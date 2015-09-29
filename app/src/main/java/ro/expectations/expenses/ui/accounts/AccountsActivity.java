@@ -1,11 +1,15 @@
-package ro.expectations.expenses;
+package ro.expectations.expenses.ui.accounts;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ro.expectations.expenses.R;
+
 public class AccountsActivity extends AppCompatActivity {
+
+    private final String LOG_TAG = AccountsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
