@@ -15,10 +15,10 @@ import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
 public class ExpensesProvider extends ContentProvider {
 
-    public static final int ROUTE_ACCOUNTS = 1;
-    public static final int ROUTE_ACCOUNT_ID = 2;
-    public static final int ROUTE_TRANSACTIONS = 3;
-    public static final int ROUTE_TRANSACTION_ID = 4;
+    private static final int ROUTE_ACCOUNTS = 1;
+    private static final int ROUTE_ACCOUNT_ID = 2;
+    private static final int ROUTE_TRANSACTIONS = 3;
+    private static final int ROUTE_TRANSACTION_ID = 4;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
