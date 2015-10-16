@@ -46,6 +46,7 @@ abstract public class DrawerActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(getSelfNavDrawerItem());
 
         mMainContent = (ViewStub) findViewById(R.id.main_content);
         mHandler = new Handler();
