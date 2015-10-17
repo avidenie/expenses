@@ -19,6 +19,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.accounts.NewAccountActivity"
+            android:label="@string/title_activity_new_account"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.accounts.AccountsActivity" >
+        </activity>
+        <activity
             android:name=".ui.transactions.TransactionsActivity"
             android:label="@string/title_activity_transactions"
             android:theme="@style/AppTheme.NoActionBar" >

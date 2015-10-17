@@ -1,8 +1,8 @@
 package ro.expectations.expenses.ui.accounts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +22,8 @@ public class AccountsActivity extends DrawerActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent newAccountIntent = new Intent(AccountsActivity.this, NewAccountActivity.class);
+                startActivity(newAccountIntent);
             }
         });
         fab.setVisibility(View.VISIBLE);
