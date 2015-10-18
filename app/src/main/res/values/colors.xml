@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color> <!-- Indigo: 500 -->
-    <color name="colorPrimaryDark">#303F9F</color> <!-- Indigo: 700 -->
-    <color name="colorAccent">#FF4081</color> <!-- Pink: A200 -->
+    <color name="primary">#3F51B5</color> <!-- Indigo: 500 -->
+    <color name="primary_dark">#303F9F</color> <!-- Indigo: 700 -->
+    <color name="accent">#FF4081</color> <!-- Pink: A200 -->
 </resources>
