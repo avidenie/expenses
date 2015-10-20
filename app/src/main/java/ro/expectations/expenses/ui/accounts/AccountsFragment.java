@@ -2,6 +2,7 @@ package ro.expectations.expenses.ui.accounts;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.provider.ExpensesContract;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -48,12 +50,23 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        String[] projection = {
+                ExpensesContract.Accounts.TITLE,
+                ExpensesContract.Accounts.CURRENCY};
+        String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
+
+        return new CursorLoader(
+                getActivity(),
+                ExpensesContract.Accounts.CONTENT_URI,
+                projection,
+                null,
+                null,
+                sortOrder);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        ((AccountsAdapter) mRecyclerView.getAdapter()).swapCursor(data);
     }
 
     @Override

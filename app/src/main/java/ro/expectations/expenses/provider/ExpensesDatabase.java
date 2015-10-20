@@ -32,24 +32,24 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        // Create table "categories".
+        db.execSQL("CREATE TABLE " + Categories.TABLE_NAME + " (" +
+                Categories._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                Categories.NAME + " TEXT NOT NULL," +
+                Categories.PARENT_ID + " INTEGER DEFAULT NULL," +
+                "CONSTRAINT fk_parent_id FOREIGN KEY (" + Categories.PARENT_ID + ") REFERENCES " +
+                Categories.TABLE_NAME + " (" + Categories._ID +
+                ") ON DELETE RESTRICT ON UPDATE CASCADE)");
+        db.execSQL("CREATE INDEX idx_parent_id ON " + Categories.TABLE_NAME + " (" +
+                Categories.PARENT_ID + " ASC)");
+
         // Create table "account_types".
         db.execSQL("CREATE TABLE " + AccountTypes.TABLE_NAME + " (" +
                 AccountTypes._ID + " INTEGER NOT NULL PRIMARY KEY," +
                 AccountTypes.TYPE + " TEXT NOT NULL)");
 
         // Populate table "account_types".
-        db.beginTransaction();
-        for (AccountTypeData type : AccountTypeData.values()) {
-            ContentValues accountTypeContentValues = new ContentValues();
-            accountTypeContentValues.put(AccountTypes._ID, type.ordinal());
-            accountTypeContentValues.put(AccountTypes.TYPE, type.toString());
-            db.insert(AccountTypes.TABLE_NAME,
-                    null,
-                    accountTypeContentValues
-            );
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
+        populateAccountTypes(db);
 
         // Create table "accounts".
         db.execSQL("CREATE TABLE " + Accounts.TABLE_NAME + " (" +
@@ -82,16 +82,8 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX idx_last_category_id ON " + Accounts.TABLE_NAME + " (" +
                 Accounts.LAST_CATEGORY_ID + " ASC)");
 
-        // Create table "categories".
-        db.execSQL("CREATE TABLE " + Categories.TABLE_NAME + " (" +
-                Categories._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                Categories.NAME + " TEXT NOT NULL," +
-                Categories.PARENT_ID + " INTEGER DEFAULT NULL," +
-                "CONSTRAINT fk_parent_id FOREIGN KEY (" + Categories.PARENT_ID + ") REFERENCES " +
-                        Categories.TABLE_NAME + " (" + Categories._ID +
-                ") ON DELETE RESTRICT ON UPDATE CASCADE)");
-        db.execSQL("CREATE INDEX idx_parent_id ON " + Categories.TABLE_NAME + " (" +
-                Categories.PARENT_ID + " ASC)");
+        // Populate table "accounts" with some dummy data.
+        populateAccountsDummyData(db);
 
         // Create table "payees".
         db.execSQL("CREATE TABLE " + Payees.TABLE_NAME + " (" +
@@ -169,6 +161,148 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 
+    private void populateAccountTypes(SQLiteDatabase db) {
+        db.beginTransaction();
+        for (AccountTypeData type : AccountTypeData.values()) {
+            ContentValues accountTypeContentValues = new ContentValues();
+            accountTypeContentValues.put(AccountTypes._ID, type.ordinal());
+            accountTypeContentValues.put(AccountTypes.TYPE, type.toString());
+            db.insert(AccountTypes.TABLE_NAME,
+                    null,
+                    accountTypeContentValues
+            );
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private void populateAccountsDummyData(SQLiteDatabase db) {
+
+        db.beginTransaction();
+
+        ContentValues cashAccountRONValues = new ContentValues();
+        cashAccountRONValues.put(Accounts.TITLE, "Cash RON");
+        cashAccountRONValues.put(Accounts.CURRENCY, "RON");
+        cashAccountRONValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
+        cashAccountRONValues.put(Accounts.IS_ACTIVE, 1);
+        cashAccountRONValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        cashAccountRONValues.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                cashAccountRONValues
+        );
+
+        ContentValues cashAccountEURValues = new ContentValues();
+        cashAccountEURValues.put(Accounts.TITLE, "Cash EUR");
+        cashAccountEURValues.put(Accounts.CURRENCY, "EUR");
+        cashAccountEURValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
+        cashAccountEURValues.put(Accounts.IS_ACTIVE, 1);
+        cashAccountEURValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        cashAccountEURValues.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                cashAccountEURValues
+        );
+
+        ContentValues cashAccountUSDValues = new ContentValues();
+        cashAccountUSDValues.put(Accounts.TITLE, "Cash USD");
+        cashAccountUSDValues.put(Accounts.CURRENCY, "USD");
+        cashAccountUSDValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
+        cashAccountUSDValues.put(Accounts.IS_ACTIVE, 0);
+        cashAccountUSDValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        cashAccountUSDValues.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                cashAccountUSDValues
+        );
+
+        ContentValues visaRON = new ContentValues();
+        visaRON.put(Accounts.TITLE, "VISA RON");
+        visaRON.put(Accounts.CURRENCY, "RON");
+        visaRON.put(Accounts.TYPE_ID, AccountTypeData.DEBIT_CARD.ordinal());
+        visaRON.put(Accounts.IS_ACTIVE, 1);
+        visaRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        visaRON.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                visaRON
+        );
+
+        ContentValues visaEUR = new ContentValues();
+        visaEUR.put(Accounts.TITLE, "VISA EUR");
+        visaEUR.put(Accounts.CURRENCY, "EUR");
+        visaEUR.put(Accounts.TYPE_ID, AccountTypeData.DEBIT_CARD.ordinal());
+        visaEUR.put(Accounts.IS_ACTIVE, 1);
+        visaEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        visaEUR.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                visaEUR
+        );
+
+        ContentValues mastercardRON = new ContentValues();
+        mastercardRON.put(Accounts.TITLE, "MasterCard RON");
+        mastercardRON.put(Accounts.CURRENCY, "RON");
+        mastercardRON.put(Accounts.TYPE_ID, AccountTypeData.CREDIT_CARD.ordinal());
+        mastercardRON.put(Accounts.IS_ACTIVE, 1);
+        mastercardRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        mastercardRON.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                mastercardRON
+        );
+
+        ContentValues mastercardEUR = new ContentValues();
+        mastercardEUR.put(Accounts.TITLE, "MasterCard EUR");
+        mastercardEUR.put(Accounts.CURRENCY, "EUR");
+        mastercardEUR.put(Accounts.TYPE_ID, AccountTypeData.CREDIT_CARD.ordinal());
+        mastercardEUR.put(Accounts.IS_ACTIVE, 1);
+        mastercardEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        mastercardEUR.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                mastercardEUR
+        );
+
+        ContentValues savingsRON = new ContentValues();
+        savingsRON.put(Accounts.TITLE, "Savings RON");
+        savingsRON.put(Accounts.CURRENCY, "RON");
+        savingsRON.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
+        savingsRON.put(Accounts.IS_ACTIVE, 1);
+        savingsRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        savingsRON.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                savingsRON
+        );
+
+        ContentValues savingsEUR = new ContentValues();
+        savingsEUR.put(Accounts.TITLE, "Savings EUR");
+        savingsEUR.put(Accounts.CURRENCY, "EUR");
+        savingsEUR.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
+        savingsEUR.put(Accounts.IS_ACTIVE, 1);
+        savingsEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
+        savingsEUR.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                savingsEUR
+        );
+
+        ContentValues houseLoaning = new ContentValues();
+        houseLoaning.put(Accounts.TITLE, "House Loaning");
+        houseLoaning.put(Accounts.CURRENCY, "EUR");
+        houseLoaning.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
+        houseLoaning.put(Accounts.IS_ACTIVE, 1);
+        houseLoaning.put(Accounts.INCLUDE_INTO_TOTALS, 0);
+        houseLoaning.put(Accounts.NOTE, "");
+        db.insert(Accounts.TABLE_NAME,
+                null,
+                houseLoaning
+        );
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }

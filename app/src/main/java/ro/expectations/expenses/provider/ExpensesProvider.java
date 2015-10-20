@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
@@ -40,7 +41,7 @@ public class ExpensesProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
@@ -58,7 +59,7 @@ public class ExpensesProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
@@ -82,7 +83,7 @@ public class ExpensesProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown content provider query URI: " + uri);
         }
 
-        SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
+        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 
         // make sure that potential listeners are getting notified
@@ -92,7 +93,7 @@ public class ExpensesProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         long id;
         Uri returnUri;
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
@@ -114,7 +115,7 @@ public class ExpensesProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
 
         int rowsUpdated;
@@ -155,7 +156,7 @@ public class ExpensesProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
         int rowsDeleted;
         long id;
