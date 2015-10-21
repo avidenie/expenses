@@ -5,17 +5,17 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
-    android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+    android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
     android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/account_icon"
         android:layout_gravity="center"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
-        android:src="@mipmap/ic_launcher"
+        android:layout_width="@dimen/list_icon_size"
+        android:layout_height="@dimen/list_icon_size"
+        android:layout_marginEnd="?android:attr/listPreferredItemPaddingRight"
+        android:src="@drawable/ic_credit_card_round"
         android:contentDescription="@null" />
 
     <LinearLayout
@@ -28,7 +28,7 @@
             android:id="@+id/account_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textAppearance="?android:attr/textAppearanceListItem"
             tools:text="Savings account" />
 
         <TextView
@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="?android:textColorSecondary"
+            android:text="9/18/15"
             tools:text="9/18/15" />
     </LinearLayout>
 
@@ -44,6 +45,7 @@
         android:id="@+id/account_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="$313.58"
         tools:text="$313.58" />
 
 </LinearLayout>
