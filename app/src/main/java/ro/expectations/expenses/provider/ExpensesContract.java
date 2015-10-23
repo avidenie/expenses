@@ -35,6 +35,7 @@ public final class ExpensesContract {
         // Database table columns.
         public static final String TITLE = "title";
         public static final String CURRENCY = "currency";
+        public static final String BALANCE = "balance";
         public static final String TYPE_ID = "type_id";
         public static final String IS_ACTIVE = "is_active";
         public static final String INCLUDE_INTO_TOTALS = "include_into_totals";
@@ -50,7 +51,7 @@ public final class ExpensesContract {
     /**
      * Inner class that defines the table contents of the `account_types` table.
      */
-    static final class AccountTypes implements BaseColumns {
+    public static final class AccountTypes implements BaseColumns {
         // Table name.
         public static final String TABLE_NAME = "account_types";
 
@@ -61,7 +62,7 @@ public final class ExpensesContract {
     /**
      * Possible values that can be stored in the `account_types` table.
      */
-    enum AccountTypeData {
+    public enum AccountTypeData {
         CASH,
         BANK_ACCOUNT,
         DEBIT_CARD,

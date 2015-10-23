@@ -52,7 +52,11 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 ExpensesContract.Accounts.TITLE,
-                ExpensesContract.Accounts.CURRENCY};
+                ExpensesContract.Accounts.CURRENCY,
+                ExpensesContract.Accounts.BALANCE,
+                ExpensesContract.Accounts.CREATED_AT,
+                ExpensesContract.AccountTypes.TYPE
+        };
         String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
 
         return new CursorLoader(

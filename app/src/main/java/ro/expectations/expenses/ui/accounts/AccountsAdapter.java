@@ -3,11 +3,15 @@ package ro.expectations.expenses.ui.accounts;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.text.NumberFormat;
+import java.util.Currency;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
@@ -34,9 +38,36 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        holder.mTitleView.setText(mCursor.getString(mCursor.getColumnIndex(
-                ExpensesContract.Accounts.TITLE
-        )));
+        // Set the icon.
+        String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.AccountTypes.TYPE));
+        ExpensesContract.AccountTypeData accountType = ExpensesContract.AccountTypeData.valueOf(type);
+        if (accountType == ExpensesContract.AccountTypeData.CASH) {
+            holder.mIconView.setImageResource(R.drawable.ic_cash_round);
+        } else if (accountType == ExpensesContract.AccountTypeData.DEBIT_CARD) {
+            holder.mIconView.setImageResource(R.drawable.ic_credit_card_round);
+        } else if (accountType == ExpensesContract.AccountTypeData.CREDIT_CARD) {
+            holder.mIconView.setImageResource(R.drawable.ic_credit_card_round);
+        } else {
+            holder.mIconView.setImageResource(R.drawable.ic_cash_round);
+        }
+
+        // Set the title
+        String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE));
+        holder.mTitleView.setText(title);
+
+        // Set the date.
+        long now = System.currentTimeMillis();
+        long createdAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT)) * 1000L;
+        holder.mCreatedAt.setText(DateUtils.getRelativeTimeSpanString(createdAt, now, DateUtils.DAY_IN_MILLIS));
+
+        // Set the balance
+        long balance = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.BALANCE)) / 100;
+        String currencyCode = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.CURRENCY));
+        Currency currency = Currency.getInstance(currencyCode);
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        format.setCurrency(currency);
+        format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+        holder.mBalanceView.setText(format.format(balance));
     }
 
     @Override
@@ -60,14 +91,14 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView mIconView;
         public final TextView mTitleView;
-        public final TextView mLastTransactionView;
+        public final TextView mCreatedAt;
         public final TextView mBalanceView;
 
         public ViewHolder(View view) {
             super(view);
             mIconView = (ImageView) view.findViewById(R.id.account_icon);
             mTitleView = (TextView) view.findViewById(R.id.account_title);
-            mLastTransactionView = (TextView) view.findViewById(R.id.account_last_transaction_at);
+            mCreatedAt = (TextView) view.findViewById(R.id.account_created_at);
             mBalanceView = (TextView) view.findViewById(R.id.account_balance);
         }
     }

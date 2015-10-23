@@ -56,6 +56,7 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Accounts._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 Accounts.TITLE + " TEXT NOT NULL," +
                 Accounts.CURRENCY + " TEXT NOT NULL," +
+                Accounts.BALANCE + " INTEGER NOT NULL DEFAULT 0," +
                 Accounts.TYPE_ID + " INTEGER NOT NULL," +
                 Accounts.IS_ACTIVE + " INTEGER NOT NULL DEFAULT 1," +
                 Accounts.INCLUDE_INTO_TOTALS + " INTEGER NOT NULL DEFAULT 1," +
@@ -180,15 +181,19 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
 
     private void populateAccountsDummyData(SQLiteDatabase db) {
 
+        long unixTime = System.currentTimeMillis() / 1000L;
+
         db.beginTransaction();
 
         ContentValues cashAccountRONValues = new ContentValues();
         cashAccountRONValues.put(Accounts.TITLE, "Cash RON");
         cashAccountRONValues.put(Accounts.CURRENCY, "RON");
+        cashAccountRONValues.put(Accounts.BALANCE, 75075);
         cashAccountRONValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
         cashAccountRONValues.put(Accounts.IS_ACTIVE, 1);
         cashAccountRONValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         cashAccountRONValues.put(Accounts.NOTE, "");
+        cashAccountRONValues.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 cashAccountRONValues
@@ -197,10 +202,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues cashAccountEURValues = new ContentValues();
         cashAccountEURValues.put(Accounts.TITLE, "Cash EUR");
         cashAccountEURValues.put(Accounts.CURRENCY, "EUR");
+        cashAccountEURValues.put(Accounts.BALANCE, 15025);
         cashAccountEURValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
         cashAccountEURValues.put(Accounts.IS_ACTIVE, 1);
         cashAccountEURValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         cashAccountEURValues.put(Accounts.NOTE, "");
+        cashAccountEURValues.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 cashAccountEURValues
@@ -209,10 +216,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues cashAccountUSDValues = new ContentValues();
         cashAccountUSDValues.put(Accounts.TITLE, "Cash USD");
         cashAccountUSDValues.put(Accounts.CURRENCY, "USD");
+        cashAccountUSDValues.put(Accounts.BALANCE, 1500);
         cashAccountUSDValues.put(Accounts.TYPE_ID, AccountTypeData.CASH.ordinal());
         cashAccountUSDValues.put(Accounts.IS_ACTIVE, 0);
         cashAccountUSDValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         cashAccountUSDValues.put(Accounts.NOTE, "");
+        cashAccountUSDValues.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 cashAccountUSDValues
@@ -221,10 +230,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues visaRON = new ContentValues();
         visaRON.put(Accounts.TITLE, "VISA RON");
         visaRON.put(Accounts.CURRENCY, "RON");
+        visaRON.put(Accounts.BALANCE, 150399);
         visaRON.put(Accounts.TYPE_ID, AccountTypeData.DEBIT_CARD.ordinal());
         visaRON.put(Accounts.IS_ACTIVE, 1);
         visaRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         visaRON.put(Accounts.NOTE, "");
+        visaRON.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 visaRON
@@ -233,10 +244,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues visaEUR = new ContentValues();
         visaEUR.put(Accounts.TITLE, "VISA EUR");
         visaEUR.put(Accounts.CURRENCY, "EUR");
+        visaEUR.put(Accounts.BALANCE, 17550);
         visaEUR.put(Accounts.TYPE_ID, AccountTypeData.DEBIT_CARD.ordinal());
         visaEUR.put(Accounts.IS_ACTIVE, 1);
         visaEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         visaEUR.put(Accounts.NOTE, "");
+        visaEUR.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 visaEUR
@@ -245,10 +258,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues mastercardRON = new ContentValues();
         mastercardRON.put(Accounts.TITLE, "MasterCard RON");
         mastercardRON.put(Accounts.CURRENCY, "RON");
+        mastercardRON.put(Accounts.BALANCE, 2500);
         mastercardRON.put(Accounts.TYPE_ID, AccountTypeData.CREDIT_CARD.ordinal());
         mastercardRON.put(Accounts.IS_ACTIVE, 1);
         mastercardRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         mastercardRON.put(Accounts.NOTE, "");
+        mastercardRON.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 mastercardRON
@@ -257,10 +272,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues mastercardEUR = new ContentValues();
         mastercardEUR.put(Accounts.TITLE, "MasterCard EUR");
         mastercardEUR.put(Accounts.CURRENCY, "EUR");
+        mastercardEUR.put(Accounts.BALANCE, 0);
         mastercardEUR.put(Accounts.TYPE_ID, AccountTypeData.CREDIT_CARD.ordinal());
         mastercardEUR.put(Accounts.IS_ACTIVE, 1);
         mastercardEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         mastercardEUR.put(Accounts.NOTE, "");
+        mastercardEUR.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 mastercardEUR
@@ -269,10 +286,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues savingsRON = new ContentValues();
         savingsRON.put(Accounts.TITLE, "Savings RON");
         savingsRON.put(Accounts.CURRENCY, "RON");
+        savingsRON.put(Accounts.BALANCE, 2730178);
         savingsRON.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
         savingsRON.put(Accounts.IS_ACTIVE, 1);
         savingsRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         savingsRON.put(Accounts.NOTE, "");
+        savingsRON.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 savingsRON
@@ -281,10 +300,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues savingsEUR = new ContentValues();
         savingsEUR.put(Accounts.TITLE, "Savings EUR");
         savingsEUR.put(Accounts.CURRENCY, "EUR");
+        savingsEUR.put(Accounts.BALANCE, 150245);
         savingsEUR.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
         savingsEUR.put(Accounts.IS_ACTIVE, 1);
         savingsEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
         savingsEUR.put(Accounts.NOTE, "");
+        savingsEUR.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 savingsEUR
@@ -293,10 +314,12 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues houseLoaning = new ContentValues();
         houseLoaning.put(Accounts.TITLE, "House Loaning");
         houseLoaning.put(Accounts.CURRENCY, "EUR");
+        houseLoaning.put(Accounts.BALANCE, 175090);
         houseLoaning.put(Accounts.TYPE_ID, AccountTypeData.BANK_ACCOUNT.ordinal());
         houseLoaning.put(Accounts.IS_ACTIVE, 1);
         houseLoaning.put(Accounts.INCLUDE_INTO_TOTALS, 0);
         houseLoaning.put(Accounts.NOTE, "");
+        houseLoaning.put(Accounts.CREATED_AT, unixTime);
         db.insert(Accounts.TABLE_NAME,
                 null,
                 houseLoaning
