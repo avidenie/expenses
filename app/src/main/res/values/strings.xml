@@ -7,4 +7,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_new_account">Add new account</string>
+    <string name="account_type_cash">Cash</string>
+    <string name="account_type_bank">Bank Account</string>
+    <string name="account_type_debit_card">Debit Card</string>
+    <string name="account_type_credit_card">Credit Card</string>
 </resources>

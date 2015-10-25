@@ -60,16 +60,6 @@ public final class ExpensesContract {
     }
 
     /**
-     * Possible values that can be stored in the `account_types` table.
-     */
-    public enum AccountTypeData {
-        CASH,
-        BANK_ACCOUNT,
-        DEBIT_CARD,
-        CREDIT_CARD
-    }
-
-    /**
      * Inner class that defines the table contents of the `categories` table.
      */
     static final class Categories implements BaseColumns {

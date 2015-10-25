@@ -14,6 +14,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
@@ -40,16 +41,8 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
 
         // Set the icon.
         String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.AccountTypes.TYPE));
-        ExpensesContract.AccountTypeData accountType = ExpensesContract.AccountTypeData.valueOf(type);
-        if (accountType == ExpensesContract.AccountTypeData.CASH) {
-            holder.mIconView.setImageResource(R.drawable.ic_cash_round);
-        } else if (accountType == ExpensesContract.AccountTypeData.DEBIT_CARD) {
-            holder.mIconView.setImageResource(R.drawable.ic_credit_card_round);
-        } else if (accountType == ExpensesContract.AccountTypeData.CREDIT_CARD) {
-            holder.mIconView.setImageResource(R.drawable.ic_credit_card_round);
-        } else {
-            holder.mIconView.setImageResource(R.drawable.ic_cash_round);
-        }
+        AccountType accountType = AccountType.valueOf(type);
+        holder.mIconView.setImageResource(accountType.iconId);
 
         // Set the title
         String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE));
