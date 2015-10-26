@@ -2,6 +2,7 @@ package ro.expectations.expenses.ui.accounts;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -60,14 +61,20 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
             holder.mIconView.setImageResource(accountType.iconId);
         }
 
+        // Set the description.
+        holder.mDescriptionView.setText(accountType.titleId);
+
         // Set the title
         String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE));
         holder.mTitleView.setText(title);
 
         // Set the date.
         long now = System.currentTimeMillis();
-        long createdAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT)) * 1000L;
-        holder.mCreatedAt.setText(DateUtils.getRelativeTimeSpanString(createdAt, now, DateUtils.DAY_IN_MILLIS));
+        long lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.LAST_TRANSACTION_AT)) * 1000L;
+        if (lastTransactionAt == 0) {
+            lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT)) * 1000L;
+        }
+        holder.mLastTransactionAt.setText(DateUtils.getRelativeTimeSpanString(lastTransactionAt, now, DateUtils.DAY_IN_MILLIS));
 
         // Set the balance
         long balance = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.BALANCE)) / 100;
@@ -77,6 +84,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         format.setCurrency(currency);
         format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
         holder.mBalanceView.setText(format.format(balance));
+        if (balance > 0) {
+            holder.mBalanceView.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+        } else if (balance < 0) {
+            holder.mBalanceView.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+        }
     }
 
     @Override
@@ -100,14 +112,16 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView mIconView;
         public final TextView mTitleView;
-        public final TextView mCreatedAt;
+        public final TextView mDescriptionView;
+        public final TextView mLastTransactionAt;
         public final TextView mBalanceView;
 
         public ViewHolder(View view) {
             super(view);
             mIconView = (ImageView) view.findViewById(R.id.account_icon);
             mTitleView = (TextView) view.findViewById(R.id.account_title);
-            mCreatedAt = (TextView) view.findViewById(R.id.account_created_at);
+            mDescriptionView = (TextView) view.findViewById(R.id.account_description);
+            mLastTransactionAt = (TextView) view.findViewById(R.id.account_last_transaction_at);
             mBalanceView = (TextView) view.findViewById(R.id.account_balance);
         }
     }

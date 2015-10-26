@@ -217,7 +217,7 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
         ContentValues mastercardEUR = new ContentValues();
         mastercardEUR.put(Accounts.TITLE, "Mastercard EUR");
         mastercardEUR.put(Accounts.CURRENCY, "EUR");
-        mastercardEUR.put(Accounts.BALANCE, 17550);
+        mastercardEUR.put(Accounts.BALANCE, -17550);
         mastercardEUR.put(Accounts.TYPE, AccountType.CREDIT_CARD.toString());
         mastercardEUR.put(Accounts.CARD_ISSUER, CardIssuer.MASTERCARD.toString());
         mastercardEUR.put(Accounts.IS_ACTIVE, 1);

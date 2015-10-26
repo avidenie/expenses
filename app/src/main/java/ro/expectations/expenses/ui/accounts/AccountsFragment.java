@@ -54,6 +54,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 ExpensesContract.Accounts.TITLE,
                 ExpensesContract.Accounts.CURRENCY,
                 ExpensesContract.Accounts.BALANCE,
+                ExpensesContract.Accounts.LAST_TRANSACTION_AT,
                 ExpensesContract.Accounts.CREATED_AT,
                 ExpensesContract.Accounts.TYPE,
                 ExpensesContract.Accounts.CARD_ISSUER

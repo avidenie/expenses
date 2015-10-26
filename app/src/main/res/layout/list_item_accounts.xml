@@ -15,7 +15,8 @@
         android:layout_width="@dimen/list_icon_size"
         android:layout_height="@dimen/list_icon_size"
         android:layout_marginEnd="?android:attr/listPreferredItemPaddingRight"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_bank_account_round" />
 
     <LinearLayout
         android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
             tools:text="Savings account" />
 
         <TextView
-            android:id="@+id/account_created_at"
+            android:id="@+id/account_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -39,11 +40,27 @@
             tools:text="9/18/15" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/account_balance"
-        android:layout_width="wrap_content"
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:text="$313.58"
-        tools:text="$313.58" />
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/account_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="?android:textColorSecondary"
+            tools:text="$313.58" />
+
+        <TextView
+            android:id="@+id/account_last_transaction_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="?android:textColorSecondary"
+            tools:text="9/18/15" />
+    </LinearLayout>
 
 </LinearLayout>
