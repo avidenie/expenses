@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import ro.expectations.expenses.provider.ExpensesContract.AccountTypes;
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
@@ -67,13 +66,7 @@ public class ExpensesProvider extends ContentProvider {
         int uriType = sUriMatcher.match(uri);
         switch (uriType) {
             case ROUTE_ACCOUNTS:
-                String join = Accounts.TABLE_NAME + " LEFT OUTER JOIN "
-                        + AccountTypes.TABLE_NAME + " ON ("
-                        + Accounts.TABLE_NAME + "." + Accounts.TYPE_ID
-                        + " = "
-                        + AccountTypes.TABLE_NAME + "." + AccountTypes._ID
-                        + ")";
-                queryBuilder.setTables(join);
+                queryBuilder.setTables(Accounts.TABLE_NAME);
                 break;
             case ROUTE_ACCOUNT_ID:
                 queryBuilder.appendWhere(Accounts._ID + "=" + ContentUris.parseId(uri));

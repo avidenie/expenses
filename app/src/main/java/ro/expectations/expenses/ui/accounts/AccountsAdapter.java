@@ -15,6 +15,7 @@ import java.util.Currency;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.model.AccountType;
+import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
@@ -40,9 +41,24 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         mCursor.moveToPosition(position);
 
         // Set the icon.
-        String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.AccountTypes.TYPE));
+        String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TYPE));
         AccountType accountType = AccountType.valueOf(type);
-        holder.mIconView.setImageResource(accountType.iconId);
+        if (accountType == AccountType.CREDIT_CARD || accountType == AccountType.DEBIT_CARD) {
+            String issuer = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.CARD_ISSUER));
+            CardIssuer cardIssuer;
+            if (issuer == null) {
+                cardIssuer = CardIssuer.OTHER;
+            } else {
+                try {
+                    cardIssuer = CardIssuer.valueOf(issuer);
+                } catch (final IllegalArgumentException ex) {
+                    cardIssuer = CardIssuer.OTHER;
+                }
+            }
+            holder.mIconView.setImageResource(cardIssuer.iconId);
+        } else {
+            holder.mIconView.setImageResource(accountType.iconId);
+        }
 
         // Set the title
         String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE));

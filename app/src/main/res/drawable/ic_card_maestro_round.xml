@@ -6,7 +6,7 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_credit_card_white_24dp"
+        android:drawable="@drawable/ic_card_maestro_white_24dp"
         android:bottom="8dp"
         android:left="8dp"
         android:right="8dp"

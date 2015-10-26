@@ -36,27 +36,16 @@ public final class ExpensesContract {
         public static final String TITLE = "title";
         public static final String CURRENCY = "currency";
         public static final String BALANCE = "balance";
-        public static final String TYPE_ID = "type_id";
+        public static final String TYPE = "type";
+        public static final String CARD_ISSUER = "card_issuer";
         public static final String IS_ACTIVE = "is_active";
         public static final String INCLUDE_INTO_TOTALS = "include_into_totals";
         public static final String SORT_ORDER = "sort_order";
         public static final String NOTE = "note";
         public static final String CREATED_AT = "created_at";
-        public static final String UPDATED_AT = "updated_at";
         public static final String LAST_TRANSACTION_AT = "last_transaction_at";
         public static final String LAST_ACCOUNT_ID = "last_account_id";
         public static final String LAST_CATEGORY_ID = "last_category_id";
-    }
-
-    /**
-     * Inner class that defines the table contents of the `account_types` table.
-     */
-    public static final class AccountTypes implements BaseColumns {
-        // Table name.
-        public static final String TABLE_NAME = "account_types";
-
-        // Database table columns.
-        public static final String TYPE = "type";
     }
 
     /**

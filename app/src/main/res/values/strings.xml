@@ -11,4 +11,19 @@
     <string name="account_type_bank">Bank Account</string>
     <string name="account_type_debit_card">Debit Card</string>
     <string name="account_type_credit_card">Credit Card</string>
+    <string name="account_type_savings">Savings Account</string>
+    <string name="account_type_loan">Loan Account</string>
+    <string name="card_issuer_american_express">American Express (Amex)</string>
+    <string name="card_issuer_other">Other</string>
+    <string name="card_issuer_visa">Visa</string>
+    <string name="card_issuer_visa_electron">Visa Electron</string>
+    <string name="card_issuer_mastercard">MasterCard</string>
+    <string name="card_issuer_maestro">Maestro</string>
+    <string name="card_issuer_discover">Discover</string>
+    <string name="card_issuer_cirrus">Cirrus</string>
+    <string name="card_issuer_jcb">JCB</string>
+    <string name="card_issuer_nets">NETS</string>
+    <string name="card_issuer_unionpay">UnionPay</string>
+    <string name="card_issuer_eps">EPS</string>
+    <string name="card_issuer_diners">Diners Club</string>
 </resources>
