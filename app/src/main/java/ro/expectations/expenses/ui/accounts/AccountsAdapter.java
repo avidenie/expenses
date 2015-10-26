@@ -2,6 +2,7 @@ package ro.expectations.expenses.ui.accounts;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -61,6 +63,10 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
             holder.mIconView.setImageResource(accountType.iconId);
         }
 
+        // Set the icon background color.
+        GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
+        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, accountType.colorId));
+
         // Set the description.
         holder.mDescriptionView.setText(accountType.titleId);
 
@@ -110,6 +116,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public final RelativeLayout mIconBackgroundView;
         public final ImageView mIconView;
         public final TextView mTitleView;
         public final TextView mDescriptionView;
@@ -118,6 +125,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
 
         public ViewHolder(View view) {
             super(view);
+            mIconBackgroundView = (RelativeLayout) view.findViewById(R.id.account_icon_background);
             mIconView = (ImageView) view.findViewById(R.id.account_icon);
             mTitleView = (TextView) view.findViewById(R.id.account_title);
             mDescriptionView = (TextView) view.findViewById(R.id.account_description);
