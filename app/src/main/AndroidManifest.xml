@@ -21,8 +21,14 @@
         <activity
             android:name=".ui.accounts.NewAccountActivity"
             android:label="@string/title_activity_new_account"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".ui.accounts.AccountsActivity" >
+            android:parentActivityName=".ui.accounts.AccountsActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ui.accounts.EditAccountActivity"
+            android:label="@string/title_activity_edit_account"
+            android:parentActivityName=".ui.accounts.AccountsActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
             android:name=".ui.transactions.TransactionsActivity"

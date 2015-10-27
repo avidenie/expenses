@@ -26,9 +26,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     private Cursor mCursor;
     final private Context mContext;
     final private View mEmptyView;
+    final private OnClickListener mClickListener;
 
-    public AccountsAdapter(Context context, View emptyView) {
+    public AccountsAdapter(Context context, OnClickListener clickListener, View emptyView) {
         mContext = context;
+        mClickListener = clickListener;
         mEmptyView = emptyView;
     }
 
@@ -115,7 +117,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         return mCursor;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final RelativeLayout mIconBackgroundView;
         public final ImageView mIconView;
         public final TextView mTitleView;
@@ -131,6 +133,19 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
             mDescriptionView = (TextView) view.findViewById(R.id.account_description);
             mLastTransactionAt = (TextView) view.findViewById(R.id.account_last_transaction_at);
             mBalanceView = (TextView) view.findViewById(R.id.account_balance);
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            int accountId = mCursor.getColumnIndex(ExpensesContract.Accounts._ID);
+            mClickListener.onClick(mCursor.getLong(accountId), this);
+        }
+    }
+
+    public interface OnClickListener {
+        void onClick(long accountId, ViewHolder vh);
     }
 }
