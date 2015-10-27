@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.widget.DrawerActivity;
 
 public class AccountsActivity extends DrawerActivity {
 

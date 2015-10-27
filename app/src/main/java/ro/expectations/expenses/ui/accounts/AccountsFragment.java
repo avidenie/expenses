@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -33,6 +34,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_accounts);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
         View emptyView = rootView.findViewById(R.id.recyclerview_accounts_empty);

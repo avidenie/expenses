@@ -1,4 +1,4 @@
-package ro.expectations.expenses.ui.drawer;
+package ro.expectations.expenses.ui.widget;
 
 import android.content.Intent;
 import android.os.Handler;

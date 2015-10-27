@@ -3,7 +3,7 @@ package ro.expectations.expenses.ui.transactions;
 import android.os.Bundle;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.widget.DrawerActivity;
 
 public class TransactionsActivity extends DrawerActivity {
 
