@@ -12,8 +12,6 @@ import ro.expectations.expenses.ui.widget.DrawerActivity;
 
 public class AccountsActivity extends DrawerActivity {
 
-    private final String LOG_TAG = AccountsActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = AccountsFragment.class.getSimpleName();
     private static final int ACCOUNTS_LOADER = 0;
 
     private RecyclerView mRecyclerView;
@@ -34,12 +32,12 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_accounts, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_accounts);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        View emptyView = rootView.findViewById(R.id.recyclerview_accounts_empty);
+        View emptyView = rootView.findViewById(R.id.list_accounts_empty);
         AccountsAdapter adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.OnClickListener() {
                 @Override
                 public void onClick(long accountId, AccountsAdapter.ViewHolder vh) {

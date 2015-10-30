@@ -6,12 +6,12 @@
     tools:context=".ui.accounts.AccountsActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_accounts"
+        android:id="@+id/list_accounts"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/recyclerview_accounts_empty"
+        android:id="@+id/list_accounts_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

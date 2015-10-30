@@ -19,8 +19,6 @@ import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 abstract public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final String LOG_TAG = DrawerActivity.class.getSimpleName();
-
     // Delay to launch nav drawer item, to allow close animation to play.
     private static final int NAV_DRAWER_LAUNCH_DELAY = 250;
 
