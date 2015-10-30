@@ -14,6 +14,7 @@ import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.ui.accounts.AccountsActivity;
+import ro.expectations.expenses.ui.backup.BackupActivity;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 
 abstract public class DrawerActivity extends AppCompatActivity
@@ -62,17 +63,19 @@ abstract public class DrawerActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        mDrawer.closeDrawer(GravityCompat.START);
 
+        int id = item.getItemId();
         if (id != getSelfNavDrawerItem()) {
             if (id == R.id.nav_accounts) {
-                Intent accountsIntent = new Intent(DrawerActivity.this, AccountsActivity.class);
+                Intent accountsIntent = new Intent(this, AccountsActivity.class);
                 startActivityDelayed(accountsIntent);
             } else if (id == R.id.nav_transactions) {
                 Intent transactionsIntent = new Intent(this, TransactionsActivity.class);
                 startActivityDelayed(transactionsIntent);
-            } else if (id == R.id.nav_slideshow) {
-
+            } else if (id == R.id.nav_backup) {
+                Intent backupIntent = new Intent(this, BackupActivity.class);
+                startActivityDelayed(backupIntent);
             } else if (id == R.id.nav_manage) {
 
             } else if (id == R.id.nav_share) {
@@ -82,7 +85,6 @@ abstract public class DrawerActivity extends AppCompatActivity
             }
         }
 
-        mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
