@@ -5,6 +5,7 @@
     <string name="no_account_defined">You haven\'t created an account yet.</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_new_account">Add new account</string>
     <string name="title_activity_edit_account">Edit account</string>
