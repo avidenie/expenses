@@ -22,7 +22,7 @@ public class EditAccountActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
-        mainContent.setLayoutResource(R.layout.content_backup);
+        mainContent.setLayoutResource(R.layout.content_edit_account);
         mainContent.inflate();
     }
 

@@ -19,7 +19,7 @@ public class NewAccountActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
-        mainContent.setLayoutResource(R.layout.content_backup);
+        mainContent.setLayoutResource(R.layout.content_new_account);
         mainContent.inflate();
     }
 }
