@@ -1,28 +1,38 @@
 package ro.expectations.expenses.ui.backup;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ro.expectations.expenses.R;
 
 public class BackupActivity extends AppCompatActivity {
 
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+    private boolean mIsFinancistoInstalled = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.app_bar);
+        setContentView(R.layout.activity_backup);
+
+        mIsFinancistoInstalled = isFinancistoInstalled();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -34,11 +44,22 @@ public class BackupActivity extends AppCompatActivity {
                 Log.i("@@@", "FAB clicked");
             }
         });
-        fab.setVisibility(View.VISIBLE);
 
-        ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
-        mainContent.setLayoutResource(R.layout.content_backup);
-        mainContent.inflate();
+        // Create the adapter that will return a fragment for each of the
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // Set up tabs from the view pager.
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        if (mSectionsPagerAdapter.getCount() > 1) {
+            tabLayout.setupWithViewPager(mViewPager);
+        } else {
+            tabLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -51,29 +72,105 @@ public class BackupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_import_from_financisto) {
-            new ImportFromFinancistoDialogFragment().show(getSupportFragmentManager(), null);
+        if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public static class ImportFromFinancistoDialogFragment extends DialogFragment {
+    private boolean isFinancistoInstalled() {
+        PackageManager pm = getPackageManager();
+        boolean installed;
+        try {
+            pm.getPackageInfo("ru.orangesoftware.financisto", PackageManager.GET_ACTIVITIES);
+            installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            installed = false;
+        }
+        return installed;
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
         @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("AppCompatDialog");
-            builder.setMessage("Lorem ipsum dolor...");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                return BackupListFragment.newInstance();
+            }
+
+            if (mIsFinancistoInstalled) {
+                if (position == 1) {
+                    return FinancistoBackupListFragment.newInstance();
                 }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+            }
+
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            int count = 1;
+            if (mIsFinancistoInstalled) {
+                count++;
+            }
+            return count;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position == 0) {
+                return "Local";
+            }
+
+            if (mIsFinancistoInstalled) {
+                if (position == 1) {
+                    return "Financisto";
                 }
-            });
-            return builder.create();
+            }
+
+            return null;
+        }
+    }
+
+    public static class BackupListFragment extends Fragment {
+
+        public static BackupListFragment newInstance() {
+            return new BackupListFragment();
+        }
+
+        public BackupListFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText("Hello from Backup");
+            return rootView;
+        }
+    }
+
+    public static class FinancistoBackupListFragment extends Fragment {
+
+        public static FinancistoBackupListFragment newInstance() {
+            return new FinancistoBackupListFragment();
+        }
+
+        public FinancistoBackupListFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText("Hello from Financisto Backup");
+            return rootView;
         }
     }
 }

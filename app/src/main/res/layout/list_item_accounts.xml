@@ -8,7 +8,8 @@
     android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
     android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <RelativeLayout
         android:id="@+id/account_icon_background"
