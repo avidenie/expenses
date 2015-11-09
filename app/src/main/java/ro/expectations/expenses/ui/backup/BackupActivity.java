@@ -3,6 +3,7 @@ package ro.expectations.expenses.ui.backup;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,18 +33,20 @@ public class BackupActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_backup);
 
-        mIsFinancistoInstalled = isFinancistoInstalled();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("@@@", "FAB clicked");
+                Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
+                        .setAction("OK", null).show();
             }
         });
+
+        mIsFinancistoInstalled = isFinancistoInstalled();
 
         // Create the adapter that will return a fragment for each of the
         // primary sections of the activity.

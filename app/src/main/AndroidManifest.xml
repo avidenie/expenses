@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ui.accounts.AccountsActivity"
+            android:name=".ui.overview.OverviewActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar.Drawer" >
             <intent-filter>
@@ -17,6 +17,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.accounts.AccountsActivity"
+            android:label="@string/title_activity_accounts"
+            android:parentActivityName=".ui.overview.OverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
             android:name=".ui.accounts.NewAccountActivity"
@@ -33,11 +39,13 @@
         <activity
             android:name=".ui.transactions.TransactionsActivity"
             android:label="@string/title_activity_transactions"
-            android:theme="@style/AppTheme.NoActionBar.Drawer" >
+            android:parentActivityName=".ui.overview.OverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
             android:name=".ui.backup.BackupActivity"
             android:label="@string/title_activity_backup"
+            android:parentActivityName=".ui.overview.OverviewActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
