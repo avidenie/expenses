@@ -1,6 +1,7 @@
 package ro.expectations.expenses.ui.overview;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -10,35 +11,40 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.accounts.AccountsActivity;
 import ro.expectations.expenses.ui.backup.BackupActivity;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 
-public class OverviewActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class OverviewActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     // Delay to launch nav drawer item, to allow close animation to play.
     private static final int NAV_DRAWER_LAUNCH_DELAY = 250;
+
+    private static final int LOADER_ACCOUNTS = 0;
 
     private DrawerLayout mDrawer;
     private Handler mHandler;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +67,6 @@ public class OverviewActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_overview);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +76,21 @@ public class OverviewActivity extends AppCompatActivity
             }
         });
 
+        // Create the adapter that will return a fragment for each primary section of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter.swapCursor(null);
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // Get a reference to the tab layout to populate when the loader finishes loading.
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        // Initialise the account data loader.
+        getSupportLoaderManager().initLoader(LOADER_ACCOUNTS, null, this);
+
+        // Handler used to delay the launch of activities from the nav drawer.
         mHandler = new Handler();
     }
 
@@ -155,7 +165,37 @@ public class OverviewActivity extends AppCompatActivity
         }, NAV_DRAWER_LAUNCH_DELAY);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                ExpensesContract.Accounts._ID,
+                ExpensesContract.Accounts.TITLE
+        };
+        String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
+
+        return new CursorLoader(
+                this,
+                ExpensesContract.Accounts.CONTENT_URI,
+                projection,
+                null,
+                null,
+                sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mSectionsPagerAdapter.swapCursor(data);
+        mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+        mSectionsPagerAdapter.swapCursor(null);
+    }
+
     public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+
+        private Cursor mCursor;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -163,52 +203,41 @@ public class OverviewActivity extends AppCompatActivity
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            if (mCursor == null) {
+                return null;
+            }
+
+            mCursor.moveToPosition(position);
+            int idIndex = mCursor.getColumnIndex(ExpensesContract.Accounts._ID);
+            return AccountDetailsFragment.newInstance(mCursor.getLong(idIndex));
         }
 
         @Override
         public int getCount() {
-            return 3;
+            if (mCursor == null) {
+                return 0;
+            } else {
+                return mCursor.getCount();
+            }
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
+            if (mCursor == null) {
+                return null;
             }
-            return null;
-        }
-    }
 
-    public static class PlaceholderFragment extends Fragment {
-
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
+            mCursor.moveToPosition(position);
+            int titleIndex = mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE);
+            return mCursor.getString(titleIndex);
         }
 
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+        public void swapCursor(Cursor newCursor) {
+            if (mCursor == newCursor) {
+                return;
+            }
+            mCursor = newCursor;
+            notifyDataSetChanged();
         }
     }
 }
