@@ -11,7 +11,7 @@ public final class ExpensesContract {
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.
-    static final String CONTENT_AUTHORITY = "ro.expectations.expenses.provider";
+    public static final String CONTENT_AUTHORITY = "ro.expectations.expenses.provider";
 
     // Use CONTENT_AUTHORITY to create the base of all URIs used to contact the content provider.
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);

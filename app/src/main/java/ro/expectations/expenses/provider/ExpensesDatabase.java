@@ -1,18 +1,15 @@
 package ro.expectations.expenses.provider;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import ro.expectations.expenses.model.AccountType;
-import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
 import ro.expectations.expenses.provider.ExpensesContract.Categories;
 import ro.expectations.expenses.provider.ExpensesContract.Payees;
 import ro.expectations.expenses.provider.ExpensesContract.RunningBalances;
-import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
+import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
 public class ExpensesDatabase extends SQLiteOpenHelper {
 
@@ -69,9 +66,6 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Accounts.LAST_ACCOUNT_ID + " ASC)");
         db.execSQL("CREATE INDEX idx_last_category_id ON " + Accounts.TABLE_NAME + " (" +
                 Accounts.LAST_CATEGORY_ID + " ASC)");
-
-        // Populate table "accounts" with some dummy data.
-        populateAccountsDummyData(db);
 
         // Create table "payees".
         db.execSQL("CREATE TABLE " + Payees.TABLE_NAME + " (" +
@@ -149,202 +143,5 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-
-    private void populateAccountsDummyData(SQLiteDatabase db) {
-
-        long unixTime = System.currentTimeMillis() / 1000L;
-
-        db.beginTransaction();
-
-        ContentValues cashAccountRONValues = new ContentValues();
-        cashAccountRONValues.put(Accounts.TITLE, "Cash RON");
-        cashAccountRONValues.put(Accounts.CURRENCY, "RON");
-        cashAccountRONValues.put(Accounts.BALANCE, 75075);
-        cashAccountRONValues.put(Accounts.TYPE, AccountType.CASH.toString());
-        cashAccountRONValues.put(Accounts.IS_ACTIVE, 1);
-        cashAccountRONValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        cashAccountRONValues.put(Accounts.NOTE, "");
-        cashAccountRONValues.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                cashAccountRONValues
-        );
-
-        ContentValues cashAccountEURValues = new ContentValues();
-        cashAccountEURValues.put(Accounts.TITLE, "Cash EUR");
-        cashAccountEURValues.put(Accounts.CURRENCY, "EUR");
-        cashAccountEURValues.put(Accounts.BALANCE, 15025);
-        cashAccountEURValues.put(Accounts.TYPE, AccountType.CASH.toString());
-        cashAccountEURValues.put(Accounts.IS_ACTIVE, 1);
-        cashAccountEURValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        cashAccountEURValues.put(Accounts.NOTE, "");
-        cashAccountEURValues.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                cashAccountEURValues
-        );
-
-        ContentValues cashAccountUSDValues = new ContentValues();
-        cashAccountUSDValues.put(Accounts.TITLE, "Cash USD");
-        cashAccountUSDValues.put(Accounts.CURRENCY, "USD");
-        cashAccountUSDValues.put(Accounts.BALANCE, 1500);
-        cashAccountUSDValues.put(Accounts.TYPE, AccountType.CASH.toString());
-        cashAccountUSDValues.put(Accounts.IS_ACTIVE, 0);
-        cashAccountUSDValues.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        cashAccountUSDValues.put(Accounts.NOTE, "");
-        cashAccountUSDValues.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                cashAccountUSDValues
-        );
-
-        ContentValues visaRON = new ContentValues();
-        visaRON.put(Accounts.TITLE, "VISA RON");
-        visaRON.put(Accounts.CURRENCY, "RON");
-        visaRON.put(Accounts.BALANCE, 150399);
-        visaRON.put(Accounts.TYPE, AccountType.CREDIT_CARD.toString());
-        visaRON.put(Accounts.CARD_ISSUER, CardIssuer.VISA.toString());
-        visaRON.put(Accounts.IS_ACTIVE, 1);
-        visaRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        visaRON.put(Accounts.NOTE, "");
-        visaRON.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                visaRON
-        );
-
-        ContentValues mastercardEUR = new ContentValues();
-        mastercardEUR.put(Accounts.TITLE, "Mastercard EUR");
-        mastercardEUR.put(Accounts.CURRENCY, "EUR");
-        mastercardEUR.put(Accounts.BALANCE, -17550);
-        mastercardEUR.put(Accounts.TYPE, AccountType.CREDIT_CARD.toString());
-        mastercardEUR.put(Accounts.CARD_ISSUER, CardIssuer.MASTERCARD.toString());
-        mastercardEUR.put(Accounts.IS_ACTIVE, 1);
-        mastercardEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        mastercardEUR.put(Accounts.NOTE, "");
-        mastercardEUR.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                mastercardEUR
-        );
-
-        ContentValues americanExpressRON = new ContentValues();
-        americanExpressRON.put(Accounts.TITLE, "American Express RON");
-        americanExpressRON.put(Accounts.CURRENCY, "RON");
-        americanExpressRON.put(Accounts.BALANCE, 2500);
-        americanExpressRON.put(Accounts.TYPE, AccountType.CREDIT_CARD.toString());
-        americanExpressRON.put(Accounts.CARD_ISSUER, CardIssuer.AMERICAN_EXPRESS.toString());
-        americanExpressRON.put(Accounts.IS_ACTIVE, 1);
-        americanExpressRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        americanExpressRON.put(Accounts.NOTE, "");
-        americanExpressRON.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                americanExpressRON
-        );
-
-        ContentValues maestroEUR = new ContentValues();
-        maestroEUR.put(Accounts.TITLE, "Maestro EUR");
-        maestroEUR.put(Accounts.CURRENCY, "EUR");
-        maestroEUR.put(Accounts.BALANCE, 0);
-        maestroEUR.put(Accounts.TYPE, AccountType.DEBIT_CARD.toString());
-        maestroEUR.put(Accounts.CARD_ISSUER, CardIssuer.MAESTRO.toString());
-        maestroEUR.put(Accounts.IS_ACTIVE, 1);
-        maestroEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        maestroEUR.put(Accounts.NOTE, "");
-        maestroEUR.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                maestroEUR
-        );
-
-        ContentValues discoverEUR = new ContentValues();
-        discoverEUR.put(Accounts.TITLE, "Discover USD");
-        discoverEUR.put(Accounts.CURRENCY, "USD");
-        discoverEUR.put(Accounts.BALANCE, 1500.75);
-        discoverEUR.put(Accounts.TYPE, AccountType.DEBIT_CARD.toString());
-        discoverEUR.put(Accounts.CARD_ISSUER, CardIssuer.DISCOVER.toString());
-        discoverEUR.put(Accounts.IS_ACTIVE, 1);
-        discoverEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        discoverEUR.put(Accounts.NOTE, "");
-        discoverEUR.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                discoverEUR
-        );
-
-        ContentValues bankAccountRON = new ContentValues();
-        bankAccountRON.put(Accounts.TITLE, "My Bank Account RON");
-        bankAccountRON.put(Accounts.CURRENCY, "EUR");
-        bankAccountRON.put(Accounts.BALANCE, 1145.75);
-        bankAccountRON.put(Accounts.TYPE, AccountType.BANK.toString());
-        bankAccountRON.put(Accounts.IS_ACTIVE, 1);
-        bankAccountRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        bankAccountRON.put(Accounts.NOTE, "");
-        bankAccountRON.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                bankAccountRON
-        );
-
-        ContentValues bankAccountEUR = new ContentValues();
-        bankAccountEUR.put(Accounts.TITLE, "My Bank Account EUR");
-        bankAccountEUR.put(Accounts.CURRENCY, "EUR");
-        bankAccountEUR.put(Accounts.BALANCE, 175.99);
-        bankAccountEUR.put(Accounts.TYPE, AccountType.BANK.toString());
-        bankAccountEUR.put(Accounts.IS_ACTIVE, 1);
-        bankAccountEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        bankAccountEUR.put(Accounts.NOTE, "");
-        bankAccountEUR.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                bankAccountEUR
-        );
-
-        ContentValues savingsRON = new ContentValues();
-        savingsRON.put(Accounts.TITLE, "Savings RON");
-        savingsRON.put(Accounts.CURRENCY, "RON");
-        savingsRON.put(Accounts.BALANCE, 2730178);
-        savingsRON.put(Accounts.TYPE, AccountType.SAVINGS.toString());
-        savingsRON.put(Accounts.IS_ACTIVE, 1);
-        savingsRON.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        savingsRON.put(Accounts.NOTE, "");
-        savingsRON.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                savingsRON
-        );
-
-        ContentValues savingsEUR = new ContentValues();
-        savingsEUR.put(Accounts.TITLE, "Savings EUR");
-        savingsEUR.put(Accounts.CURRENCY, "EUR");
-        savingsEUR.put(Accounts.BALANCE, 150245);
-        savingsEUR.put(Accounts.TYPE, AccountType.SAVINGS.toString());
-        savingsEUR.put(Accounts.IS_ACTIVE, 1);
-        savingsEUR.put(Accounts.INCLUDE_INTO_TOTALS, 1);
-        savingsEUR.put(Accounts.NOTE, "");
-        savingsEUR.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                savingsEUR
-        );
-
-        ContentValues houseLoaning = new ContentValues();
-        houseLoaning.put(Accounts.TITLE, "House Loaning");
-        houseLoaning.put(Accounts.CURRENCY, "EUR");
-        houseLoaning.put(Accounts.BALANCE, 175090);
-        houseLoaning.put(Accounts.TYPE, AccountType.LOAN.toString());
-        houseLoaning.put(Accounts.IS_ACTIVE, 1);
-        houseLoaning.put(Accounts.INCLUDE_INTO_TOTALS, 0);
-        houseLoaning.put(Accounts.NOTE, "");
-        houseLoaning.put(Accounts.CREATED_AT, unixTime);
-        db.insert(Accounts.TABLE_NAME,
-                null,
-                houseLoaning
-        );
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
     }
 }

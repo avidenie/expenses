@@ -1,9 +1,12 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,11 +18,14 @@ import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+import de.greenrobot.event.ThreadMode;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
-import ro.expectations.expenses.restore.AbstractRestoreTask;
-import ro.expectations.expenses.restore.FinancistoImportTask;
-import ro.expectations.expenses.restore.LocalRestoreTask;
+import ro.expectations.expenses.restore.AbstractRestoreIntentService;
+import ro.expectations.expenses.restore.FinancistoImportIntentService;
+import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class BackupFragment extends Fragment {
@@ -37,7 +43,6 @@ public class BackupFragment extends Fragment {
     private boolean mIsTaskRunning;
 
     private ProgressDialog mProgressDialog;
-    private RecyclerView mRecyclerView;
 
     static BackupFragment newInstance(@BackupType int backupType) {
         BackupFragment fragment = new BackupFragment();
@@ -53,6 +58,12 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -60,7 +71,7 @@ public class BackupFragment extends Fragment {
 
         mBackupType = getArguments().getInt(ARG_BACKUP_TYPE);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
@@ -94,6 +105,12 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
 
@@ -102,8 +119,43 @@ public class BackupFragment extends Fragment {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MainThread)
+    public void onEvent(FinancistoImportIntentService.SuccessEvent successEvent) {
+        if (mBackupType != BACKUP_TYPE_FINANCISTO) {
+            return;
+        }
+
+        hideProgressDialog();
+
+        if (getActivity() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
+            builder.setTitle("Dialog");
+            builder.setMessage("Lorem ipsum dolor ....");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MainThread)
+    public void onEvent(LocalRestoreIntentService.SuccessEvent successEvent) {
+        if (mBackupType != BACKUP_TYPE_LOCAL) {
+            return;
+        }
+
+        hideProgressDialog();
+
+        if (getActivity() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
+            builder.setTitle("Dialog");
+            builder.setMessage("Lorem ipsum dolor ....");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        }
+    }
+
     private void showProgressDialog() {
         int stringId;
+        mIsTaskRunning = true;
         if (mBackupType == BACKUP_TYPE_FINANCISTO) {
             stringId = R.string.import_financisto_backup;
         } else {
@@ -112,30 +164,25 @@ public class BackupFragment extends Fragment {
         mProgressDialog = ProgressDialog.show(getActivity(), null, getString(stringId), true);
     }
 
+    private void hideProgressDialog() {
+        mIsTaskRunning = false;
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
     private BackupAdapter.OnClickListener getOnClickListener() {
         BackupAdapter.OnClickListener listener;
-        final AbstractRestoreTask.Callback callback = new AbstractRestoreTask.Callback() {
-            @Override
-            public void onPreExecute() {
-                showProgressDialog();
-                mIsTaskRunning = true;
-            }
-
-            @Override
-            public void onPostExecute() {
-                mIsTaskRunning = false;
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-            }
-        };
 
         switch (mBackupType) {
             case BACKUP_TYPE_FINANCISTO:
                 listener = new BackupAdapter.OnClickListener() {
                     @Override
                     public void onClick(File file, BackupAdapter.ViewHolder vh) {
-                        new FinancistoImportTask(callback).execute(file);
+                        Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportIntentService.class);
+                        financistoImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
+                        getActivity().startService(financistoImportIntent);
+                        showProgressDialog();
                     }
                 };
                 break;
@@ -143,7 +190,10 @@ public class BackupFragment extends Fragment {
                 listener = new BackupAdapter.OnClickListener() {
                     @Override
                     public void onClick(File file, BackupAdapter.ViewHolder vh) {
-                        new LocalRestoreTask(callback).execute(file);
+                        Intent localImportIntent = new Intent(getActivity(), LocalRestoreIntentService.class);
+                        localImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
+                        getActivity().startService(localImportIntent);
+                        showProgressDialog();
                     }
                 };
                 break;

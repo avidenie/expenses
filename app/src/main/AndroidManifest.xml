@@ -57,6 +57,13 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name=".restore.LocalRestoreIntentService"
+            android:exported="false" />
+        <service
+            android:name=".restore.FinancistoImportIntentService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
