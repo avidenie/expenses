@@ -1,22 +1,30 @@
 package ro.expectations.expenses.restore;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import ro.expectations.expenses.model.AccountType;
+import ro.expectations.expenses.model.CardIssuer;
+import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
 
     protected static final String TAG = FinancistoImportIntentService.class.getSimpleName();
+
+    private ArrayList<ContentValues> mAccountContentValues = new ArrayList<>();
+    private Map<String, String> mCurrencies = new HashMap<>();
 
     @Override
     protected void parse(InputStream input) throws IOException {
@@ -31,7 +39,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 if (line.startsWith("$")) {
                     if ("$$".equals(line)) {
                         if (tableName != null && values.size() > 0) {
-                            processTable(tableName, values);
+                            processEntry(tableName, values);
                             tableName = null;
                             insideEntity = false;
                         }
@@ -57,7 +65,8 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         } finally {
             br.close();
         }
-        Log.i(TAG, "finished restore database: " + mOperations.size() + " to process");
+        processAccountEntries();
+        Log.i(TAG, "Finished parsing Financisto backup file: " + mOperations.size() + " entries to restore");
     }
 
     @Override
@@ -70,21 +79,156 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         EventBus.getDefault().post(new SuccessEvent());
     }
 
-    private void processTable(String tableName, Map<String, String> values) {
+    private void processEntry(String tableName, Map<String, String> values) {
         switch(tableName) {
             case "account":
-                Log.e(TAG, "Importing account with ID " + values.get("_id") + ": " + values.toString());
-                mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Accounts.CONTENT_URI)
-                        .withValue(ExpensesContract.Accounts.TITLE, values.get("title"))
-                        .withValue(ExpensesContract.Accounts.CURRENCY, "RON")
-                        .withValue(ExpensesContract.Accounts.BALANCE, values.get("total_amount"))
-                        .withValue(ExpensesContract.Accounts.TYPE, AccountType.CASH.toString())
-                        .withValue(ExpensesContract.Accounts.IS_ACTIVE, values.get("is_active"))
-                        .withValue(ExpensesContract.Accounts.INCLUDE_INTO_TOTALS, values.get("is_include_into_totals"))
-                        .withValue(ExpensesContract.Accounts.NOTE, values.get("note") != null ? values.get("note") : "")
-                        .withValue(ExpensesContract.Accounts.CREATED_AT, values.get("creation_date"))
-                        .build());
+                processAccountEntry(values);
                 break;
+            case "currency":
+                processCurrencyEntry(values);
+                break;
+        }
+    }
+
+    private void processAccountEntry(Map<String, String> values) {
+        AccountType accountType;
+        CardIssuer cardIssuer = null;
+        ElectronicPaymentType electronicPaymentType = null;
+        switch (values.get("type")) {
+            case "CASH":
+                accountType = AccountType.CASH;
+                break;
+            case "BANK":
+                accountType = AccountType.BANK;
+                break;
+            case "DEBIT_CARD":
+                accountType = AccountType.DEBIT_CARD;
+                cardIssuer = getCardIssuer(values.get("card_issuer"));
+                break;
+            case "CREDIT_CARD":
+                accountType = AccountType.CREDIT_CARD;
+                cardIssuer = getCardIssuer(values.get("card_issuer"));
+                break;
+            case "ASSET":
+                accountType = AccountType.SAVINGS;
+                break;
+            case "LIABILITY":
+                accountType = AccountType.LOAN;
+                break;
+            case "ELECTRONIC":
+                accountType = AccountType.ELECTRONIC;
+                electronicPaymentType = getElectronicPaymentType(values.get("card_issuer"));
+                break;
+            case "PAYPAL":
+                accountType = AccountType.ELECTRONIC;
+                electronicPaymentType = ElectronicPaymentType.PAYPAL;
+                break;
+            case "OTHER":
+            default:
+                accountType = AccountType.OTHER;
+                break;
+        }
+
+        String accountSubtype ;
+        if (cardIssuer == null) {
+            accountSubtype = electronicPaymentType == null ? null : electronicPaymentType.toString();
+        } else {
+            accountSubtype = cardIssuer.toString();
+        }
+
+        String note = values.get("note");
+        if (note == null) {
+            note = "";
+        }
+
+        ContentValues accountValues = new ContentValues();
+        accountValues.put(ExpensesContract.Accounts.TITLE, values.get("title"));
+        accountValues.put(ExpensesContract.Accounts.CURRENCY, values.get("currency_id"));
+        accountValues.put(ExpensesContract.Accounts.BALANCE, values.get("total_amount"));
+        accountValues.put(ExpensesContract.Accounts.TYPE, accountType.toString());
+        accountValues.put(ExpensesContract.Accounts.SUBTYPE, accountSubtype);
+        accountValues.put(ExpensesContract.Accounts.IS_ACTIVE, values.get("is_active"));
+        accountValues.put(ExpensesContract.Accounts.INCLUDE_INTO_TOTALS, values.get("is_include_into_totals"));
+        accountValues.put(ExpensesContract.Accounts.SORT_ORDER, values.get("sort_order"));
+        accountValues.put(ExpensesContract.Accounts.NOTE, note);
+        accountValues.put(ExpensesContract.Accounts.CREATED_AT, values.get("creation_date"));
+
+        mAccountContentValues.add(accountValues);
+    }
+
+    private void processAccountEntries() {
+        for (ContentValues accountValues: mAccountContentValues) {
+            String currencyId = accountValues.getAsString(ExpensesContract.Accounts.CURRENCY);
+            String currencyCode;
+            if (mCurrencies.containsKey(currencyId)) {
+                currencyCode = mCurrencies.get(currencyId);
+            } else {
+                currencyCode = "EUR";
+            }
+            accountValues.put(ExpensesContract.Accounts.CURRENCY, currencyCode);
+            mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Accounts.CONTENT_URI)
+                    .withValues(accountValues)
+                    .build());
+        }
+    }
+
+    private void processCurrencyEntry(Map<String, String> values) {
+        String currencyCode = values.get("name");
+        try {
+            Currency currency = Currency.getInstance(currencyCode);
+            mCurrencies.put(values.get("_id"), currency.getCurrencyCode());
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Could not find currency for currency code '" + currencyCode + "', will default to EUR");
+        }
+    }
+
+
+    private ElectronicPaymentType getElectronicPaymentType(String paymentType) {
+        switch(paymentType) {
+            case "PAYPAL":
+                return ElectronicPaymentType.PAYPAL;
+            case "BITCOIN":
+                return ElectronicPaymentType.BITCOIN;
+            case "AMAZON":
+                return ElectronicPaymentType.AMAZON;
+            case "EBAY":
+                return ElectronicPaymentType.EBAY;
+            case "GOOGLE_WALLET":
+                return ElectronicPaymentType.GOOGLE_WALLET;
+            case "WEB_MONEY":
+            case "YANDEX_MONEY":
+            default:
+                return ElectronicPaymentType.OTHER;
+        }
+    }
+
+    private CardIssuer getCardIssuer(String cardIssuer) {
+        switch(cardIssuer) {
+            case "VISA":
+                return CardIssuer.VISA;
+            case "VISA_ELECTRON":
+                return CardIssuer.VISA_ELECTRON;
+            case "MASTERCARD":
+                return CardIssuer.MASTERCARD;
+            case "MAESTRO":
+                return CardIssuer.MAESTRO;
+            case "CIRRUS":
+                return CardIssuer.CIRRUS;
+            case "AMEX":
+                return CardIssuer.AMERICAN_EXPRESS;
+            case "JCB":
+                return CardIssuer.JCB;
+            case "DINERS":
+                return CardIssuer.DINERS;
+            case "DISCOVER":
+                return CardIssuer.DISCOVER;
+            case "UNIONPAY":
+                return CardIssuer.UNIONPAY;
+            case "EPS":
+                return CardIssuer.EPS;
+            case "NETS":
+            default:
+                return CardIssuer.OTHER;
         }
     }
 

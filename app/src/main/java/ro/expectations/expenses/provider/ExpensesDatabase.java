@@ -47,7 +47,7 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Accounts.CURRENCY + " TEXT NOT NULL," +
                 Accounts.BALANCE + " INTEGER NOT NULL DEFAULT 0," +
                 Accounts.TYPE + " TEXT NOT NULL DEFAULT 'CASH'," +
-                Accounts.CARD_ISSUER + " TEXT DEFAULT NULL," +
+                Accounts.SUBTYPE + " TEXT DEFAULT NULL," +
                 Accounts.IS_ACTIVE + " INTEGER NOT NULL DEFAULT 1," +
                 Accounts.INCLUDE_INTO_TOTALS + " INTEGER NOT NULL DEFAULT 1," +
                 Accounts.SORT_ORDER + " INTEGER NOT NULL DEFAULT 0," +

@@ -66,7 +66,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 ExpensesContract.Accounts.LAST_TRANSACTION_AT,
                 ExpensesContract.Accounts.CREATED_AT,
                 ExpensesContract.Accounts.TYPE,
-                ExpensesContract.Accounts.CARD_ISSUER
+                ExpensesContract.Accounts.SUBTYPE
         };
         String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
 

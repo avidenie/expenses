@@ -37,7 +37,7 @@ public final class ExpensesContract {
         public static final String CURRENCY = "currency";
         public static final String BALANCE = "balance";
         public static final String TYPE = "type";
-        public static final String CARD_ISSUER = "card_issuer";
+        public static final String SUBTYPE = "subtype";
         public static final String IS_ACTIVE = "is_active";
         public static final String INCLUDE_INTO_TOTALS = "include_into_totals";
         public static final String SORT_ORDER = "sort_order";

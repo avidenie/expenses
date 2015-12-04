@@ -19,6 +19,7 @@ import java.util.Currency;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
+import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
@@ -49,7 +50,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TYPE));
         AccountType accountType = AccountType.valueOf(type);
         if (accountType == AccountType.CREDIT_CARD || accountType == AccountType.DEBIT_CARD) {
-            String issuer = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.CARD_ISSUER));
+            String issuer = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
             CardIssuer cardIssuer;
             if (issuer == null) {
                 cardIssuer = CardIssuer.OTHER;
@@ -61,6 +62,19 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
                 }
             }
             holder.mIconView.setImageResource(cardIssuer.iconId);
+        } else if (accountType == AccountType.ELECTRONIC) {
+            String paymentType = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
+            ElectronicPaymentType electronicPaymentType;
+            if (paymentType == null) {
+                electronicPaymentType = ElectronicPaymentType.OTHER;
+            } else {
+                try {
+                    electronicPaymentType = ElectronicPaymentType.valueOf(paymentType);
+                } catch(IllegalArgumentException ex) {
+                    electronicPaymentType = ElectronicPaymentType.OTHER;
+                }
+            }
+            holder.mIconView.setImageResource(electronicPaymentType.iconId);
         } else {
             holder.mIconView.setImageResource(accountType.iconId);
         }
@@ -78,9 +92,9 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
 
         // Set the date.
         long now = System.currentTimeMillis();
-        long lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.LAST_TRANSACTION_AT)) * 1000L;
+        long lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.LAST_TRANSACTION_AT));
         if (lastTransactionAt == 0) {
-            lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT)) * 1000L;
+            lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT));
         }
         holder.mLastTransactionAt.setText(DateUtils.getRelativeTimeSpanString(lastTransactionAt, now, DateUtils.DAY_IN_MILLIS));
 

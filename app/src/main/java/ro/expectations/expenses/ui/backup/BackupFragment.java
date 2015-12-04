@@ -43,6 +43,7 @@ public class BackupFragment extends Fragment {
     private boolean mIsTaskRunning;
 
     private ProgressDialog mProgressDialog;
+    private AlertDialog mAlertDialog;
 
     static BackupFragment newInstance(@BackupType int backupType) {
         BackupFragment fragment = new BackupFragment();
@@ -112,11 +113,13 @@ public class BackupFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        super.onDetach();
-
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+        if (mAlertDialog != null && mAlertDialog.isShowing()) {
+            mAlertDialog.dismiss();
+        }
+        super.onDetach();
     }
 
     @Subscribe(threadMode = ThreadMode.MainThread)
@@ -129,10 +132,10 @@ public class BackupFragment extends Fragment {
 
         if (getActivity() != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
-            builder.setTitle("Dialog");
-            builder.setMessage("Lorem ipsum dolor ....");
-            builder.setPositiveButton("OK", null);
-            builder.show();
+            builder.setTitle(getString(R.string.title_success));
+            builder.setMessage(getString(R.string.financisto_import_successful));
+            builder.setPositiveButton(getString(R.string.button_ok), null);
+            mAlertDialog = builder.show();
         }
     }
 
@@ -146,9 +149,9 @@ public class BackupFragment extends Fragment {
 
         if (getActivity() != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
-            builder.setTitle("Dialog");
-            builder.setMessage("Lorem ipsum dolor ....");
-            builder.setPositiveButton("OK", null);
+            builder.setTitle(getString(R.string.title_success));
+            builder.setMessage(getString(R.string.database_restore_successful));
+            builder.setPositiveButton(getString(R.string.button_ok), null);
             builder.show();
         }
     }
@@ -157,9 +160,9 @@ public class BackupFragment extends Fragment {
         int stringId;
         mIsTaskRunning = true;
         if (mBackupType == BACKUP_TYPE_FINANCISTO) {
-            stringId = R.string.import_financisto_backup;
+            stringId = R.string.financisto_import_progress;
         } else {
-            stringId = R.string.restore_backup;
+            stringId = R.string.database_restore_progress;
         }
         mProgressDialog = ProgressDialog.show(getActivity(), null, getString(stringId), true);
     }

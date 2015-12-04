@@ -22,9 +22,10 @@
     <string name="account_type_credit_card">Credit Card</string>
     <string name="account_type_savings">Savings Account</string>
     <string name="account_type_loan">Loan Account</string>
+    <string name="account_type_electronic">Electronic</string>
+    <string name="account_type_other">Other</string>
 
     <string name="card_issuer_american_express">American Express (Amex)</string>
-    <string name="card_issuer_other">Other</string>
     <string name="card_issuer_visa">Visa</string>
     <string name="card_issuer_visa_electron">Visa Electron</string>
     <string name="card_issuer_mastercard">MasterCard</string>
@@ -36,14 +37,25 @@
     <string name="card_issuer_unionpay">UnionPay</string>
     <string name="card_issuer_eps">EPS</string>
     <string name="card_issuer_diners">Diners Club</string>
+    <string name="card_issuer_other">Other</string>
+    <string name="electronic_payment_paypal">Paypal</string>
+    <string name="electronic_payment_google_wallet">Google Wallet</string>
+    <string name="electronic_payment_amazon">Amazon</string>
+    <string name="electronic_payment_ebay">Ebay</string>
+    <string name="electronic_payment_bitcoin">Bitcoin</string>
+    <string name="electronic_payment_other">Other</string>
 
     <string name="no_account_defined">You haven\'t created an account yet.</string>
-    <string name="no_backup_found">You haven\'t backed up your database yet. Why don\'t you try to back it up now?</string>
+    <string name="no_database_backup_found">You haven\'t backed up your database yet. Why don\'t you try to back it up now?</string>
+    <string name="database_restore_progress">Restoring database…</string>
+    <string name="database_restore_successful">The database has been successfully restored.</string>
     <string name="no_financisto_backup_found">Could not find any Financisto backups. Open Financisto, back up your database and try again.</string>
-
-    <string name="restore_backup">Restoring database …</string>
-    <string name="import_financisto_backup">Importing from Financisto backup …</string>
+    <string name="financisto_import_progress">Importing Financisto backup…</string>
+    <string name="financisto_import_successful">The Financisto backup has been successfully imported.</string>
 
     <string name="section_format">Hello World for account with ID: %1$d</string>
+
+    <string name="title_success">Success</string>
+    <string name="button_ok">OK</string>
 
 </resources>
