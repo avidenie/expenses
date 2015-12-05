@@ -74,7 +74,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 getActivity(),
                 ExpensesContract.Accounts.CONTENT_URI,
                 projection,
-                null,
+                ExpensesContract.Accounts.IS_ACTIVE + " = 1",
                 null,
                 sortOrder);
     }

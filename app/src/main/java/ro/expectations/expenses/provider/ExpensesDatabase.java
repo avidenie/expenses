@@ -62,6 +62,8 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 "CONSTRAINT fk_last_category_id FOREIGN KEY (" + Accounts.LAST_CATEGORY_ID + ") REFERENCES " +
                         Categories.TABLE_NAME + " (" + Categories._ID +
                 ") ON DELETE SET NULL ON UPDATE CASCADE)");
+        db.execSQL("CREATE INDEX idx_is_active ON " + Accounts.TABLE_NAME + " (" +
+                Accounts.IS_ACTIVE + " DESC)");
         db.execSQL("CREATE INDEX idx_last_account_id ON " + Accounts.TABLE_NAME + " (" +
                 Accounts.LAST_ACCOUNT_ID + " ASC)");
         db.execSQL("CREATE INDEX idx_last_category_id ON " + Accounts.TABLE_NAME + " (" +
