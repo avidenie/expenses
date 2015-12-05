@@ -166,12 +166,13 @@ public class OverviewActivity extends AppCompatActivity implements
                 ExpensesContract.Accounts.TITLE
         };
         String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
+        String selection = ExpensesContract.Accounts.IS_ACTIVE + " = 1";
 
         return new CursorLoader(
                 this,
                 ExpensesContract.Accounts.CONTENT_URI,
                 projection,
-                ExpensesContract.Accounts.IS_ACTIVE + " = 1",
+                selection,
                 null,
                 sortOrder);
     }

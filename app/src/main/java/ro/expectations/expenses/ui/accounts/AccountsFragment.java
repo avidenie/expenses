@@ -69,12 +69,13 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 ExpensesContract.Accounts.SUBTYPE
         };
         String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
+        String selection = ExpensesContract.Accounts.IS_ACTIVE + " = 1";
 
         return new CursorLoader(
                 getActivity(),
                 ExpensesContract.Accounts.CONTENT_URI,
                 projection,
-                ExpensesContract.Accounts.IS_ACTIVE + " = 1",
+                selection,
                 null,
                 sortOrder);
     }
