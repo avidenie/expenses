@@ -2,10 +2,17 @@ package ro.expectations.expenses.ui.transactions;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
@@ -15,13 +22,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.provider.ExpensesContract;
 
-public class TransactionsActivity extends AppCompatActivity {
+public class TransactionsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private Spinner mAccountsSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +43,21 @@ public class TransactionsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        // Setup spinner
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setAdapter(new MyAdapter(
+        // Setup spinner.
+        mAccountsSpinner = (Spinner) findViewById(R.id.spinner);
+        mAccountsSpinner.setAdapter(new AccountsSpinnerAdapter(
                 toolbar.getContext(),
-                new String[]{
-                        "Section 1",
-                        "Section 2",
-                        "Section 3",
-                }));
+                android.R.layout.simple_spinner_dropdown_item,
+                null,
+                new String[] { ExpensesContract.Accounts.TITLE },
+                new int[] { android.R.id.text1 },
+                0));
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mAccountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // When the given dropdown item is selected, show its contents in the
-                // container view.
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .replace(R.id.container, PlaceholderFragment.newInstance(id))
                         .commit();
             }
 
@@ -58,6 +65,8 @@ public class TransactionsActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        getSupportLoaderManager().restartLoader(0, null, this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,9 +76,7 @@ public class TransactionsActivity extends AppCompatActivity {
                         .setAction("OK", null).show();
             }
         });
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,31 +100,53 @@ public class TransactionsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                ExpensesContract.Accounts._ID,
+                ExpensesContract.Accounts.TITLE
+        };
+        String sortOrder = ExpensesContract.Accounts.SORT_ORDER + " ASC";
+        String selection = ExpensesContract.Accounts.IS_ACTIVE + " = 1";
 
-    private static class MyAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
+        return new CursorLoader(
+                this,
+                ExpensesContract.Accounts.CONTENT_URI,
+                projection,
+                selection,
+                null,
+                sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[] {
+                ExpensesContract.Accounts._ID,
+                ExpensesContract.Accounts.TITLE
+        });
+        matrixCursor.addRow(new Object[] { "0", getString(R.string.all_accounts) });
+        MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, data });
+
+        ((AccountsSpinnerAdapter) mAccountsSpinner.getAdapter()).swapCursor(mergeCursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        ((AccountsSpinnerAdapter) mAccountsSpinner.getAdapter()).swapCursor(null);
+    }
+
+    private static class AccountsSpinnerAdapter extends SimpleCursorAdapter implements ThemedSpinnerAdapter {
         private final ThemedSpinnerAdapter.Helper mDropDownHelper;
 
-        public MyAdapter(Context context, String[] objects) {
-            super(context, android.R.layout.simple_list_item_1, objects);
+        public AccountsSpinnerAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
+            super(context, layout, c, from, to, flags);
             mDropDownHelper = new ThemedSpinnerAdapter.Helper(context);
         }
 
         @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            View view;
-
-            if (convertView == null) {
-                // Inflate the drop down using the helper's LayoutInflater
-                LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
-                view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-            textView.setText(getItem(position));
-
-            return view;
+        public View newDropDownView(Context context, Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
+            return inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
         }
 
         @Override
@@ -130,7 +159,6 @@ public class TransactionsActivity extends AppCompatActivity {
             return mDropDownHelper.getDropDownViewTheme();
         }
     }
-
 
     /**
      * A placeholder fragment containing a simple view.
@@ -146,10 +174,10 @@ public class TransactionsActivity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(long sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putLong(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
@@ -162,7 +190,7 @@ public class TransactionsActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            textView.setText(getString(R.string.section_format, getArguments().getLong(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }

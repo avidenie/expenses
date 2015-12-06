@@ -43,6 +43,7 @@
     <string name="card_issuer_eps">EPS</string>
     <string name="card_issuer_diners">Diners Club</string>
     <string name="card_issuer_other">Other</string>
+
     <string name="electronic_payment_paypal">Paypal</string>
     <string name="electronic_payment_google_wallet">Google Wallet</string>
     <string name="electronic_payment_amazon">Amazon</string>
@@ -52,9 +53,11 @@
 
     <string name="no_account_defined">You haven\'t created an account yet.</string>
     <string name="no_database_backup_found">You haven\'t backed up your database yet. Why don\'t you try to back it up now?</string>
+    <string name="no_financisto_backup_found">Could not find any Financisto backups. Open Financisto, back up your database and try again.</string>
+    <string name="no_transaction_found">No transaction found.</string>
+
     <string name="database_restore_progress">Restoring database…</string>
     <string name="database_restore_successful">The database has been successfully restored.</string>
-    <string name="no_financisto_backup_found">Could not find any Financisto backups. Open Financisto, back up your database and try again.</string>
     <string name="financisto_import_progress">Importing Financisto backup…</string>
     <string name="financisto_import_successful">The Financisto backup has been successfully imported.</string>
 
@@ -62,5 +65,6 @@
 
     <string name="title_success">Success</string>
     <string name="button_ok">OK</string>
+    <string name="all_accounts">All Accounts</string>
 
 </resources>
