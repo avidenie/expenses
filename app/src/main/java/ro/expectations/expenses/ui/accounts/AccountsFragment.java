@@ -19,8 +19,6 @@ import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int ACCOUNTS_LOADER = 0;
-
     private RecyclerView mRecyclerView;
 
     public AccountsFragment() {
@@ -52,7 +50,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(ACCOUNTS_LOADER, null, this);
+        getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -87,6 +85,6 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        ((AccountsAdapter) mRecyclerView.getAdapter()).swapCursor(null);
     }
 }
