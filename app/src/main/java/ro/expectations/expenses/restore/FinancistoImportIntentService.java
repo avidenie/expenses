@@ -87,6 +87,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             case "currency":
                 processCurrencyEntry(values);
                 break;
+            case "payee":
+                processPayeeEntry(values);
+                break;
         }
     }
 
@@ -182,6 +185,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
     }
 
+    private void processPayeeEntry(Map<String, String> values) {
+        mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Payees.CONTENT_URI)
+                .withValue(ExpensesContract.Payees._ID, values.get("_id"))
+                .withValue(ExpensesContract.Payees.NAME, values.get("title"))
+                .build());
+    }
 
     private ElectronicPaymentType getElectronicPaymentType(String paymentType) {
         switch(paymentType) {
