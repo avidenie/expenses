@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
+import ro.expectations.expenses.provider.ExpensesContract.Payees;
 
 public class ExpensesProvider extends ContentProvider {
 
@@ -20,6 +21,8 @@ public class ExpensesProvider extends ContentProvider {
     private static final int ROUTE_ACCOUNT_ID = 2;
     private static final int ROUTE_TRANSACTIONS = 3;
     private static final int ROUTE_TRANSACTION_ID = 4;
+    private static final int ROUTE_PAYEES = 5;
+    private static final int ROUTE_PAYEE_ID = 6;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -27,6 +30,8 @@ public class ExpensesProvider extends ContentProvider {
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "accounts/#", ROUTE_ACCOUNT_ID);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transactions", ROUTE_TRANSACTIONS);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transactions/#", ROUTE_TRANSACTION_ID);
+        sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "payees", ROUTE_PAYEES);
+        sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "payees/#", ROUTE_PAYEE_ID);
     }
 
     private ExpensesDatabase mDatabaseHelper;
@@ -53,6 +58,10 @@ public class ExpensesProvider extends ContentProvider {
                 return Transactions.CONTENT_TYPE;
             case ROUTE_TRANSACTION_ID:
                 return Transactions.CONTENT_ITEM_TYPE;
+            case ROUTE_PAYEES:
+                return Payees.CONTENT_TYPE;
+            case ROUTE_PAYEE_ID:
+                return Payees.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown content provider type URI: " + uri);
         }
@@ -78,6 +87,13 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_ID:
                 queryBuilder.appendWhere(Transactions._ID + "=" + ContentUris.parseId(uri));
                 queryBuilder.setTables(Transactions.TABLE_NAME);
+                break;
+            case ROUTE_PAYEES:
+                queryBuilder.setTables(Payees.TABLE_NAME);
+                break;
+            case ROUTE_PAYEE_ID:
+                queryBuilder.appendWhere(Payees._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.setTables(Payees.TABLE_NAME);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown content provider query URI: " + uri);
@@ -106,6 +122,10 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTIONS:
                 id = db.insertOrThrow(Transactions.TABLE_NAME, null, values);
                 returnUri = ContentUris.withAppendedId(Transactions.CONTENT_URI, id);
+                break;
+            case ROUTE_PAYEES:
+                id = db.insertOrThrow(Payees.TABLE_NAME, null, values);
+                returnUri = ContentUris.withAppendedId(Payees.CONTENT_URI, id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown content provider insert URI: " + uri);
@@ -148,6 +168,18 @@ public class ExpensesProvider extends ContentProvider {
                 }
                 rowsUpdated = db.update(Transactions.TABLE_NAME, values, newSelection.toString(), selectionArgs);
                 break;
+            case ROUTE_PAYEES:
+                rowsUpdated = db.update(Payees.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case ROUTE_PAYEE_ID:
+                id = ContentUris.parseId(uri);
+                newSelection = new StringBuilder();
+                newSelection.append(Payees._ID).append("=").append(id);
+                if (!TextUtils.isEmpty(selection)) {
+                    newSelection.append(" AND ").append(selection);
+                }
+                rowsUpdated = db.update(Payees.TABLE_NAME, values, newSelection.toString(), selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown content provider update URI: " + uri);
         }
@@ -187,6 +219,18 @@ public class ExpensesProvider extends ContentProvider {
                     newSelection.append(" AND ").append(selection);
                 }
                 rowsDeleted = db.delete(Transactions.TABLE_NAME, newSelection.toString(), selectionArgs);
+                break;
+            case ROUTE_PAYEES:
+                rowsDeleted = db.delete(Payees.TABLE_NAME, selection, selectionArgs);
+                break;
+            case ROUTE_PAYEE_ID:
+                id = ContentUris.parseId(uri);
+                newSelection = new StringBuilder();
+                newSelection.append(Payees._ID).append("=").append(id);
+                if (!TextUtils.isEmpty(selection)) {
+                    newSelection.append(" AND ").append(selection);
+                }
+                rowsDeleted = db.delete(Payees.TABLE_NAME, newSelection.toString(), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown content provider delete URI: " + uri);
