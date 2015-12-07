@@ -28,6 +28,7 @@ import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.accounts.AccountsActivity;
 import ro.expectations.expenses.ui.backup.BackupActivity;
+import ro.expectations.expenses.ui.payees.PayeesActivity;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 
 public class OverviewActivity extends AppCompatActivity implements
@@ -125,7 +126,6 @@ public class OverviewActivity extends AppCompatActivity implements
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         mDrawer.closeDrawer(GravityCompat.START);
@@ -141,6 +141,9 @@ public class OverviewActivity extends AppCompatActivity implements
             } else if (id == R.id.nav_backup) {
                 Intent backupIntent = new Intent(this, BackupActivity.class);
                 startActivityDelayed(backupIntent);
+            } else if (id == R.id.nav_payees) {
+                Intent payeesIntent = new Intent(this, PayeesActivity.class);
+                startActivityDelayed(payeesIntent);
             }
         }
 

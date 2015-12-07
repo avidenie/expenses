@@ -19,7 +19,7 @@
         <menu>
             <item android:id="@+id/nav_categories" android:icon="@drawable/ic_format_list_bulleted_24dp"
                 android:title="@string/title_activity_categories" />
-            <item android:id="@+id/nav_payee" android:icon="@drawable/ic_payee_24dp"
+            <item android:id="@+id/nav_payees" android:icon="@drawable/ic_payee_24dp"
                 android:title="@string/title_activity_payees" />
             <item android:id="@+id/nav_exchange_rates" android:icon="@drawable/ic_currency_24dp"
                 android:title="@string/title_activity_exchange_rates" />
