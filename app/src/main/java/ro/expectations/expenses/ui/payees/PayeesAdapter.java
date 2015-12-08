@@ -25,6 +25,13 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
     }
 
     @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.list_item_payees, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
@@ -45,13 +52,6 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
         mCursor = newCursor;
         notifyDataSetChanged();
         mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.list_item_payees, parent, false);
-        return new ViewHolder(view);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
