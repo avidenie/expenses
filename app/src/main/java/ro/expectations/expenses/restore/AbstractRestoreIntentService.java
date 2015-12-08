@@ -79,6 +79,7 @@ abstract public class AbstractRestoreIntentService extends IntentService {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.Accounts.CONTENT_URI).build());
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Payees.CONTENT_URI).build());
 
         getContentResolver().applyBatch(ExpensesContract.CONTENT_AUTHORITY, operations);
     }
