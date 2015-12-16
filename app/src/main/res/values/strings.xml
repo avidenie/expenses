@@ -56,6 +56,8 @@
     <string name="no_financisto_backup_found">Could not find any Financisto backups. Open Financisto, back up your database and try again.</string>
     <string name="no_transaction_found">No transactions found.</string>
     <string name="no_payees_found">You haven\'t added a payee yet.</string>
+    <string name="no_categories_defined">You haven\'t created a category yet.</string>
+    <string name="no_subcategories_defined">You haven\'t created a subcategory yet.</string>
 
     <string name="database_restore_progress">Restoring database…</string>
     <string name="database_restore_successful">The database has been successfully restored.</string>

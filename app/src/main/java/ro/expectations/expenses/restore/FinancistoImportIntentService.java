@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
@@ -25,6 +26,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     private ArrayList<ContentValues> mAccountContentValues = new ArrayList<>();
     private Map<String, String> mCurrencies = new HashMap<>();
+    private List<Map<String, String>> mCategories = new ArrayList<>();
 
     @Override
     protected void parse(InputStream input) throws IOException {
@@ -66,6 +68,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             br.close();
         }
         processAccountEntries();
+        processCategoryEntries();
         Log.i(TAG, "Finished parsing Financisto backup file: " + mOperations.size() + " entries to restore");
     }
 
@@ -89,6 +92,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 break;
             case "payee":
                 processPayeeEntry(values);
+                break;
+            case "category":
+                processCategoryEntry(values);
                 break;
         }
     }
@@ -192,6 +198,46 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 .build());
     }
 
+    private void processCategoryEntry(Map<String, String> values) {
+        mCategories.add(new HashMap<>(values));
+    }
+
+    private void processCategoryEntries() {
+        List<Map<String, String>> mParentCategories = new ArrayList<>();
+        List<Map<String, String>> mChildCategories = new ArrayList<>();
+
+        for(Map<String, String> values: mCategories) {
+            int id = Integer.valueOf(values.get("_id"));
+            if (id <= 0) {
+                continue;
+            }
+            String parentId = getParentCategoryId(values);
+            values.put("parent_id", parentId);
+            if (Integer.valueOf(parentId) == 0) {
+                mParentCategories.add(values);
+            } else {
+                mChildCategories.add(values);
+            }
+        }
+        mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
+                .withValue(ExpensesContract.Categories._ID, -1)
+                .withValue(ExpensesContract.Categories.NAME, "SPLIT")
+                .build());
+        for(Map<String, String> values: mParentCategories) {
+            mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
+                    .withValue(ExpensesContract.Categories._ID, values.get("_id"))
+                    .withValue(ExpensesContract.Categories.NAME, values.get("title"))
+                    .build());
+        }
+        for(Map<String, String> values: mChildCategories) {
+            mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
+                    .withValue(ExpensesContract.Categories._ID, values.get("_id"))
+                    .withValue(ExpensesContract.Categories.NAME, values.get("title"))
+                    .withValue(ExpensesContract.Categories.PARENT_ID, values.get("parent_id"))
+                    .build());
+        }
+    }
+
     private ElectronicPaymentType getElectronicPaymentType(String paymentType) {
         switch(paymentType) {
             case "PAYPAL":
@@ -239,6 +285,27 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             default:
                 return CardIssuer.OTHER;
         }
+    }
+
+    public String getParentCategoryId(Map<String, String> category) {
+
+        String parentId = "0";
+        int previousLeft = 0;
+        int left = Integer.valueOf(category.get("left"));
+
+        for(Map<String, String> values: mCategories) {
+            String currentId = values.get("_id");
+            int currentLeft = Integer.valueOf(values.get("left"));
+            int currentRight = Integer.valueOf(values.get("right"));
+
+            if (left > currentLeft && left < currentRight) {
+                if (currentLeft > previousLeft) {
+                    parentId = currentId;
+                }
+            }
+        }
+
+        return parentId;
     }
 
     public static class SuccessEvent {

@@ -11,9 +11,14 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
-import ro.expectations.expenses.provider.ExpensesContract.Transactions;
+import ro.expectations.expenses.provider.ExpensesContract.Categories;
 import ro.expectations.expenses.provider.ExpensesContract.Payees;
+import ro.expectations.expenses.provider.ExpensesContract.Subcategories;
+import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
 public class ExpensesProvider extends ContentProvider {
 
@@ -21,8 +26,10 @@ public class ExpensesProvider extends ContentProvider {
     private static final int ROUTE_ACCOUNT_ID = 2;
     private static final int ROUTE_TRANSACTIONS = 3;
     private static final int ROUTE_TRANSACTION_ID = 4;
-    private static final int ROUTE_PAYEES = 5;
-    private static final int ROUTE_PAYEE_ID = 6;
+    private static final int ROUTE_CATEGORIES = 5;
+    private static final int ROUTE_CATEGORY_ID = 6;
+    private static final int ROUTE_PAYEES = 7;
+    private static final int ROUTE_PAYEE_ID = 8;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -30,6 +37,8 @@ public class ExpensesProvider extends ContentProvider {
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "accounts/#", ROUTE_ACCOUNT_ID);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transactions", ROUTE_TRANSACTIONS);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transactions/#", ROUTE_TRANSACTION_ID);
+        sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "categories", ROUTE_CATEGORIES);
+        sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "categories/#", ROUTE_CATEGORY_ID);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "payees", ROUTE_PAYEES);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "payees/#", ROUTE_PAYEE_ID);
     }
@@ -58,6 +67,10 @@ public class ExpensesProvider extends ContentProvider {
                 return Transactions.CONTENT_TYPE;
             case ROUTE_TRANSACTION_ID:
                 return Transactions.CONTENT_ITEM_TYPE;
+            case ROUTE_CATEGORIES:
+                return Categories.CONTENT_TYPE;
+            case ROUTE_CATEGORY_ID:
+                return Categories.CONTENT_ITEM_TYPE;
             case ROUTE_PAYEES:
                 return Payees.CONTENT_TYPE;
             case ROUTE_PAYEE_ID:
@@ -71,6 +84,7 @@ public class ExpensesProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        String groupBy = null;
 
         int uriType = sUriMatcher.match(uri);
         switch (uriType) {
@@ -88,6 +102,23 @@ public class ExpensesProvider extends ContentProvider {
                 queryBuilder.appendWhere(Transactions._ID + "=" + ContentUris.parseId(uri));
                 queryBuilder.setTables(Transactions.TABLE_NAME);
                 break;
+            case ROUTE_CATEGORIES:
+                queryBuilder.setTables(Categories.TABLE_NAME + " LEFT OUTER JOIN "
+                        + Categories.TABLE_NAME + " AS " + Subcategories.TABLE_NAME + " ON "
+                        + Categories.TABLE_NAME + "." + Categories._ID + " = "
+                        + Subcategories.TABLE_NAME + "." + Categories.PARENT_ID);
+                Map<String, String> projectionMap = new HashMap<>();
+                projectionMap.put(Categories._ID, Categories.TABLE_NAME + "." + Categories._ID);
+                projectionMap.put(Categories.NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
+                projectionMap.put(Categories.CHILDREN, "COUNT(" + ExpensesContract.Subcategories.TABLE_NAME + "." + Categories._ID + ")");
+                queryBuilder.setProjectionMap(projectionMap);
+                groupBy = Categories.TABLE_NAME + "." + Categories._ID;
+                break;
+            case ROUTE_CATEGORY_ID:
+                queryBuilder.appendWhere(Categories._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.setTables(Categories.TABLE_NAME);
+                break;
             case ROUTE_PAYEES:
                 queryBuilder.setTables(Payees.TABLE_NAME);
                 break;
@@ -100,7 +131,7 @@ public class ExpensesProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, groupBy, null, sortOrder);
 
         // make sure that potential listeners are getting notified
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -122,6 +153,10 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTIONS:
                 id = db.insertOrThrow(Transactions.TABLE_NAME, null, values);
                 returnUri = ContentUris.withAppendedId(Transactions.CONTENT_URI, id);
+                break;
+            case ROUTE_CATEGORIES:
+                id = db.insertOrThrow(Categories.TABLE_NAME, null, values);
+                returnUri = ContentUris.withAppendedId(Categories.CONTENT_URI, id);
                 break;
             case ROUTE_PAYEES:
                 id = db.insertOrThrow(Payees.TABLE_NAME, null, values);
@@ -167,6 +202,18 @@ public class ExpensesProvider extends ContentProvider {
                     newSelection.append(" AND ").append(selection);
                 }
                 rowsUpdated = db.update(Transactions.TABLE_NAME, values, newSelection.toString(), selectionArgs);
+                break;
+            case ROUTE_CATEGORIES:
+                rowsUpdated = db.update(Categories.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case ROUTE_CATEGORY_ID:
+                id = ContentUris.parseId(uri);
+                newSelection = new StringBuilder();
+                newSelection.append(Categories._ID).append("=").append(id);
+                if (!TextUtils.isEmpty(selection)) {
+                    newSelection.append(" AND ").append(selection);
+                }
+                rowsUpdated = db.update(Categories.TABLE_NAME, values, newSelection.toString(), selectionArgs);
                 break;
             case ROUTE_PAYEES:
                 rowsUpdated = db.update(Payees.TABLE_NAME, values, selection, selectionArgs);
@@ -219,6 +266,18 @@ public class ExpensesProvider extends ContentProvider {
                     newSelection.append(" AND ").append(selection);
                 }
                 rowsDeleted = db.delete(Transactions.TABLE_NAME, newSelection.toString(), selectionArgs);
+                break;
+            case ROUTE_CATEGORIES:
+                rowsDeleted = db.delete(Categories.TABLE_NAME, selection, selectionArgs);
+                break;
+            case ROUTE_CATEGORY_ID:
+                id = ContentUris.parseId(uri);
+                newSelection = new StringBuilder();
+                newSelection.append(Categories._ID).append("=").append(id);
+                if (!TextUtils.isEmpty(selection)) {
+                    newSelection.append(" AND ").append(selection);
+                }
+                rowsDeleted = db.delete(Categories.TABLE_NAME, newSelection.toString(), selectionArgs);
                 break;
             case ROUTE_PAYEES:
                 rowsDeleted = db.delete(Payees.TABLE_NAME, selection, selectionArgs);

@@ -51,7 +51,7 @@ public final class ExpensesContract {
     /**
      * Inner class that defines the table contents of the `categories` table.
      */
-    static final class Categories implements BaseColumns {
+    public static final class Categories implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(BASE_CONTENT_URI, "categories");
@@ -67,6 +67,13 @@ public final class ExpensesContract {
         // Database table columns.
         public static final String NAME = "name";
         public static final String PARENT_ID = "parent_id";
+        public static final String CHILDREN = "children";
+    }
+
+    public static final class Subcategories implements BaseColumns {
+
+        // Table name.
+        public static final String TABLE_NAME = "subcategories";
     }
 
     /**

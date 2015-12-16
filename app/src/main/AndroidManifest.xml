@@ -51,6 +51,11 @@
             android:parentActivityName=".ui.backup.BackupActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.categories.CategoriesActivity"
+            android:label="@string/title_activity_categories"
+            android:parentActivityName=".ui.overview.OverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.payees.PayeesActivity"
             android:label="@string/title_activity_payees"
             android:parentActivityName=".ui.overview.OverviewActivity"
