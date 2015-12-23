@@ -65,7 +65,7 @@
             android:id="@+id/account_last_transaction_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="?android:textColorSecondary"
             tools:text="9/18/15" />
     </LinearLayout>
