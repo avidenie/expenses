@@ -78,12 +78,16 @@ abstract public class AbstractRestoreIntentService extends IntentService {
     protected void emptyDatabase() throws RemoteException, OperationApplicationException {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Accounts.CONTENT_URI).build());
+
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.TransactionDetails
+                .CONTENT_URI).build());
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Transactions.CONTENT_URI).build());
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Payees.CONTENT_URI).build());
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.Categories.CONTENT_URI)
                 .withSelection(ExpensesContract.Categories.PARENT_ID + " IS NOT NULL", new String[]{})
                 .build());
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.Categories.CONTENT_URI).build());
-        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Payees.CONTENT_URI).build());
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.Accounts.CONTENT_URI).build());
 
         getContentResolver().applyBatch(ExpensesContract.CONTENT_AUTHORITY, operations);
     }

@@ -47,15 +47,15 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Accounts.CURRENCY + " TEXT NOT NULL," +
                 Accounts.BALANCE + " INTEGER NOT NULL DEFAULT 0," +
                 Accounts.TYPE + " TEXT NOT NULL DEFAULT 'CASH'," +
-                Accounts.SUBTYPE + " TEXT DEFAULT NULL," +
+                Accounts.SUBTYPE + " TEXT," +
                 Accounts.IS_ACTIVE + " INTEGER NOT NULL DEFAULT 1," +
                 Accounts.INCLUDE_INTO_TOTALS + " INTEGER NOT NULL DEFAULT 1," +
                 Accounts.SORT_ORDER + " INTEGER NOT NULL DEFAULT 0," +
-                Accounts.NOTE + " TEXT NOT NULL," +
+                Accounts.NOTE + " TEXT," +
                 Accounts.CREATED_AT + " INTEGER NOT NULL DEFAULT 0," +
-                Accounts.LAST_TRANSACTION_AT + " INTEGER NOT NULL DEFAULT 0," +
-                Accounts.LAST_ACCOUNT_ID + " INTEGER DEFAULT NULL," +
-                Accounts.LAST_CATEGORY_ID + " INTEGER DEFAULT NULL," +
+                Accounts.LAST_TRANSACTION_AT + " INTEGER," +
+                Accounts.LAST_ACCOUNT_ID + " INTEGER," +
+                Accounts.LAST_CATEGORY_ID + " INTEGER," +
                 "CONSTRAINT fk_last_account_id FOREIGN KEY (" + Accounts.LAST_ACCOUNT_ID + ") REFERENCES " +
                         Accounts.TABLE_NAME + " (" + Accounts._ID +
                 ") ON DELETE SET NULL ON UPDATE CASCADE," +
@@ -88,21 +88,21 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Transactions._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 Transactions.FROM_ACCOUNT_ID + " INTEGER," +
                 Transactions.TO_ACCOUNT_ID + " INTEGER," +
-                Transactions.PAYEE_ID + " INTEGER DEFAULT NULL," +
+                Transactions.PAYEE_ID + " INTEGER," +
                 Transactions.OCCURRED_AT + " INTEGER NOT NULL DEFAULT 0," +
                 Transactions.CREATED_AT + " INTEGER NOT NULL DEFAULT 0," +
                 Transactions.UPDATED_AT + " INTEGER NOT NULL DEFAULT 0," +
-                Transactions.NOTE + " TEXT NOT NULL," +
-                Transactions.ORIGINAL_FROM_CURRENCY + " TEXT DEFAULT NULL," +
-                Transactions.ORIGINAL_FROM_AMOUNT + " INTEGER DEFAULT NULL," +
+                Transactions.NOTE + " TEXT," +
+                Transactions.ORIGINAL_FROM_CURRENCY + " TEXT," +
+                Transactions.ORIGINAL_FROM_AMOUNT + " INTEGER," +
                 "CONSTRAINT fk_from_account_id FOREIGN KEY (" + Transactions.FROM_ACCOUNT_ID + ") REFERENCES " +
-                        Transactions.TABLE_NAME + " (" + Transactions._ID +
+                        Accounts.TABLE_NAME + " (" + Accounts._ID +
                 ") ON DELETE RESTRICT ON UPDATE CASCADE," +
                 "CONSTRAINT fk_to_account_id FOREIGN KEY (" + Transactions.TO_ACCOUNT_ID + ") REFERENCES " +
-                        Transactions.TABLE_NAME + " (" + Transactions._ID +
+                        Accounts.TABLE_NAME + " (" + Accounts._ID +
                 ") ON DELETE RESTRICT ON UPDATE CASCADE," +
                 "CONSTRAINT fk_payee_id FOREIGN KEY (" + Transactions.PAYEE_ID + ") REFERENCES " +
-                        Transactions.TABLE_NAME + " (" + Transactions._ID +
+                        Payees.TABLE_NAME + " (" + Payees._ID +
                 ") ON DELETE SET NULL ON UPDATE CASCADE)");
 
         db.execSQL("CREATE INDEX idx_from_account_id ON " + Transactions.TABLE_NAME +
@@ -116,14 +116,13 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
 
         // Create table "transaction_details".
         db.execSQL("CREATE TABLE " + TransactionDetails.TABLE_NAME + " (" +
-                TransactionDetails._ID + " INTEGER NOT NULL," +
+                TransactionDetails._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 TransactionDetails.TRANSACTION_ID + " INTEGER NOT NULL," +
                 TransactionDetails.FROM_AMOUNT + " INTEGER," +
                 TransactionDetails.TO_AMOUNT + " INTEGER," +
                 TransactionDetails.CATEGORY_ID + " INTEGER," +
                 TransactionDetails.IS_TRANSFER + " INTEGER NOT NULL DEFAULT 0," +
                 TransactionDetails.IS_SPLIT + " INTEGER NOT NULL DEFAULT 0," +
-                "PRIMARY KEY(" + TransactionDetails._ID + ")," +
                 "CONSTRAINT fk_transaction_id FOREIGN KEY (" + TransactionDetails.TRANSACTION_ID + ") REFERENCES " +
                         Transactions.TABLE_NAME + " (" + Transactions._ID +
                 ") ON DELETE CASCADE ON UPDATE CASCADE," +

@@ -24,9 +24,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     protected static final String TAG = FinancistoImportIntentService.class.getSimpleName();
 
-    private ArrayList<ContentValues> mAccountContentValues = new ArrayList<>();
+    private List<ContentValues> mAccountContentValues = new ArrayList<>();
     private Map<String, String> mCurrencies = new HashMap<>();
     private List<Map<String, String>> mCategories = new ArrayList<>();
+    private List<Long> mPayeeIds = new ArrayList<>();
+    private List<ContentValues> mTransactionContentValues = new ArrayList<>();
+    private Map<Long, List<ContentValues>> mTransactionDetailsContentValues = new HashMap<>();
 
     @Override
     protected void parse(InputStream input) throws IOException {
@@ -69,6 +72,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
         processAccountEntries();
         processCategoryEntries();
+        processTransactionEntries();
         Log.i(TAG, "Finished parsing Financisto backup file: " + mOperations.size() + " entries to restore");
     }
 
@@ -95,6 +99,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 break;
             case "category":
                 processCategoryEntry(values);
+                break;
+            case "transactions":
+                processTransactionEntry(values);
                 break;
         }
     }
@@ -145,22 +152,18 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             accountSubtype = cardIssuer.toString();
         }
 
-        String note = values.get("note");
-        if (note == null) {
-            note = "";
-        }
-
         ContentValues accountValues = new ContentValues();
+        accountValues.put(ExpensesContract.Accounts._ID, Long.parseLong(values.get("_id")));
         accountValues.put(ExpensesContract.Accounts.TITLE, values.get("title"));
         accountValues.put(ExpensesContract.Accounts.CURRENCY, values.get("currency_id"));
-        accountValues.put(ExpensesContract.Accounts.BALANCE, values.get("total_amount"));
+        accountValues.put(ExpensesContract.Accounts.BALANCE, Long.parseLong(values.get("total_amount")));
         accountValues.put(ExpensesContract.Accounts.TYPE, accountType.toString());
         accountValues.put(ExpensesContract.Accounts.SUBTYPE, accountSubtype);
-        accountValues.put(ExpensesContract.Accounts.IS_ACTIVE, values.get("is_active"));
-        accountValues.put(ExpensesContract.Accounts.INCLUDE_INTO_TOTALS, values.get("is_include_into_totals"));
-        accountValues.put(ExpensesContract.Accounts.SORT_ORDER, values.get("sort_order"));
-        accountValues.put(ExpensesContract.Accounts.NOTE, note);
-        accountValues.put(ExpensesContract.Accounts.CREATED_AT, values.get("creation_date"));
+        accountValues.put(ExpensesContract.Accounts.IS_ACTIVE, Integer.parseInt(values.get("is_active")));
+        accountValues.put(ExpensesContract.Accounts.INCLUDE_INTO_TOTALS, Integer.parseInt(values.get("is_include_into_totals")));
+        accountValues.put(ExpensesContract.Accounts.SORT_ORDER, Integer.parseInt(values.get("sort_order")));
+        accountValues.put(ExpensesContract.Accounts.NOTE, values.get("note"));
+        accountValues.put(ExpensesContract.Accounts.CREATED_AT, Long.parseLong(values.get("creation_date")));
 
         mAccountContentValues.add(accountValues);
     }
@@ -192,8 +195,10 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     }
 
     private void processPayeeEntry(Map<String, String> values) {
+        long payeeId = Long.parseLong(values.get("_id"));
+        mPayeeIds.add(payeeId);
         mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Payees.CONTENT_URI)
-                .withValue(ExpensesContract.Payees._ID, values.get("_id"))
+                .withValue(ExpensesContract.Payees._ID, payeeId)
                 .withValue(ExpensesContract.Payees.NAME, values.get("title"))
                 .build());
     }
@@ -207,13 +212,13 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         List<Map<String, String>> mChildCategories = new ArrayList<>();
 
         for(Map<String, String> values: mCategories) {
-            int id = Integer.valueOf(values.get("_id"));
+            long id = Long.parseLong(values.get("_id"));
             if (id <= 0) {
                 continue;
             }
             String parentId = getParentCategoryId(values);
             values.put("parent_id", parentId);
-            if (Integer.valueOf(parentId) == 0) {
+            if (parentId.equals("0")) {
                 mParentCategories.add(values);
             } else {
                 mChildCategories.add(values);
@@ -225,17 +230,130 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 .build());
         for(Map<String, String> values: mParentCategories) {
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
-                    .withValue(ExpensesContract.Categories._ID, values.get("_id"))
+                    .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
                     .build());
         }
         for(Map<String, String> values: mChildCategories) {
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
-                    .withValue(ExpensesContract.Categories._ID, values.get("_id"))
+                    .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
-                    .withValue(ExpensesContract.Categories.PARENT_ID, values.get("parent_id"))
+                    .withValue(ExpensesContract.Categories.PARENT_ID, Long.parseLong(values.get("parent_id")))
                     .build());
         }
+    }
+
+    private void processTransactionEntry(Map<String, String> values) {
+
+        ContentValues transactionValues = new ContentValues();
+        ContentValues transactionDetailsValues = new ContentValues();
+
+        long id = Long.parseLong(values.get("_id"));
+        long fromAccountId = Long.parseLong(values.get("from_account_id"));
+        long fromAmount = Long.parseLong(values.get("from_amount"));
+        long toAccountId = Long.parseLong(values.get("to_account_id"));
+        long toAmount = Long.parseLong(values.get("to_amount"));
+
+        String parentId = values.get("parent_id");
+        if (parentId != null && !parentId.equals("0")) {
+            if (toAccountId > 0) {
+                Map<String, String> newValues = new HashMap<>(values);
+                newValues.put("parent_id", "0");
+                newValues.put("from_account_id", values.get("to_account_id"));
+                newValues.put("from_amount", values.get("to_amount"));
+                newValues.put("to_account_id", "0");
+                newValues.put("to_amount", "0");
+
+                processTransactionEntry(newValues);
+            }
+            transactionDetailsValues.put(ExpensesContract.TransactionDetails.TRANSACTION_ID, Long.parseLong(parentId));
+            transactionDetailsValues.put(ExpensesContract.TransactionDetails.FROM_AMOUNT, 0 - fromAmount);
+            transactionDetailsValues.put(ExpensesContract.TransactionDetails.IS_SPLIT, 1);
+        } else {
+            transactionValues.put(ExpensesContract.Transactions._ID, id);
+            transactionDetailsValues.put(ExpensesContract.TransactionDetails.TRANSACTION_ID, id);
+
+            if (toAccountId > 0) {
+                transactionValues.put(ExpensesContract.Transactions.FROM_ACCOUNT_ID, fromAccountId);
+                transactionDetailsValues.put(ExpensesContract.TransactionDetails.FROM_AMOUNT, 0 - fromAmount);
+                transactionValues.put(ExpensesContract.Transactions.TO_ACCOUNT_ID, toAccountId);
+                transactionDetailsValues.put(ExpensesContract.TransactionDetails.TO_AMOUNT, toAmount);
+                transactionDetailsValues.put(ExpensesContract.TransactionDetails.IS_TRANSFER, 1);
+            } else {
+                if (fromAmount > 0) {
+                    transactionValues.put(ExpensesContract.Transactions.TO_ACCOUNT_ID, fromAccountId);
+                    transactionDetailsValues.put(ExpensesContract.TransactionDetails.TO_AMOUNT, fromAmount);
+                } else {
+                    transactionDetailsValues.put(ExpensesContract.TransactionDetails.FROM_AMOUNT, 0 - fromAmount);
+                    transactionValues.put(ExpensesContract.Transactions.FROM_ACCOUNT_ID, fromAccountId);
+                }
+            }
+
+            if (values.containsKey("payee_id")) {
+                long payeeId = Long.parseLong(values.get("payee_id"));
+                if (payeeId > 0 && mPayeeIds.contains(payeeId)) {
+                    transactionValues.put(ExpensesContract.Transactions.PAYEE_ID, payeeId);
+                }
+            }
+
+            long createdAt = Long.parseLong(values.get("datetime"));
+            transactionValues.put(ExpensesContract.Transactions.OCCURRED_AT, createdAt);
+            transactionValues.put(ExpensesContract.Transactions.CREATED_AT, createdAt);
+            transactionValues.put(ExpensesContract.Transactions.UPDATED_AT, Long.parseLong(values.get("updated_on")));
+
+            transactionValues.put(ExpensesContract.Transactions.NOTE, values.get("note"));
+
+            String originalFromCurrencyId = values.get("original_currency_id");
+            if (originalFromCurrencyId != null && mCurrencies.containsKey(originalFromCurrencyId)) {
+                String OriginalFromCurrencyCode = mCurrencies.get(originalFromCurrencyId);
+                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_FROM_CURRENCY, OriginalFromCurrencyCode);
+                String originalFromAmount = values.get("original_from_amount");
+                if (originalFromAmount == null) {
+                    originalFromAmount = "0";
+                }
+                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_FROM_AMOUNT, Long.parseLong(originalFromAmount));
+            }
+
+            mTransactionContentValues.add(transactionValues);
+        }
+
+        if (values.containsKey("category_id")) {
+            long categoryId = Long.parseLong(values.get("category_id"));
+            if (categoryId > 0) {
+                transactionDetailsValues.put(ExpensesContract.TransactionDetails.CATEGORY_ID, categoryId);
+            }
+        }
+
+        if (!mTransactionDetailsContentValues.containsKey(id)) {
+            mTransactionDetailsContentValues.put(id, new ArrayList<ContentValues>());
+        }
+        mTransactionDetailsContentValues.get(id).add(transactionDetailsValues);
+    }
+
+    private void processTransactionEntries() {
+        for (ContentValues transactionValues: mTransactionContentValues) {
+            mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Transactions.CONTENT_URI)
+                    .withValues(transactionValues)
+                    .build());
+        }
+        for (Map.Entry<Long, List<ContentValues>> entry: mTransactionDetailsContentValues.entrySet()) {
+            List<ContentValues> details = entry.getValue();
+            for (ContentValues values: details) {
+                mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.TransactionDetails.CONTENT_URI)
+                        .withValues(values)
+                        .build());
+            }
+        }
+        mOperations.add(ContentProviderOperation.newUpdate(ExpensesContract.TransactionDetails.CONTENT_URI)
+                .withValue(ExpensesContract.TransactionDetails.CATEGORY_ID, -1)
+                .withSelection(
+                        ExpensesContract.TransactionDetails.TABLE_NAME + "." + ExpensesContract.TransactionDetails.TRANSACTION_ID + " IN (" +
+                        "SELECT DISTINCT " + ExpensesContract.TransactionDetails.TABLE_NAME + "." + ExpensesContract.TransactionDetails.TRANSACTION_ID + " " +
+                        "FROM " + ExpensesContract.TransactionDetails.TABLE_NAME + " " +
+                        "WHERE " + ExpensesContract.TransactionDetails.TABLE_NAME + "." + ExpensesContract.TransactionDetails.IS_SPLIT + " = 1) " +
+                        "AND " + ExpensesContract.TransactionDetails.TABLE_NAME + "." + ExpensesContract.TransactionDetails.IS_SPLIT + " = 0",
+                        null)
+                .build());
     }
 
     private ElectronicPaymentType getElectronicPaymentType(String paymentType) {
