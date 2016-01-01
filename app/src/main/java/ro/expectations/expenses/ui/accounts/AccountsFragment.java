@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -39,8 +40,9 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
         AccountsAdapter adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.OnClickListener() {
                 @Override
                 public void onClick(long accountId, AccountsAdapter.ViewHolder vh) {
-                    Intent editAccountIntent = new Intent(getActivity(), EditAccountActivity.class);
-                    startActivity(editAccountIntent);
+                    Intent transactionsListingIntent = new Intent(getActivity(), TransactionsActivity.class);
+                    transactionsListingIntent.putExtra(TransactionsActivity.ARG_ACCOUNT_ID, accountId);
+                    startActivity(transactionsListingIntent);
                 }
             }, emptyView);
         mRecyclerView.setAdapter(adapter);
