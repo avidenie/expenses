@@ -90,7 +90,21 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             additionalDescription.insert(0, " (");
             additionalDescription.append(")");
         }
-        description.append(additionalDescription.toString());
+        if (additionalDescription.length() > 0) {
+            description.append(additionalDescription.toString());
+        }
+        if (description.length() == 0) {
+            if (isTransfer) {
+                description.append(mContext.getString(R.string.default_transfer_description));
+            } else {
+                long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
+                if (fromAmount > 0) {
+                    description.append(mContext.getString(R.string.default_debit_description));
+                } else {
+                    description.append(mContext.getString(R.string.default_credit_description));
+                }
+            }
+        }
         holder.mDescription.setText(description.toString());
 
         // Set the transaction date
@@ -163,9 +177,9 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         Currency fromCurrency = Currency.getInstance(fromCurrencyCode);
         format.setCurrency(fromCurrency);
         format.setMaximumFractionDigits(fromCurrency.getDefaultFractionDigits());
-        holder.mAmount.setText(mContext.getResources().getString(R.string.negative, format.format(fromAmount)));
+        holder.mAmount.setText(mContext.getResources().getString(R.string.negative_amount, format.format(fromAmount)));
         holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
-        holder.mRunningBalance.setText(mContext.getResources().getString(R.string.negative, format.format(fromAmount)));
+        holder.mRunningBalance.setText(mContext.getResources().getString(R.string.negative_amount, format.format(fromAmount)));
 
         // Set the transaction type icon
         holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
