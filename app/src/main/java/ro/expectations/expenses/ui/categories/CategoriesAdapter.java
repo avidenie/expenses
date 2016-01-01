@@ -40,7 +40,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         // Set the icon background color.
         GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.blue_grey_500));
+        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
 
         // Set the category name.
         String name = mCursor.getString(CategoriesFragment.COLUMN_CATEGORY_NAME);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -28,46 +27,79 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:layout_weight="7"
+        android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/transaction_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceListItem"
-            tools:text="Electricity bill" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/transaction_type_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:layout_alignParentEnd="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null" />
+            <TextView
+                android:id="@+id/transaction_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:layout_toStartOf="@id/transaction_type_icon"
+                android:layout_alignParentStart="true"
+                android:lines="1"
+                android:ellipsize="marquee"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/transaction_description"
-            android:layout_width="wrap_content"
+        <RelativeLayout
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="?android:textColorSecondary"
-            tools:text="9/18/15" />
-    </LinearLayout>
+            android:layout_width="match_parent">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:gravity="end">
+            <TextView
+                android:id="@+id/account_running_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-        <TextView
-            android:id="@+id/transaction_amount"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/transaction_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/account_running_balance"
+                android:layout_alignParentStart="true"
+                android:lines="1"
+                android:ellipsize="marquee"
+                android:textAppearance="?android:attr/textAppearanceListItem" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="?android:textColorSecondary"
-            tools:text="$7.99" />
+            android:layout_width="match_parent">
 
-        <TextView
-            android:id="@+id/account_running_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="?android:textColorSecondary"
-            tools:text="$545.89" />
+            <TextView
+                android:id="@+id/transaction_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:id="@+id/transaction_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@id/transaction_amount"
+                android:layout_alignParentStart="true"
+                android:lines="1"
+                android:ellipsize="marquee"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

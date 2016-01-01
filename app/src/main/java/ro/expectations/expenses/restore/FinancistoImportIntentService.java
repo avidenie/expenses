@@ -291,7 +291,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
             if (values.containsKey("payee_id")) {
                 long payeeId = Long.parseLong(values.get("payee_id"));
-                if (payeeId > 0 && mPayeeIds.contains(payeeId)) {
+                if (payeeId > 0) {
                     transactionValues.put(ExpensesContract.Transactions.PAYEE_ID, payeeId);
                 }
             }
@@ -304,14 +304,13 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             transactionValues.put(ExpensesContract.Transactions.NOTE, values.get("note"));
 
             String originalFromCurrencyId = values.get("original_currency_id");
-            if (originalFromCurrencyId != null && mCurrencies.containsKey(originalFromCurrencyId)) {
-                String OriginalFromCurrencyCode = mCurrencies.get(originalFromCurrencyId);
-                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_FROM_CURRENCY, OriginalFromCurrencyCode);
+            if (originalFromCurrencyId != null) {
+                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_CURRENCY, originalFromCurrencyId);
                 String originalFromAmount = values.get("original_from_amount");
                 if (originalFromAmount == null) {
                     originalFromAmount = "0";
                 }
-                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_FROM_AMOUNT, Long.parseLong(originalFromAmount));
+                transactionValues.put(ExpensesContract.Transactions.ORIGINAL_AMOUNT, Long.parseLong(originalFromAmount));
             }
 
             mTransactionContentValues.add(transactionValues);
@@ -332,6 +331,22 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     private void processTransactionEntries() {
         for (ContentValues transactionValues: mTransactionContentValues) {
+            if (transactionValues.containsKey(ExpensesContract.Transactions.PAYEE_ID)) {
+                long payeeId = transactionValues.getAsLong(ExpensesContract.Transactions.PAYEE_ID);
+                if (payeeId <= 0 || !mPayeeIds.contains(payeeId)) {
+                    transactionValues.remove(ExpensesContract.Transactions.PAYEE_ID);
+                }
+            }
+            if (transactionValues.containsKey(ExpensesContract.Transactions.ORIGINAL_CURRENCY)) {
+                String originalFromCurrencyId = transactionValues.getAsString(ExpensesContract.Transactions.ORIGINAL_CURRENCY);
+                if (!originalFromCurrencyId.equals("0") && mCurrencies.containsKey(originalFromCurrencyId)) {
+                    String originalFromCurrencyCode = mCurrencies.get(originalFromCurrencyId);
+                    transactionValues.put(ExpensesContract.Transactions.ORIGINAL_CURRENCY, originalFromCurrencyCode);
+                } else {
+                    transactionValues.remove(ExpensesContract.Transactions.ORIGINAL_CURRENCY);
+                    transactionValues.remove(ExpensesContract.Transactions.ORIGINAL_AMOUNT);
+                }
+            }
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Transactions.CONTENT_URI)
                     .withValues(transactionValues)
                     .build());

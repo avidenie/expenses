@@ -69,5 +69,8 @@
     <string name="title_success">Success</string>
     <string name="button_ok">OK</string>
     <string name="all_accounts">All Accounts</string>
+    <string name="breadcrumbs">%1$s » %2$s</string>
+    <string name="negative">-%s</string>
+    <string name="multiple_categories">[Multiple categories …]</string>
 
 </resources>

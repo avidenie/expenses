@@ -28,7 +28,10 @@ import ro.expectations.expenses.provider.ExpensesContract;
 
 public class TransactionsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String ARG_ACCOUNT_ID = "account_id";
+
     private Spinner mAccountsSpinner;
+    private long mSelectedAccountId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +44,27 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        if (savedInstanceState == null) {
+            mSelectedAccountId = getIntent().getLongExtra(ARG_ACCOUNT_ID, 0);
+        } else {
+            mSelectedAccountId = savedInstanceState.getLong(ARG_ACCOUNT_ID, 0);
+        }
+
         // Setup spinner.
-        mAccountsSpinner = (Spinner) findViewById(R.id.spinner);
-        mAccountsSpinner.setAdapter(new AccountsSpinnerAdapter(
+        AccountsSpinnerAdapter adapter = new AccountsSpinnerAdapter(
                 toolbar.getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
                 null,
                 new String[] { ExpensesContract.Accounts.TITLE },
                 new int[] { android.R.id.text1 },
-                0));
+                0);
+        mAccountsSpinner = (Spinner) findViewById(R.id.spinner);
+        mAccountsSpinner.setAdapter(adapter);
 
         mAccountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedAccountId = id;
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment, TransactionsFragment.newInstance(id))
                         .commit();
@@ -63,6 +74,9 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        if (mSelectedAccountId > 0) {
+            setSpinnerItemById(mSelectedAccountId);
+        }
 
         getSupportLoaderManager().restartLoader(0, null, this);
 
@@ -74,6 +88,12 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
                         .setAction("OK", null).show();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(ARG_ACCOUNT_ID, mSelectedAccountId);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -126,11 +146,24 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
         MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, data });
 
         ((AccountsSpinnerAdapter) mAccountsSpinner.getAdapter()).swapCursor(mergeCursor);
+        setSpinnerItemById(mSelectedAccountId);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         ((AccountsSpinnerAdapter) mAccountsSpinner.getAdapter()).swapCursor(null);
+    }
+
+    public void setSpinnerItemById(long selectedId) {
+        int spinnerCount = mAccountsSpinner.getCount();
+        for (int i = 0; i < spinnerCount; i++) {
+            Cursor value = (Cursor) mAccountsSpinner.getItemAtPosition(i);
+            long id = value.getLong(value.getColumnIndex(ExpensesContract.Accounts._ID));
+            if (id == selectedId) {
+                mAccountsSpinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     private static class AccountsSpinnerAdapter extends SimpleCursorAdapter implements ThemedSpinnerAdapter {

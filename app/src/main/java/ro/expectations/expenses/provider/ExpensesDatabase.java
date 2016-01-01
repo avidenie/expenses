@@ -93,8 +93,8 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Transactions.CREATED_AT + " INTEGER NOT NULL DEFAULT 0," +
                 Transactions.UPDATED_AT + " INTEGER NOT NULL DEFAULT 0," +
                 Transactions.NOTE + " TEXT," +
-                Transactions.ORIGINAL_FROM_CURRENCY + " TEXT," +
-                Transactions.ORIGINAL_FROM_AMOUNT + " INTEGER," +
+                Transactions.ORIGINAL_CURRENCY + " TEXT," +
+                Transactions.ORIGINAL_AMOUNT + " INTEGER," +
                 "CONSTRAINT fk_from_account_id FOREIGN KEY (" + Transactions.FROM_ACCOUNT_ID + ") REFERENCES " +
                         Accounts.TABLE_NAME + " (" + Accounts._ID +
                 ") ON DELETE RESTRICT ON UPDATE CASCADE," +

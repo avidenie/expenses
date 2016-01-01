@@ -19,7 +19,7 @@ public final class ExpensesContract {
     /**
      * Inner class that defines the table contents of the `accounts` table.
      */
-    public static final class Accounts implements BaseColumns {
+    public static class Accounts implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(BASE_CONTENT_URI, "accounts");
@@ -48,10 +48,26 @@ public final class ExpensesContract {
         public static final String LAST_CATEGORY_ID = "last_category_id";
     }
 
+    public static final class FromAccounts extends Accounts {
+        public static final String TABLE_NAME = "from_accounts";
+
+        // Database table columns aliases.
+        public static final String FROM_TITLE = "from_title";
+        public static final String FROM_CURRENCY = "from_currency";
+    }
+
+    public static final class ToAccounts extends Accounts {
+        public static final String TABLE_NAME = "to_accounts";
+
+        // Database table columns aliases.
+        public static final String TO_TITLE = "to_title";
+        public static final String TO_CURRENCY = "to_currency";
+    }
+
     /**
      * Inner class that defines the table contents of the `categories` table.
      */
-    public static final class Categories implements BaseColumns {
+    public static class Categories implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(BASE_CONTENT_URI, "categories");
@@ -67,13 +83,22 @@ public final class ExpensesContract {
         // Database table columns.
         public static final String NAME = "name";
         public static final String PARENT_ID = "parent_id";
+
+        // Database table columns aliases.
+        public static final String CATEGORY_ID = "category_id";
+        public static final String CATEGORY_NAME = "category_name";
         public static final String CHILDREN = "children";
     }
 
-    public static final class Subcategories implements BaseColumns {
-
-        // Table name.
+    public static final class Subcategories extends Categories {
         public static final String TABLE_NAME = "subcategories";
+    }
+
+    public static final class ParentCategories extends Categories {
+        public static final String TABLE_NAME = "parent_categories";
+
+        // Database table columns aliases.
+        public static final String PARENT_NAME = "parent_name";
     }
 
     /**
@@ -94,12 +119,15 @@ public final class ExpensesContract {
 
         // Database table columns.
         public static final String NAME = "name";
+
+        // Database table columns aliases.
+        public static final String PAYEE_NAME = "payee_name";
     }
 
     /**
      * Inner class that defines the table contents of the `running_balances` table.
      */
-    public static final class RunningBalances implements BaseColumns {
+    public static class RunningBalances implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(BASE_CONTENT_URI, "running_balances");
@@ -116,6 +144,20 @@ public final class ExpensesContract {
         public static final String ACCOUNT_ID = "account_id";
         public static final String TRANSACTION_ID = "transaction_id";
         public static final String BALANCE = "balance";
+    }
+
+    public static final class FromRunningBalances extends RunningBalances {
+        public static final String TABLE_NAME = "from_running_balances";
+
+        // Database table columns aliases.
+        public static final String FROM_BALANCE = "from_balance";
+    }
+
+    public static final class ToRunningBalances extends RunningBalances {
+        public static final String TABLE_NAME = "to_running_balances";
+
+        // Database table columns aliases.
+        public static final String TO_BALANCE = "to_balance";
     }
 
     /**
@@ -142,8 +184,8 @@ public final class ExpensesContract {
         public static final String CREATED_AT = "created_at";
         public static final String UPDATED_AT = "updated_at";
         public static final String NOTE = "note";
-        public static final String ORIGINAL_FROM_CURRENCY = "original_from_currency";
-        public static final String ORIGINAL_FROM_AMOUNT = "original_from_amount";
+        public static final String ORIGINAL_CURRENCY = "original_currency";
+        public static final String ORIGINAL_AMOUNT = "original_amount";
     }
 
     /**

@@ -20,8 +20,14 @@ import java.util.Map;
 
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
 import ro.expectations.expenses.provider.ExpensesContract.Categories;
+import ro.expectations.expenses.provider.ExpensesContract.FromAccounts;
+import ro.expectations.expenses.provider.ExpensesContract.FromRunningBalances;
+import ro.expectations.expenses.provider.ExpensesContract.ParentCategories;
 import ro.expectations.expenses.provider.ExpensesContract.Payees;
+import ro.expectations.expenses.provider.ExpensesContract.RunningBalances;
 import ro.expectations.expenses.provider.ExpensesContract.Subcategories;
+import ro.expectations.expenses.provider.ExpensesContract.ToAccounts;
+import ro.expectations.expenses.provider.ExpensesContract.ToRunningBalances;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
@@ -98,6 +104,7 @@ public class ExpensesProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         String groupBy = null;
+        Map<String, String> projectionMap;
 
         int uriType = sUriMatcher.match(uri);
         switch (uriType) {
@@ -112,12 +119,12 @@ public class ExpensesProvider extends ContentProvider {
                 queryBuilder.setTables(Categories.TABLE_NAME + " LEFT OUTER JOIN "
                         + Categories.TABLE_NAME + " AS " + Subcategories.TABLE_NAME + " ON "
                         + Categories.TABLE_NAME + "." + Categories._ID + " = "
-                        + Subcategories.TABLE_NAME + "." + Categories.PARENT_ID);
-                Map<String, String> projectionMap = new HashMap<>();
+                        + Subcategories.TABLE_NAME + "." + Subcategories.PARENT_ID);
+                projectionMap = new HashMap<>();
                 projectionMap.put(Categories._ID, Categories.TABLE_NAME + "." + Categories._ID);
                 projectionMap.put(Categories.NAME, Categories.TABLE_NAME + "." + Categories.NAME);
                 projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
-                projectionMap.put(Categories.CHILDREN, "COUNT(" + ExpensesContract.Subcategories.TABLE_NAME + "." + Categories._ID + ")");
+                projectionMap.put(Categories.CHILDREN, "COUNT(" + Subcategories.TABLE_NAME + "." + Subcategories._ID + ")");
                 queryBuilder.setProjectionMap(projectionMap);
                 groupBy = Categories.TABLE_NAME + "." + Categories._ID;
                 break;
@@ -133,7 +140,61 @@ public class ExpensesProvider extends ContentProvider {
                 queryBuilder.setTables(Payees.TABLE_NAME);
                 break;
             case ROUTE_TRANSACTIONS:
-                queryBuilder.setTables(Transactions.TABLE_NAME);
+                queryBuilder.setTables(Transactions.TABLE_NAME + " " +
+                        "JOIN " + TransactionDetails.TABLE_NAME + " ON " +
+                        Transactions.TABLE_NAME + "." + Transactions._ID + " = " +
+                        TransactionDetails.TABLE_NAME + "." + TransactionDetails.TRANSACTION_ID + " " +
+                        "LEFT JOIN " + Accounts.TABLE_NAME + " AS " + FromAccounts.TABLE_NAME + " ON (" +
+                        Transactions.TABLE_NAME + "." + Transactions.FROM_ACCOUNT_ID + " = " +
+                        FromAccounts.TABLE_NAME + "." + FromAccounts._ID + ") " +
+                        "LEFT JOIN " + Accounts.TABLE_NAME + " AS " + ToAccounts.TABLE_NAME + " ON (" +
+                        Transactions.TABLE_NAME + "." + Transactions.TO_ACCOUNT_ID + " = " +
+                        ToAccounts.TABLE_NAME + "." + ToAccounts._ID + ") " +
+                        "LEFT JOIN " + RunningBalances.TABLE_NAME + " AS " + FromRunningBalances.TABLE_NAME + " ON (" +
+                        Transactions.TABLE_NAME + "." + Transactions.FROM_ACCOUNT_ID + " = " +
+                        FromRunningBalances.TABLE_NAME + "." + FromRunningBalances.ACCOUNT_ID + " AND " +
+                        Transactions.TABLE_NAME + "." + Transactions._ID + " = " +
+                        FromRunningBalances.TABLE_NAME + "." + FromRunningBalances.TRANSACTION_ID + ") " +
+                        "LEFT JOIN " + RunningBalances.TABLE_NAME + " AS " + ToRunningBalances.TABLE_NAME + " ON (" +
+                        Transactions.TABLE_NAME + "." + Transactions.TO_ACCOUNT_ID + " = " +
+                        ToRunningBalances.TABLE_NAME + "." + ToRunningBalances.ACCOUNT_ID + " AND " +
+                        Transactions.TABLE_NAME + "." + Transactions._ID + " = " +
+                        ToRunningBalances.TABLE_NAME + "." + ToRunningBalances.TRANSACTION_ID + ") " +
+                        "LEFT JOIN " + Categories.TABLE_NAME + " ON (" +
+                        TransactionDetails.TABLE_NAME + "." + TransactionDetails.CATEGORY_ID + " = " +
+                        Categories.TABLE_NAME + "." + Categories._ID + ") " +
+                        "LEFT JOIN " + Categories.TABLE_NAME + " AS " + ParentCategories.TABLE_NAME + " ON (" +
+                        Categories.TABLE_NAME + "." + Categories.PARENT_ID + " = " +
+                        ParentCategories.TABLE_NAME + "." + ParentCategories._ID + ") " +
+                        "LEFT JOIN " + Payees.TABLE_NAME + " ON (" +
+                        Transactions.TABLE_NAME + "." + Transactions.PAYEE_ID + " = " +
+                        Payees.TABLE_NAME + "." + Payees._ID + ")");
+                projectionMap = new HashMap<>();
+                projectionMap.put(Transactions._ID, Transactions.TABLE_NAME + "." + Transactions._ID);
+                projectionMap.put(Transactions.FROM_ACCOUNT_ID, Transactions.TABLE_NAME + "." + Transactions.FROM_ACCOUNT_ID);
+                projectionMap.put(FromAccounts.FROM_TITLE, FromAccounts.TABLE_NAME + "." + FromAccounts.TITLE);
+                projectionMap.put(TransactionDetails.FROM_AMOUNT, TransactionDetails.TABLE_NAME + "." + TransactionDetails.FROM_AMOUNT);
+                projectionMap.put(FromAccounts.FROM_CURRENCY, FromAccounts.TABLE_NAME + "." + FromAccounts.CURRENCY);
+                projectionMap.put(FromRunningBalances.FROM_BALANCE, FromRunningBalances.TABLE_NAME + "." + FromRunningBalances.BALANCE);
+                projectionMap.put(Transactions.TO_ACCOUNT_ID, Transactions.TABLE_NAME + "." + Transactions.TO_ACCOUNT_ID);
+                projectionMap.put(ToAccounts.TO_TITLE, ToAccounts.TABLE_NAME + "." + ToAccounts.TITLE);
+                projectionMap.put(TransactionDetails.TO_AMOUNT, TransactionDetails.TABLE_NAME + "." + TransactionDetails.TO_AMOUNT);
+                projectionMap.put(ToAccounts.TO_CURRENCY, ToAccounts.TABLE_NAME + "." + ToAccounts.CURRENCY);
+                projectionMap.put(ToRunningBalances.TO_BALANCE, ToRunningBalances.TABLE_NAME + "." + ToRunningBalances.BALANCE);
+                projectionMap.put(Categories.CATEGORY_ID, TransactionDetails.TABLE_NAME + "." + TransactionDetails.CATEGORY_ID);
+                projectionMap.put(Categories.CATEGORY_NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
+                projectionMap.put(ParentCategories.PARENT_NAME, ParentCategories.TABLE_NAME + "." + ParentCategories.NAME);
+                projectionMap.put(Transactions.NOTE, Transactions.TABLE_NAME + "." + Transactions.NOTE);
+                projectionMap.put(TransactionDetails.IS_TRANSFER, TransactionDetails.TABLE_NAME + "." + TransactionDetails.IS_TRANSFER);
+                projectionMap.put(TransactionDetails.IS_SPLIT, TransactionDetails.TABLE_NAME + "." + TransactionDetails.IS_SPLIT);
+                projectionMap.put(Transactions.OCCURRED_AT, Transactions.TABLE_NAME + "." + Transactions.OCCURRED_AT);
+                projectionMap.put(Transactions.CREATED_AT, Transactions.TABLE_NAME + "." + Transactions.CREATED_AT);
+                projectionMap.put(Transactions.ORIGINAL_CURRENCY, Transactions.TABLE_NAME + "." + Transactions.ORIGINAL_CURRENCY);
+                projectionMap.put(Transactions.ORIGINAL_AMOUNT, Transactions.TABLE_NAME + "." + Transactions.ORIGINAL_AMOUNT);
+                projectionMap.put(Transactions.PAYEE_ID, Transactions.TABLE_NAME + "." + Transactions.PAYEE_ID);
+                projectionMap.put(Payees.PAYEE_NAME, Payees.TABLE_NAME + "." + Payees.NAME);
+                queryBuilder.setProjectionMap(projectionMap);
                 break;
             case ROUTE_TRANSACTION_ID:
                 queryBuilder.appendWhere(Transactions._ID + "=" + ContentUris.parseId(uri));
