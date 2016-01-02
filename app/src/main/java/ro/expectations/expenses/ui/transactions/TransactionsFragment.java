@@ -26,6 +26,8 @@ import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    protected static final String ARG_ACCOUNT_ID = "account_id";
+
     private static final String[] PROJECTION = {
             Transactions._ID,
             Transactions.FROM_ACCOUNT_ID,
@@ -76,8 +78,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_CREATED_AT = 21;
     static final int COLUMN_ORIGINAL_AMOUNT = 22;
     static final int COLUMN_ORIGINAL_CURRENCY = 23;
-
-    private static final String ARG_ACCOUNT_ID = "account_id";
 
     private RecyclerView mRecyclerView;
     private long mSelectedAccountId;

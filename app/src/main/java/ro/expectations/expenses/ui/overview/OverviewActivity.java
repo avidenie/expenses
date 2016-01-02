@@ -1,6 +1,8 @@
 package ro.expectations.expenses.ui.overview;
 
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -111,7 +113,14 @@ public class OverviewActivity extends DrawerActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mSectionsPagerAdapter.swapCursor(data);
+        MatrixCursor matrixCursor = new MatrixCursor(new String[] {
+                ExpensesContract.Accounts._ID,
+                ExpensesContract.Accounts.TITLE
+        });
+        matrixCursor.addRow(new Object[] { "0", getString(R.string.all_accounts) });
+        MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, data });
+
+        mSectionsPagerAdapter.swapCursor(mergeCursor);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

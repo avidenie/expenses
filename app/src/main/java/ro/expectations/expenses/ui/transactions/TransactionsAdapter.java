@@ -17,6 +17,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.utils.NumberUtils;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.ViewHolder> {
 
@@ -46,12 +47,12 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         if (isTransfer) {
             processTransfer(holder, position);
         } else {
-            long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
+            long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT);
             if (fromAmount > 0) {
                 processDebit(holder, position);
             }
 
-            long toAmount = mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100;
+            long toAmount = mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT);
             if (toAmount > 0) {
                 processCredit(holder, position);
             }
@@ -97,7 +98,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             if (isTransfer) {
                 description.append(mContext.getString(R.string.default_transfer_description));
             } else {
-                long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
+                long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT);
                 if (fromAmount > 0) {
                     description.append(mContext.getString(R.string.default_debit_description));
                 } else {
@@ -133,7 +134,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         String fromCurrencyCode = mCursor.getString(TransactionsFragment.COLUMN_FROM_CURRENCY);
         String toCurrencyCode = mCursor.getString(TransactionsFragment.COLUMN_TO_CURRENCY);
         if (fromCurrencyCode.equals(toCurrencyCode)) {
-            long amount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
+            double amount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
             Currency currency = Currency.getInstance(fromCurrencyCode);
             format.setCurrency(currency);
             format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
@@ -143,17 +144,16 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             Currency fromCurrency = Currency.getInstance(fromCurrencyCode);
             format.setCurrency(fromCurrency);
             format.setMaximumFractionDigits(fromCurrency.getDefaultFractionDigits());
-            long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
-
-            String amount = format.format(fromAmount);
+            double fromAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
+            String fromAmountFormatted = format.format(fromAmount);
 
             Currency toCurrency = Currency.getInstance(toCurrencyCode);
             format.setCurrency(toCurrency);
             format.setMaximumFractionDigits(toCurrency.getDefaultFractionDigits());
-            long toAmount = mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100;
+            double toAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100.0);
 
-            holder.mAmount.setText(mContext.getResources().getString(R.string.breadcrumbs, amount, format.format(toAmount)));
-            holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, amount, format.format(toAmount)));
+            holder.mAmount.setText(mContext.getResources().getString(R.string.breadcrumbs, fromAmountFormatted, format.format(toAmount)));
+            holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, fromAmountFormatted, format.format(toAmount)));
         }
 
         // Set the color for the amount
@@ -171,7 +171,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         holder.mAccount.setText(fromAccount);
 
         // Set the amount
-        long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100;
+        double fromAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
         NumberFormat format = NumberFormat.getCurrencyInstance();
         String fromCurrencyCode = mCursor.getString(TransactionsFragment.COLUMN_FROM_CURRENCY);
         Currency fromCurrency = Currency.getInstance(fromCurrencyCode);
@@ -193,7 +193,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         holder.mAccount.setText(toAccount);
 
         // Set the amount
-        long toAmount = mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100;
+        double toAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100.0);
         NumberFormat format = NumberFormat.getCurrencyInstance();
         String toCurrencyCode = mCursor.getString(TransactionsFragment.COLUMN_TO_CURRENCY);
         Currency toCurrency = Currency.getInstance(toCurrencyCode);
