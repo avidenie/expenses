@@ -38,7 +38,6 @@
     <string name="card_issuer_discover">Discover</string>
     <string name="card_issuer_cirrus">Cirrus</string>
     <string name="card_issuer_jcb">JCB</string>
-    <string name="card_issuer_nets">NETS</string>
     <string name="card_issuer_unionpay">UnionPay</string>
     <string name="card_issuer_eps">EPS</string>
     <string name="card_issuer_diners">Diners Club</string>

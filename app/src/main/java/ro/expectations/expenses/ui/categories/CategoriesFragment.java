@@ -76,9 +76,9 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     if (mParentCategoryId > 0) {
                         return;
                     }
-                    Intent categoryIntent = new Intent(getActivity(), CategoriesActivity.class);
-                    categoryIntent.putExtra(CategoriesActivity.ARG_CATEGORY_ID, categoryId);
-                    getActivity().startActivity(categoryIntent);
+                    Intent subcategoryIntent = new Intent(getActivity(), SubcategoriesActivity.class);
+                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, categoryId);
+                    getActivity().startActivity(subcategoryIntent);
                 }
             }, emptyView);
         mRecyclerView.setAdapter(adapter);

@@ -5,8 +5,6 @@ import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,8 +19,6 @@ import ro.expectations.expenses.provider.ExpensesContract;
 abstract public class AbstractRestoreIntentService extends IntentService {
 
     public static final String ARG_FILE_URI = "arg_file_uri";
-
-    protected static final String TAG = AbstractRestoreIntentService.class.getSimpleName();
 
     protected ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 

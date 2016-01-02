@@ -1,11 +1,8 @@
 package ro.expectations.expenses.ui.overview;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,60 +11,34 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.accounts.AccountsActivity;
-import ro.expectations.expenses.ui.backup.BackupActivity;
-import ro.expectations.expenses.ui.categories.CategoriesActivity;
-import ro.expectations.expenses.ui.payees.PayeesActivity;
-import ro.expectations.expenses.ui.transactions.TransactionsActivity;
+import ro.expectations.expenses.ui.drawer.DrawerActivity;
 
-public class OverviewActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener,
+public class OverviewActivity extends DrawerActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    // Delay to launch nav drawer item, to allow close animation to play.
-    private static final int NAV_DRAWER_LAUNCH_DELAY = 250;
-
     private static final int LOADER_ACCOUNTS = 0;
-
-    private DrawerLayout mDrawer;
-    private Handler mHandler;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
 
+    protected void setMainContentView() {
+        setContentView(R.layout.activity_drawer_tabs);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_overview);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Setup drawer and drawer toggle.
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        // Setup navigation view.
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_overview);
+        mMainContent.setLayoutResource(R.layout.content_overview);
+        mMainContent.inflate();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -91,9 +62,11 @@ public class OverviewActivity extends AppCompatActivity implements
 
         // Initialise the account data loader.
         getSupportLoaderManager().initLoader(LOADER_ACCOUNTS, null, this);
+    }
 
-        // Handler used to delay the launch of activities from the nav drawer.
-        mHandler = new Handler();
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return R.id.nav_overview;
     }
 
     @Override
@@ -116,54 +89,6 @@ public class OverviewActivity extends AppCompatActivity implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
-            mDrawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        mDrawer.closeDrawer(GravityCompat.START);
-
-        int id = item.getItemId();
-        if (id != R.id.nav_overview) {
-            if (id == R.id.nav_accounts) {
-                Intent accountsIntent = new Intent(this, AccountsActivity.class);
-                startActivityDelayed(accountsIntent);
-            } else if (id == R.id.nav_transactions) {
-                Intent transactionsIntent = new Intent(this, TransactionsActivity.class);
-                startActivityDelayed(transactionsIntent);
-            } else if (id == R.id.nav_backup) {
-                Intent backupIntent = new Intent(this, BackupActivity.class);
-                startActivityDelayed(backupIntent);
-            } else if (id == R.id.nav_categories) {
-                Intent categoriesIntent = new Intent(this, CategoriesActivity.class);
-                startActivityDelayed(categoriesIntent);
-            } else if (id == R.id.nav_payees) {
-                Intent payeesIntent = new Intent(this, PayeesActivity.class);
-                startActivityDelayed(payeesIntent);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Start the activity after a short delay, to allow the nav drawer close animation to play.
-     */
-    private void startActivityDelayed(final Intent intent) {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-            }
-        }, NAV_DRAWER_LAUNCH_DELAY);
     }
 
     @Override

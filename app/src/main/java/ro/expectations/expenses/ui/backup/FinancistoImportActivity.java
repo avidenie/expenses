@@ -2,12 +2,11 @@ package ro.expectations.expenses.ui.backup;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
 
@@ -17,7 +16,11 @@ public class FinancistoImportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_backup);
+        setContentView(R.layout.app_bar);
+
+        ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
+        mainContent.setLayoutResource(R.layout.content_backup);
+        mainContent.inflate();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

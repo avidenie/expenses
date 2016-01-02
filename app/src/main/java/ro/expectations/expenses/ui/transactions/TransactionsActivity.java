@@ -12,7 +12,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,23 +24,24 @@ import android.widget.Spinner;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.drawer.DrawerActivity;
 
-public class TransactionsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TransactionsActivity extends DrawerActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ARG_ACCOUNT_ID = "account_id";
 
     private Spinner mAccountsSpinner;
     private long mSelectedAccountId;
 
+    protected void setMainContentView() {
+        setContentView(R.layout.activity_drawer_spinner);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_transactions);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         if (savedInstanceState == null) {
@@ -50,7 +50,11 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
             mSelectedAccountId = savedInstanceState.getLong(ARG_ACCOUNT_ID, 0);
         }
 
+        mMainContent.setLayoutResource(R.layout.content_transactions);
+        mMainContent.inflate();
+
         // Setup spinner.
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         AccountsSpinnerAdapter adapter = new AccountsSpinnerAdapter(
                 toolbar.getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -88,6 +92,11 @@ public class TransactionsActivity extends AppCompatActivity implements LoaderMan
                         .setAction("OK", null).show();
             }
         });
+    }
+
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return R.id.nav_transactions;
     }
 
     @Override

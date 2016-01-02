@@ -3,23 +3,19 @@ package ro.expectations.expenses.ui.payees;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.drawer.DrawerActivity;
 
-public class PayeesActivity extends AppCompatActivity {
+public class PayeesActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_payees);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mMainContent.setLayoutResource(R.layout.content_payees);
+        mMainContent.inflate();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -29,5 +25,10 @@ public class PayeesActivity extends AppCompatActivity {
                         .setAction("OK", null).show();
             }
         });
+    }
+
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return R.id.nav_payees;
     }
 }

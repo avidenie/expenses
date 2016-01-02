@@ -23,8 +23,7 @@
         <activity
             android:name=".ui.accounts.AccountsActivity"
             android:label="@string/title_activity_accounts"
-            android:parentActivityName=".ui.overview.OverviewActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
         <activity
             android:name=".ui.accounts.NewAccountActivity"
             android:label="@string/title_activity_new_account"
@@ -38,13 +37,11 @@
         <activity
             android:name=".ui.transactions.TransactionsActivity"
             android:label="@string/title_activity_transactions"
-            android:parentActivityName=".ui.overview.OverviewActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
         <activity
             android:name=".ui.backup.BackupActivity"
             android:label="@string/title_activity_backup"
-            android:parentActivityName=".ui.overview.OverviewActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
         <activity
             android:name=".ui.backup.FinancistoImportActivity"
             android:label="@string/title_activity_financisto_import"
@@ -53,13 +50,16 @@
         <activity
             android:name=".ui.categories.CategoriesActivity"
             android:label="@string/title_activity_categories"
-            android:parentActivityName=".ui.overview.OverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
+        <activity
+            android:name=".ui.categories.SubcategoriesActivity"
+            android:label="@string/title_activity_categories"
+            android:parentActivityName=".ui.categories.CategoriesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.payees.PayeesActivity"
             android:label="@string/title_activity_payees"
-            android:parentActivityName=".ui.overview.OverviewActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
 
         <provider
             android:name=".provider.ExpensesProvider"
