@@ -23,11 +23,13 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     private Cursor mCursor;
     final private Context mContext;
+    final private long mSelectedAccountId;
     final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public TransactionsAdapter(Context context, OnClickListener clickListener, View emptyView) {
+    public TransactionsAdapter(Context context, long selectedAccountId, OnClickListener clickListener, View emptyView) {
         mContext = context;
+        mSelectedAccountId = selectedAccountId;
         mClickListener = clickListener;
         mEmptyView = emptyView;
     }
@@ -43,17 +45,15 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        boolean isTransfer = mCursor.getInt(TransactionsFragment.COLUMN_IS_TRANSFER) == 1;
-        if (isTransfer) {
+        long fromAccountId = mCursor.getLong(TransactionsFragment.COLUMN_FROM_ACCOUNT_ID);
+        long toAccountId = mCursor.getLong(TransactionsFragment.COLUMN_TO_ACCOUNT_ID);
+
+        if (fromAccountId > 0 && toAccountId > 0) {
             processTransfer(holder, position);
         } else {
-            long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT);
-            if (fromAmount > 0) {
+            if (fromAccountId > 0) {
                 processDebit(holder, position);
-            }
-
-            long toAmount = mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT);
-            if (toAmount > 0) {
+            } else {
                 processCredit(holder, position);
             }
         }
@@ -95,7 +95,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             description.append(additionalDescription.toString());
         }
         if (description.length() == 0) {
-            if (isTransfer) {
+            if (fromAccountId > 0 && toAccountId > 0) {
                 description.append(mContext.getString(R.string.default_transfer_description));
             } else {
                 long fromAmount = mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT);
@@ -116,7 +116,11 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         holder.mDate.setText(DateUtils.getRelativeTimeSpanString(transactionDate, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
 
         // Set the icon
-        holder.mIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
+        if (fromAccountId > 0 && toAccountId > 0) {
+            holder.mIcon.setImageResource(R.drawable.ic_transfer_white_24dp);
+        } else {
+            holder.mIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
+        }
         GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
     }
@@ -163,11 +167,24 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, fromBalanceFormatted, format.format(toBalance)));
         }
 
-        // Set the color for the amount
-        holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.orange_700));
+        // Set the color for the amount and the transaction type icon
+        if (mSelectedAccountId == 0) {
+            holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.orange_700));
+            holder.mTypeIcon.setImageResource(R.drawable.ic_swap_horiz_orange_24dp);
+        } else {
+            long fromAccountId = mCursor.getLong(TransactionsFragment.COLUMN_FROM_ACCOUNT_ID);
+            long toAccountId = mCursor.getLong(TransactionsFragment.COLUMN_TO_ACCOUNT_ID);
+            if (mSelectedAccountId == fromAccountId) {
+                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+                holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
+            } else if (mSelectedAccountId == toAccountId) {
+                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+                holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);
+            }
+        }
 
         // Set the transaction type icon
-        holder.mTypeIcon.setImageResource(R.drawable.ic_swap_horiz_orange_24dp);
+
     }
 
     private void processDebit(ViewHolder holder, int position) {

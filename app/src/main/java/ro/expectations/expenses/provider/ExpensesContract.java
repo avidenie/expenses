@@ -209,7 +209,6 @@ public final class ExpensesContract {
         public static final String FROM_AMOUNT = "from_amount";
         public static final String TO_AMOUNT = "to_amount";
         public static final String CATEGORY_ID = "category_id";
-        public static final String IS_TRANSFER = "is_transfer";
         public static final String IS_SPLIT = "is_split";
 
         // Database table columns aliases.

@@ -280,7 +280,6 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 transactionDetailsValues.put(ExpensesContract.TransactionDetails.FROM_AMOUNT, 0 - fromAmount);
                 transactionValues.put(ExpensesContract.Transactions.TO_ACCOUNT_ID, toAccountId);
                 transactionDetailsValues.put(ExpensesContract.TransactionDetails.TO_AMOUNT, toAmount);
-                transactionDetailsValues.put(ExpensesContract.TransactionDetails.IS_TRANSFER, 1);
             } else {
                 if (fromAmount > 0) {
                     transactionValues.put(ExpensesContract.Transactions.TO_ACCOUNT_ID, fromAccountId);

@@ -188,7 +188,6 @@ public class ExpensesProvider extends ContentProvider {
                 projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
                 projectionMap.put(ParentCategories.PARENT_NAME, ParentCategories.TABLE_NAME + "." + ParentCategories.NAME);
                 projectionMap.put(Transactions.NOTE, Transactions.TABLE_NAME + "." + Transactions.NOTE);
-                projectionMap.put(TransactionDetails.IS_TRANSFER, TransactionDetails.TABLE_NAME + "." + TransactionDetails.IS_TRANSFER);
                 projectionMap.put(TransactionDetails.IS_SPLIT, TransactionDetails.TABLE_NAME + "." + TransactionDetails.IS_SPLIT);
                 projectionMap.put(Transactions.OCCURRED_AT, Transactions.TABLE_NAME + "." + Transactions.OCCURRED_AT);
                 projectionMap.put(Transactions.CREATED_AT, Transactions.TABLE_NAME + "." + Transactions.CREATED_AT);

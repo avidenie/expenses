@@ -47,7 +47,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
             Transactions.PAYEE_ID,
             Payees.PAYEE_NAME,
             Transactions.NOTE,
-            TransactionDetails.IS_TRANSFER,
             TransactionDetails.IS_SPLIT,
             Transactions.OCCURRED_AT,
             Transactions.CREATED_AT,
@@ -72,12 +71,11 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_PAYEE_ID = 15;
     static final int COLUMN_PAYEE_NAME = 16;
     static final int COLUMN_NOTE = 17;
-    static final int COLUMN_IS_TRANSFER = 18;
-    static final int COLUMN_IS_SPLIT = 19;
-    static final int COLUMN_OCCURED_AT = 20;
-    static final int COLUMN_CREATED_AT = 21;
-    static final int COLUMN_ORIGINAL_AMOUNT = 22;
-    static final int COLUMN_ORIGINAL_CURRENCY = 23;
+    static final int COLUMN_IS_SPLIT = 18;
+    static final int COLUMN_OCCURED_AT = 19;
+    static final int COLUMN_CREATED_AT = 20;
+    static final int COLUMN_ORIGINAL_AMOUNT = 21;
+    static final int COLUMN_ORIGINAL_CURRENCY = 22;
 
     private RecyclerView mRecyclerView;
     private long mSelectedAccountId;
@@ -113,7 +111,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         mRecyclerView.setHasFixedSize(true);
 
         View emptyView = rootView.findViewById(R.id.list_transactions_empty);
-        TransactionsAdapter adapter = new TransactionsAdapter(getActivity(), new TransactionsAdapter.OnClickListener() {
+        TransactionsAdapter adapter = new TransactionsAdapter(getActivity(), mSelectedAccountId, new TransactionsAdapter.OnClickListener() {
             @Override
             public void onClick(long accountId, TransactionsAdapter.ViewHolder vh) {
             }

@@ -121,7 +121,6 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 TransactionDetails.FROM_AMOUNT + " INTEGER," +
                 TransactionDetails.TO_AMOUNT + " INTEGER," +
                 TransactionDetails.CATEGORY_ID + " INTEGER," +
-                TransactionDetails.IS_TRANSFER + " INTEGER NOT NULL DEFAULT 0," +
                 TransactionDetails.IS_SPLIT + " INTEGER NOT NULL DEFAULT 0," +
                 "CONSTRAINT fk_transaction_id FOREIGN KEY (" + TransactionDetails.TRANSACTION_ID + ") REFERENCES " +
                         Transactions.TABLE_NAME + " (" + Transactions._ID +
@@ -134,7 +133,6 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 " (" + TransactionDetails.TRANSACTION_ID + " ASC)");
 
         db.execSQL("CREATE INDEX idx_type ON " + TransactionDetails.TABLE_NAME + " (" +
-                TransactionDetails.IS_TRANSFER + " ASC, " +
                 TransactionDetails.IS_SPLIT + " ASC, " +
                 TransactionDetails.CATEGORY_ID + " ASC)");
 
