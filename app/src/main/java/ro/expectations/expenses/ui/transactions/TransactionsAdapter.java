@@ -139,21 +139,28 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             format.setCurrency(currency);
             format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
             holder.mAmount.setText(format.format(amount));
-            holder.mRunningBalance.setText(format.format(amount));
+
+            double fromBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_BALANCE) / 100.0);
+            String fromBalanceFormatted = format.format(fromBalance);
+            double toBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_BALANCE) / 100.0);
+            holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, fromBalanceFormatted, format.format(toBalance)));
         } else {
             Currency fromCurrency = Currency.getInstance(fromCurrencyCode);
             format.setCurrency(fromCurrency);
             format.setMaximumFractionDigits(fromCurrency.getDefaultFractionDigits());
             double fromAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
             String fromAmountFormatted = format.format(fromAmount);
+            double fromBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_BALANCE) / 100.0);
+            String fromBalanceFormatted = format.format(fromBalance);
 
             Currency toCurrency = Currency.getInstance(toCurrencyCode);
             format.setCurrency(toCurrency);
             format.setMaximumFractionDigits(toCurrency.getDefaultFractionDigits());
             double toAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_AMOUNT) / 100.0);
+            double toBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_BALANCE) / 100.0);
 
             holder.mAmount.setText(mContext.getResources().getString(R.string.breadcrumbs, fromAmountFormatted, format.format(toAmount)));
-            holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, fromAmountFormatted, format.format(toAmount)));
+            holder.mRunningBalance.setText(mContext.getResources().getString(R.string.breadcrumbs, fromBalanceFormatted, format.format(toBalance)));
         }
 
         // Set the color for the amount
@@ -171,15 +178,17 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         holder.mAccount.setText(fromAccount);
 
         // Set the amount
-        double fromAmount = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
+        double fromAmount = NumberUtils.roundToTwoPlaces(0 - mCursor.getLong(TransactionsFragment.COLUMN_FROM_AMOUNT) / 100.0);
         NumberFormat format = NumberFormat.getCurrencyInstance();
         String fromCurrencyCode = mCursor.getString(TransactionsFragment.COLUMN_FROM_CURRENCY);
         Currency fromCurrency = Currency.getInstance(fromCurrencyCode);
         format.setCurrency(fromCurrency);
         format.setMaximumFractionDigits(fromCurrency.getDefaultFractionDigits());
-        holder.mAmount.setText(mContext.getResources().getString(R.string.negative_amount, format.format(fromAmount)));
+        holder.mAmount.setText(format.format(fromAmount));
         holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
-        holder.mRunningBalance.setText(mContext.getResources().getString(R.string.negative_amount, format.format(fromAmount)));
+
+        double fromBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_BALANCE) / 100.0);
+        holder.mRunningBalance.setText(format.format(fromBalance));
 
         // Set the transaction type icon
         holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
@@ -201,7 +210,9 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         format.setMaximumFractionDigits(toCurrency.getDefaultFractionDigits());
         holder.mAmount.setText(format.format(toAmount));
         holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
-        holder.mRunningBalance.setText(format.format(toAmount));
+
+        double toBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_BALANCE) / 100.0);
+        holder.mRunningBalance.setText(format.format(toBalance));
 
         // Set the transaction type icon
         holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);

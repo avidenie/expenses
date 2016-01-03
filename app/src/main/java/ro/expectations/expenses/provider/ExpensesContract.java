@@ -211,5 +211,9 @@ public final class ExpensesContract {
         public static final String CATEGORY_ID = "category_id";
         public static final String IS_TRANSFER = "is_transfer";
         public static final String IS_SPLIT = "is_split";
+
+        // Database table columns aliases.
+        public static final String FROM_AMOUNT_SUM = "from_amount_sum";
+        public static final String TO_AMOUNT_SUM = "to_amount_sum";
     }
 }

@@ -70,10 +70,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         } finally {
             br.close();
         }
+        Log.i(TAG, "Finished parsing Financisto backup file");
+
         processAccountEntries();
         processCategoryEntries();
         processTransactionEntries();
-        Log.i(TAG, "Finished parsing Financisto backup file: " + mOperations.size() + " entries to restore");
+        Log.i(TAG, "Finished processing backup file: " + mOperations.size() + " entries to restore");
     }
 
     @Override

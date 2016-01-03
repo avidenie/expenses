@@ -5,6 +5,7 @@ import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +16,13 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.utils.IntegrityFix;
 
 abstract public class AbstractRestoreIntentService extends IntentService {
 
     public static final String ARG_FILE_URI = "arg_file_uri";
+
+    protected static final String TAG = AbstractRestoreIntentService.class.getSimpleName();
 
     protected ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 
@@ -41,13 +45,8 @@ abstract public class AbstractRestoreIntentService extends IntentService {
 
         try {
             emptyDatabase();
-        } catch(RemoteException | OperationApplicationException e) {
-            notifyFailure(e);
-            return;
-        }
-
-        try {
             populateDatabase();
+            new IntegrityFix(this).fix();
         } catch(RemoteException | OperationApplicationException e) {
             notifyFailure(e);
             return;
@@ -86,10 +85,13 @@ abstract public class AbstractRestoreIntentService extends IntentService {
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.Accounts.CONTENT_URI).build());
 
         getContentResolver().applyBatch(ExpensesContract.CONTENT_AUTHORITY, operations);
+
+        Log.i(TAG, "Finished emptying existing database");
     }
 
     protected void populateDatabase() throws RemoteException, OperationApplicationException {
         getContentResolver().applyBatch(ExpensesContract.CONTENT_AUTHORITY, mOperations);
+        Log.i(TAG, "Finished populating the database with new entries");
     }
 
     abstract protected void parse(InputStream input) throws IOException;

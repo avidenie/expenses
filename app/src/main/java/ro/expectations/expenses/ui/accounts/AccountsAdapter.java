@@ -21,6 +21,7 @@ import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.utils.NumberUtils;
 
 public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
 
@@ -99,7 +100,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         holder.mLastTransactionAt.setText(DateUtils.getRelativeTimeSpanString(lastTransactionAt, now, DateUtils.DAY_IN_MILLIS));
 
         // Set the balance
-        long balance = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.BALANCE)) / 100;
+        double balance = NumberUtils.roundToTwoPlaces(mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.BALANCE)) / 100.0);
         String currencyCode = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.CURRENCY));
         Currency currency = Currency.getInstance(currencyCode);
         NumberFormat format = NumberFormat.getCurrencyInstance();

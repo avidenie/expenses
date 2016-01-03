@@ -43,6 +43,7 @@ public class ExpensesProvider extends ContentProvider {
     private static final int ROUTE_TRANSACTION_ID = 108;
     private static final int ROUTE_TRANSACTION_DETAILS = 109;
     private static final int ROUTE_TRANSACTION_DETAILS_ID = 110;
+    private static final int ROUTE_RUNNING_BALANCES = 111;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -56,6 +57,7 @@ public class ExpensesProvider extends ContentProvider {
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transactions/#", ROUTE_TRANSACTION_ID);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transaction_details", ROUTE_TRANSACTION_DETAILS);
         sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "transaction_details/#", ROUTE_TRANSACTION_DETAILS_ID);
+        sUriMatcher.addURI(ExpensesContract.CONTENT_AUTHORITY, "running_balances", ROUTE_RUNNING_BALANCES);
     }
 
     private ExpensesDatabase mDatabaseHelper;
@@ -194,6 +196,8 @@ public class ExpensesProvider extends ContentProvider {
                 projectionMap.put(Transactions.ORIGINAL_AMOUNT, Transactions.TABLE_NAME + "." + Transactions.ORIGINAL_AMOUNT);
                 projectionMap.put(Transactions.PAYEE_ID, Transactions.TABLE_NAME + "." + Transactions.PAYEE_ID);
                 projectionMap.put(Payees.PAYEE_NAME, Payees.TABLE_NAME + "." + Payees.NAME);
+                projectionMap.put(TransactionDetails.FROM_AMOUNT_SUM, "SUM(" + TransactionDetails.TABLE_NAME + "." + TransactionDetails.FROM_AMOUNT + ")");
+                projectionMap.put(TransactionDetails.TO_AMOUNT_SUM, "SUM(" + TransactionDetails.TABLE_NAME + "." + TransactionDetails.TO_AMOUNT + ")");
                 queryBuilder.setProjectionMap(projectionMap);
                 break;
             case ROUTE_TRANSACTION_ID:
@@ -246,6 +250,10 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_DETAILS:
                 id = db.insertOrThrow(TransactionDetails.TABLE_NAME, null, values);
                 returnUri = ContentUris.withAppendedId(TransactionDetails.CONTENT_URI, id);
+                break;
+            case ROUTE_RUNNING_BALANCES:
+                id = db.insertOrThrow(RunningBalances.TABLE_NAME, null, values);
+                returnUri = ContentUris.withAppendedId(RunningBalances.CONTENT_URI, id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown content provider insert URI: " + uri);
@@ -414,6 +422,12 @@ public class ExpensesProvider extends ContentProvider {
                     newSelection.append(" AND ").append(selection);
                 }
                 rowsDeleted = db.delete(TransactionDetails.TABLE_NAME, newSelection.toString(), selectionArgs);
+                break;
+            case ROUTE_RUNNING_BALANCES:
+                rowsDeleted = db.delete(RunningBalances.TABLE_NAME, selection, selectionArgs);
+                if (selection == null) {
+                    db.delete("sqlite_sequence", "name = ?", new String[] {RunningBalances.TABLE_NAME});
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown content provider delete URI: " + uri);
