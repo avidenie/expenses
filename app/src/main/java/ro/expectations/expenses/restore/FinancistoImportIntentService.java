@@ -103,7 +103,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 processCategoryEntry(values);
                 break;
             case "transactions":
-                processTransactionEntry(values);
+                if (!values.containsKey("is_template") || Integer.parseInt(values.get("is_template")) == 0) {
+                    processTransactionEntry(values);
+                }
                 break;
         }
     }
