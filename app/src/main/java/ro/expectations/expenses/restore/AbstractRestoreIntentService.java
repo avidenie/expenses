@@ -73,7 +73,8 @@ abstract public class AbstractRestoreIntentService extends IntentService {
     protected void emptyDatabase() throws RemoteException, OperationApplicationException {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-
+        operations.add(ContentProviderOperation.newDelete(ExpensesContract.RunningBalances
+                .CONTENT_URI).build());
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.TransactionDetails
                 .CONTENT_URI).build());
         operations.add(ContentProviderOperation.newDelete(ExpensesContract.Transactions.CONTENT_URI).build());

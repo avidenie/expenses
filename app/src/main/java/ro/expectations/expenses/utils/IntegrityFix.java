@@ -128,13 +128,14 @@ public class IntegrityFix {
                 .withSelection(RunningBalances.ACCOUNT_ID + " = ?", new String[]{String.valueOf(accountId)})
                 .build());
 
-        // Retrieve all transactions for this account.
+        // Retrieve all transactions and update running balances.
         String[] projection = {
                 Transactions._ID,
                 Transactions.FROM_ACCOUNT_ID,
                 TransactionDetails.FROM_AMOUNT,
                 Transactions.TO_ACCOUNT_ID,
-                TransactionDetails.TO_AMOUNT
+                TransactionDetails.TO_AMOUNT,
+                Transactions.CREATED_AT
         };
         String selection = TransactionDetails.TABLE_NAME + "." + TransactionDetails.IS_SPLIT + " = 0"
                 + " AND (" + Transactions.TABLE_NAME + "." + Transactions.FROM_ACCOUNT_ID
@@ -150,6 +151,7 @@ public class IntegrityFix {
                 projection, selection, selectionArgs, sortOrder);
         try {
             long balance = 0;
+            long lastTransactionAt = 0;
             while (transactions.moveToNext()) {
                 long transactionId = transactions.getLong(0);
                 long fromAccountId = transactions.getLong(1);
@@ -171,6 +173,16 @@ public class IntegrityFix {
                             .withValue(RunningBalances.BALANCE, balance)
                             .build());
                 }
+                long createdAt = transactions.getLong(5);
+                if (createdAt > lastTransactionAt) {
+                    lastTransactionAt = createdAt;
+                }
+            }
+            if (lastTransactionAt > 0) {
+                operations.add(ContentProviderOperation.newUpdate(Accounts.CONTENT_URI)
+                        .withValue(Accounts.LAST_TRANSACTION_AT, lastTransactionAt)
+                        .withSelection(Accounts.TABLE_NAME + "." + Accounts._ID + " = ?", new String[] {String.valueOf(accountId)})
+                        .build());
             }
         } finally {
             transactions.close();
