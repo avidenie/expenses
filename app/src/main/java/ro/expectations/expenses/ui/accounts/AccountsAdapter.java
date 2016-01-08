@@ -27,13 +27,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
 
     private Cursor mCursor;
     final private Context mContext;
-    final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public AccountsAdapter(Context context, OnClickListener clickListener, View emptyView) {
+    public AccountsAdapter(Context context, OnClickListener clickListener) {
         mContext = context;
         mClickListener = clickListener;
-        mEmptyView = emptyView;
     }
 
     @Override
@@ -125,7 +123,6 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
-        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public Cursor getCursor() {

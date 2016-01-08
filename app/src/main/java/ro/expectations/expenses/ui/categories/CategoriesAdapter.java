@@ -18,13 +18,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     private Cursor mCursor;
     final private Context mContext;
-    final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public CategoriesAdapter(Context context, OnClickListener clickListener, View emptyView) {
+    public CategoriesAdapter(Context context, OnClickListener clickListener) {
         mContext = context;
         mClickListener = clickListener;
-        mEmptyView = emptyView;
     }
 
     @Override
@@ -71,7 +69,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
-        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public Cursor getCursor() {
@@ -95,9 +92,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            mClickListener.onClick(mCursor.getLong(CategoriesFragment.COLUMN_CATEGORY_ID), this);
+            if (mClickListener != null) {
+                mCursor.moveToPosition(getAdapterPosition());
+                mClickListener.onClick(
+                        mCursor.getLong(CategoriesFragment.COLUMN_CATEGORY_ID),
+                        this);
+            }
         }
     }
 

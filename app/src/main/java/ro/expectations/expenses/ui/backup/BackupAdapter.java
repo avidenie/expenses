@@ -16,13 +16,11 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
 
     private File[] mFiles;
     final private Context mContext;
-    final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public BackupAdapter(Context context, OnClickListener clickListener, View emptyView) {
+    public BackupAdapter(Context context, OnClickListener clickListener) {
         mContext = context;
         mClickListener = clickListener;
-        mEmptyView = emptyView;
         mFiles = new File[0];
     }
 
@@ -36,7 +34,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         File currentFile = mFiles[position];
-        holder.bind(currentFile);
+        holder.mBackupFilename.setText(currentFile.getName());
+        holder.mBackupFilesize.setText(Formatter.formatFileSize(mContext, currentFile.length()));
     }
 
     @Override
@@ -47,7 +46,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
     public void setFiles(File[] newFiles) {
         mFiles = newFiles;
         notifyDataSetChanged();
-        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -64,13 +62,10 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-            File file = mFiles[getAdapterPosition()];
-            mClickListener.onClick(file, this);
-        }
-
-        public void bind(File file) {
-            mBackupFilename.setText(file.getName());
-            mBackupFilesize.setText(Formatter.formatFileSize(mContext, file.length()));
+            if (mClickListener != null) {
+                File file = mFiles[getAdapterPosition()];
+                mClickListener.onClick(file, this);
+            }
         }
     }
 

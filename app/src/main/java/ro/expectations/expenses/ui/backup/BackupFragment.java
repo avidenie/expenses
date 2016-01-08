@@ -45,6 +45,7 @@ public class BackupFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     private AlertDialog mAlertDialog;
 
+
     static BackupFragment newInstance(@BackupType int backupType) {
         BackupFragment fragment = new BackupFragment();
         Bundle args = new Bundle();
@@ -77,12 +78,10 @@ public class BackupFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        TextView emptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
+        TextView mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
         if (mBackupType == BACKUP_TYPE_FINANCISTO) {
-            emptyView.setText(getString(R.string.no_financisto_backup_found));
+            mEmptyView.setText(getString(R.string.no_financisto_backup_found));
         }
-
-        BackupAdapter adapter = new BackupAdapter(getActivity(), getOnClickListener(), emptyView);
 
         File[] files;
         if (mBackupType == BACKUP_TYPE_FINANCISTO) {
@@ -90,6 +89,10 @@ public class BackupFragment extends Fragment {
         } else {
             files = BackupHelper.listBackups(BackupHelper.getLocalBackupFolder(getActivity()));
         }
+
+        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
+
+        BackupAdapter adapter = new BackupAdapter(getActivity(), getOnClickListener());
         adapter.setFiles(files);
         mRecyclerView.setAdapter(adapter);
 

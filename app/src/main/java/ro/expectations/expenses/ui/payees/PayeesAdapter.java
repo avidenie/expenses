@@ -15,13 +15,11 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
 
     private Cursor mCursor;
     final private Context mContext;
-    final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public PayeesAdapter(Context context, OnClickListener clickListener, View emptyView) {
+    public PayeesAdapter(Context context, OnClickListener clickListener) {
         mContext = context;
         mClickListener = clickListener;
-        mEmptyView = emptyView;
     }
 
     @Override
@@ -51,7 +49,6 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
-        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -66,10 +63,12 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            int accountId = mCursor.getColumnIndex(ExpensesContract.Accounts._ID);
-            mClickListener.onClick(mCursor.getLong(accountId), this);
+            if (mClickListener != null) {
+                mCursor.moveToPosition(getAdapterPosition());
+                mClickListener.onClick(
+                        mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts._ID)),
+                        this);
+            }
         }
     }
 

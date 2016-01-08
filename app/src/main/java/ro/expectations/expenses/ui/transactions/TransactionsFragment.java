@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract.Categories;
@@ -78,6 +79,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_ORIGINAL_CURRENCY = 22;
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyView;
     private long mSelectedAccountId;
 
     public static TransactionsFragment newInstance(long accountId) {
@@ -110,12 +112,13 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        View emptyView = rootView.findViewById(R.id.list_transactions_empty);
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_transactions_empty);
+
         TransactionsAdapter adapter = new TransactionsAdapter(getActivity(), mSelectedAccountId, new TransactionsAdapter.OnClickListener() {
             @Override
             public void onClick(long accountId, TransactionsAdapter.ViewHolder vh) {
             }
-        }, emptyView);
+        });
         mRecyclerView.setAdapter(adapter);
 
         return rootView;
@@ -151,6 +154,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         ((TransactionsAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override

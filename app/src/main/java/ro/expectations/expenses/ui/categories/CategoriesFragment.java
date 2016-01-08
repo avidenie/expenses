@@ -35,6 +35,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
 
     private long mParentCategoryId;
     private RecyclerView mRecyclerView;
+    private TextView mEmptyView;
 
     public CategoriesFragment() {
         // Required empty public constructor
@@ -66,9 +67,9 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        TextView emptyView = (TextView) rootView.findViewById(R.id.list_categories_empty);
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_categories_empty);
         if (mParentCategoryId > 0) {
-            emptyView.setText(getString(R.string.no_subcategories_defined));
+            mEmptyView.setText(getString(R.string.no_subcategories_defined));
         }
         CategoriesAdapter adapter = new CategoriesAdapter(getActivity(), new CategoriesAdapter.OnClickListener() {
                 @Override
@@ -80,7 +81,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, categoryId);
                     getActivity().startActivity(subcategoryIntent);
                 }
-            }, emptyView);
+            });
         mRecyclerView.setAdapter(adapter);
 
         return rootView;
@@ -119,6 +120,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         ((CategoriesAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override

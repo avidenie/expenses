@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.accounts.AccountsActivity">
+    tools:context=".ui.overview.OverviewActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:src="@drawable/ic_add_white_24dp"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

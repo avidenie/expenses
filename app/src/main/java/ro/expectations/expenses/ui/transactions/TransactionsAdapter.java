@@ -24,14 +24,12 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
     private Cursor mCursor;
     final private Context mContext;
     final private long mSelectedAccountId;
-    final private View mEmptyView;
     final private OnClickListener mClickListener;
 
-    public TransactionsAdapter(Context context, long selectedAccountId, OnClickListener clickListener, View emptyView) {
+    public TransactionsAdapter(Context context, long selectedAccountId, OnClickListener clickListener) {
         mContext = context;
         mSelectedAccountId = selectedAccountId;
         mClickListener = clickListener;
-        mEmptyView = emptyView;
     }
 
     @Override
@@ -182,9 +180,6 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
                 holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);
             }
         }
-
-        // Set the transaction type icon
-
     }
 
     private void processDebit(ViewHolder holder, int position) {
@@ -246,10 +241,10 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
-        mEmptyView.setVisibility(mCursor != null && getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         public final RelativeLayout mIconBackgroundView;
         public final ImageView mIcon;
         public final TextView mAccount;
@@ -273,9 +268,12 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            mClickListener.onClick(mCursor.getLong(TransactionsFragment.COLUMN_TRANSACTION_ID), this);
+            if (mClickListener != null) {
+                mCursor.moveToPosition(getAdapterPosition());
+                mClickListener.onClick(
+                        mCursor.getLong(TransactionsFragment.COLUMN_TRANSACTION_ID),
+                        this);
+            }
         }
     }
 

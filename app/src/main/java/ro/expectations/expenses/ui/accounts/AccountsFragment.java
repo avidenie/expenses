@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
@@ -21,6 +22,7 @@ import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyView;
 
     public AccountsFragment() {
         // Required empty public constructor
@@ -36,7 +38,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        View emptyView = rootView.findViewById(R.id.list_accounts_empty);
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
         AccountsAdapter adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.OnClickListener() {
                 @Override
                 public void onClick(long accountId, AccountsAdapter.ViewHolder vh) {
@@ -44,7 +46,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                     transactionsListingIntent.putExtra(TransactionsActivity.ARG_ACCOUNT_ID, accountId);
                     startActivity(transactionsListingIntent);
                 }
-            }, emptyView);
+            });
         mRecyclerView.setAdapter(adapter);
 
         return rootView;
@@ -83,6 +85,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         ((AccountsAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override

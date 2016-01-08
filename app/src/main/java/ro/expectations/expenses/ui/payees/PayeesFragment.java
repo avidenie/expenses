@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
@@ -21,6 +22,7 @@ import ro.expectations.expenses.ui.widget.DividerItemDecoration;
 public class PayeesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyView;
 
     public PayeesFragment() {
         // Required empty public constructor
@@ -37,14 +39,15 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        View emptyView = rootView.findViewById(R.id.list_payees_empty);
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_payees_empty);
+
         PayeesAdapter adapter = new PayeesAdapter(getActivity(), new PayeesAdapter.OnClickListener() {
             @Override
             public void onClick(long accountId, PayeesAdapter.ViewHolder vh) {
                 Snackbar.make(vh.itemView, "Not yet implemented", Snackbar.LENGTH_LONG)
                         .setAction("OK", null).show();
             }
-        }, emptyView);
+        });
         mRecyclerView.setAdapter(adapter);
 
         return rootView;
@@ -76,6 +79,7 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         ((PayeesAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
