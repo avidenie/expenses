@@ -23,7 +23,7 @@ import ro.expectations.expenses.provider.ExpensesContract.ToAccounts;
 import ro.expectations.expenses.provider.ExpensesContract.ToRunningBalances;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
-import ro.expectations.expenses.ui.widget.DividerItemDecoration;
+import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

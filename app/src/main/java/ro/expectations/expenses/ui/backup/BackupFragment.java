@@ -26,7 +26,7 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
-import ro.expectations.expenses.ui.widget.DividerItemDecoration;
+import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 
 public class BackupFragment extends Fragment {
     @Retention(RetentionPolicy.SOURCE)

@@ -17,7 +17,7 @@ import android.widget.TextView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
-import ro.expectations.expenses.ui.widget.DividerItemDecoration;
+import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

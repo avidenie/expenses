@@ -1,4 +1,4 @@
-package ro.expectations.expenses.ui.widget;
+package ro.expectations.expenses.widget.recyclerview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
