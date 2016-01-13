@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +23,16 @@ import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.NumberUtils;
+import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
-public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
+public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.ViewHolder> {
 
     private Cursor mCursor;
     final private Context mContext;
-    final private OnClickListener mClickListener;
 
-    public AccountsAdapter(Context context, OnClickListener clickListener) {
+    public AccountsAdapter(Context context) {
         mContext = context;
-        mClickListener = clickListener;
+        setHasStableIds(true);
     }
 
     @Override
@@ -45,7 +46,22 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        // Set the icon.
+        // Set the row background
+        TypedValue iconBackgroundTypedValue = new TypedValue();
+        if (isItemSelected(position)) {
+            holder.mAccountIconBackground.setVisibility(View.GONE);
+            holder.mSelectedIconBackground.setVisibility(View.VISIBLE);
+            mContext.getTheme().resolveAttribute(android.R.attr.activatedBackgroundIndicator, iconBackgroundTypedValue, true);
+            holder.itemView.setActivated(true);
+        } else {
+            holder.mAccountIconBackground.setVisibility(View.VISIBLE);
+            holder.mSelectedIconBackground.setVisibility(View.GONE);
+            mContext.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, iconBackgroundTypedValue, true);
+            holder.itemView.setActivated(false);
+        }
+        holder.itemView.setBackgroundResource(iconBackgroundTypedValue.resourceId);
+
+        // Set the icon
         String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TYPE));
         AccountType accountType = AccountType.valueOf(type);
         if (accountType == AccountType.CREDIT_CARD || accountType == AccountType.DEBIT_CARD) {
@@ -60,7 +76,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
                     cardIssuer = CardIssuer.OTHER;
                 }
             }
-            holder.mIconView.setImageResource(cardIssuer.iconId);
+            holder.mAccountIcon.setImageResource(cardIssuer.iconId);
         } else if (accountType == AccountType.ELECTRONIC) {
             String paymentType = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
             ElectronicPaymentType electronicPaymentType;
@@ -73,42 +89,42 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
                     electronicPaymentType = ElectronicPaymentType.OTHER;
                 }
             }
-            holder.mIconView.setImageResource(electronicPaymentType.iconId);
+            holder.mAccountIcon.setImageResource(electronicPaymentType.iconId);
         } else {
-            holder.mIconView.setImageResource(accountType.iconId);
+            holder.mAccountIcon.setImageResource(accountType.iconId);
         }
 
-        // Set the icon background color.
-        GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
+        // Set the icon background color
+        GradientDrawable bgShape = (GradientDrawable) holder.mAccountIconBackground.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, accountType.colorId));
 
-        // Set the description.
-        holder.mDescriptionView.setText(accountType.titleId);
+        // Set the description
+        holder.mAccountDescription.setText(accountType.titleId);
 
         // Set the title
         String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TITLE));
-        holder.mTitleView.setText(title);
+        holder.mAccountTitle.setText(title);
 
-        // Set the date.
+        // Set the date
         long now = System.currentTimeMillis();
         long lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.LAST_TRANSACTION_AT));
         if (lastTransactionAt == 0) {
             lastTransactionAt = mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.CREATED_AT));
         }
-        holder.mLastTransactionAt.setText(DateUtils.getRelativeTimeSpanString(lastTransactionAt, now, DateUtils.DAY_IN_MILLIS));
+        holder.mAccountLastTransactionAt.setText(DateUtils.getRelativeTimeSpanString(lastTransactionAt, now, DateUtils.DAY_IN_MILLIS));
 
-        // Set the balance
+        // Set the account balance
         double balance = NumberUtils.roundToTwoPlaces(mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts.BALANCE)) / 100.0);
         String currencyCode = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.CURRENCY));
         Currency currency = Currency.getInstance(currencyCode);
         NumberFormat format = NumberFormat.getCurrencyInstance();
         format.setCurrency(currency);
         format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-        holder.mBalanceView.setText(format.format(balance));
+        holder.mAccountBalance.setText(format.format(balance));
         if (balance > 0) {
-            holder.mBalanceView.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
         } else if (balance < 0) {
-            holder.mBalanceView.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
         }
     }
 
@@ -120,6 +136,12 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         return mCursor.getCount();
     }
 
+    @Override
+    public long getItemId(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts._ID));
+    }
+
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
@@ -129,35 +151,26 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         return mCursor;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final RelativeLayout mIconBackgroundView;
-        public final ImageView mIconView;
-        public final TextView mTitleView;
-        public final TextView mDescriptionView;
-        public final TextView mLastTransactionAt;
-        public final TextView mBalanceView;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final RelativeLayout mAccountIconBackground;
+        public final ImageView mAccountIcon;
+        public final RelativeLayout mSelectedIconBackground;
+        public final ImageView mSelectedIcon;
+        public final TextView mAccountTitle;
+        public final TextView mAccountDescription;
+        public final TextView mAccountLastTransactionAt;
+        public final TextView mAccountBalance;
 
         public ViewHolder(View view) {
             super(view);
-            mIconBackgroundView = (RelativeLayout) view.findViewById(R.id.account_icon_background);
-            mIconView = (ImageView) view.findViewById(R.id.account_icon);
-            mTitleView = (TextView) view.findViewById(R.id.account_title);
-            mDescriptionView = (TextView) view.findViewById(R.id.account_description);
-            mLastTransactionAt = (TextView) view.findViewById(R.id.account_last_transaction_at);
-            mBalanceView = (TextView) view.findViewById(R.id.account_balance);
-            view.setOnClickListener(this);
+            mAccountIconBackground = (RelativeLayout) view.findViewById(R.id.account_icon_background);
+            mSelectedIconBackground = (RelativeLayout) view.findViewById(R.id.selected_icon_background);
+            mAccountIcon = (ImageView) view.findViewById(R.id.account_icon);
+            mSelectedIcon = (ImageView) view.findViewById(R.id.selected_icon);
+            mAccountTitle = (TextView) view.findViewById(R.id.account_title);
+            mAccountDescription = (TextView) view.findViewById(R.id.account_description);
+            mAccountLastTransactionAt = (TextView) view.findViewById(R.id.account_last_transaction_at);
+            mAccountBalance = (TextView) view.findViewById(R.id.account_balance);
         }
-
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            int accountId = mCursor.getColumnIndex(ExpensesContract.Accounts._ID);
-            mClickListener.onClick(mCursor.getLong(accountId), this);
-        }
-    }
-
-    public interface OnClickListener {
-        void onClick(long accountId, ViewHolder vh);
     }
 }

@@ -27,6 +27,7 @@ public class AccountsActivity extends DrawerActivity {
                 startActivity(newAccountIntent);
             }
         });
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override

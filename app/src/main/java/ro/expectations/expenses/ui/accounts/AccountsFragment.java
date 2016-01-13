@@ -18,6 +18,7 @@ import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -33,29 +34,56 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_accounts, container, false);
 
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setHasFixedSize(true);
 
-        mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
-        AccountsAdapter adapter = new AccountsAdapter(getActivity(), new AccountsAdapter.OnClickListener() {
-                @Override
-                public void onClick(long accountId, AccountsAdapter.ViewHolder vh) {
+        final AccountsAdapter adapter = new AccountsAdapter(getActivity());
+        mRecyclerView.setAdapter(adapter);
+
+        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView parent, View view, int position) {
+                boolean isItemSelected = adapter.isItemSelected(position);
+                if (isItemSelected) {
+                    adapter.setItemSelected(position, false);
+                } else if (adapter.isChoiceMode()) {
+                    adapter.setItemSelected(position, true);
+                } else {
+                    long id = parent.getAdapter().getItemId(position);
                     Intent transactionsListingIntent = new Intent(getActivity(), TransactionsActivity.class);
-                    transactionsListingIntent.putExtra(TransactionsActivity.ARG_ACCOUNT_ID, accountId);
+                    transactionsListingIntent.putExtra(TransactionsActivity.ARG_ACCOUNT_ID, id);
                     startActivity(transactionsListingIntent);
                 }
-            });
-        mRecyclerView.setAdapter(adapter);
+            }
+        });
+        itemClickHelper.setOnItemLongClickListener(new ItemClickHelper.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(RecyclerView parent, View view, int position) {
+                adapter.setItemSelected(position, !adapter.isItemSelected(position));
+                return true;
+            }
+        });
 
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            ((AccountsAdapter) mRecyclerView.getAdapter()).onRestoreInstanceState(savedInstanceState);
+        }
         getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        ((AccountsAdapter) mRecyclerView.getAdapter()).onSaveInstanceState(outState);
     }
 
     @Override

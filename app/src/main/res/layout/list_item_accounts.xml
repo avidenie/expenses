@@ -24,12 +24,27 @@
             android:contentDescription="@null" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/selected_icon_background"
+        android:layout_width="@dimen/list_icon_size"
+        android:layout_height="@dimen/list_icon_size"
+        android:layout_marginEnd="?android:attr/listPreferredItemPaddingRight"
+        android:gravity="center"
+        android:background="@drawable/circle_background_grey"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/selected_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_done_white_24dp" />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="7"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/account_title"
             android:layout_width="wrap_content"
@@ -49,7 +64,6 @@
         android:layout_width="wrap_content"
         android:orientation="vertical"
         android:gravity="end">
-
         <TextView
             android:id="@+id/account_balance"
             android:layout_width="wrap_content"
