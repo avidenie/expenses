@@ -6,4 +6,4 @@
     android:name="ro.expectations.expenses.ui.payees.PayeesFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout="@layout/fragment_accounts" />
+    tools:layout="@layout/fragment_payees" />

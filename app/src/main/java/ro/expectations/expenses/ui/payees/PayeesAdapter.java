@@ -15,11 +15,9 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
 
     private Cursor mCursor;
     final private Context mContext;
-    final private OnClickListener mClickListener;
 
-    public PayeesAdapter(Context context, OnClickListener clickListener) {
+    public PayeesAdapter(Context context) {
         mContext = context;
-        mClickListener = clickListener;
     }
 
     @Override
@@ -33,9 +31,9 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        // Set the title
-        String title = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Payees.NAME));
-        holder.mNameView.setText(title);
+        // Set the payee name
+        String name = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Payees.NAME));
+        holder.mPayeeName.setText(name);
     }
 
     @Override
@@ -51,28 +49,13 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView mNameView;
+        public final TextView mPayeeName;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mNameView = (TextView) itemView.findViewById(R.id.payee_name);
-            itemView.setOnClickListener(this);
+            mPayeeName = (TextView) itemView.findViewById(R.id.payee_name);
         }
-
-        @Override
-        public void onClick(View v) {
-            if (mClickListener != null) {
-                mCursor.moveToPosition(getAdapterPosition());
-                mClickListener.onClick(
-                        mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts._ID)),
-                        this);
-            }
-        }
-    }
-
-    public interface OnClickListener {
-        void onClick(long payeeId, ViewHolder vh);
     }
 }

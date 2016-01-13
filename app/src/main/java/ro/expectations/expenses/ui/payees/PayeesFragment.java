@@ -3,7 +3,6 @@ package ro.expectations.expenses.ui.payees;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -41,13 +40,7 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
 
         mEmptyView = (TextView) rootView.findViewById(R.id.list_payees_empty);
 
-        PayeesAdapter adapter = new PayeesAdapter(getActivity(), new PayeesAdapter.OnClickListener() {
-            @Override
-            public void onClick(long accountId, PayeesAdapter.ViewHolder vh) {
-                Snackbar.make(vh.itemView, "Not yet implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
-            }
-        });
+        final PayeesAdapter adapter = new PayeesAdapter(getActivity());
         mRecyclerView.setAdapter(adapter);
 
         return rootView;

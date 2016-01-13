@@ -25,6 +25,7 @@ public class PayeesActivity extends DrawerActivity {
                         .setAction("OK", null).show();
             }
         });
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override
