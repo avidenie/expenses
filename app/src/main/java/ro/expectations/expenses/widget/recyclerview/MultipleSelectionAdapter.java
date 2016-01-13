@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 
@@ -38,13 +41,18 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
     }
 
     /**
-     * Returns the set of selected items in the list.
+     * Returns the set of selected item positions in the list.
      *
-     * @return A SparseBooleanArray which will return the selected status for each position in
-     * the list.
+     * @return All selected item positions in the list.
      */
-    public SparseBooleanArray getSelectedItemPositions() {
-        return mSelectedItems;
+    public List<Integer> getSelectedItemPositions() {
+        List<Integer> items = new ArrayList<>();
+        for (int i = 0; i < mSelectedItems.size(); ++i) {
+            if (mSelectedItems.valueAt(i)) {
+                items.add(mSelectedItems.keyAt(i));
+            }
+        }
+        return items;
     }
 
     /**
@@ -55,7 +63,12 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
      */
     public void setItemSelected(int position, boolean selected) {
         boolean oldValue = mSelectedItems.get(position);
-        mSelectedItems.put(position, selected);
+
+        if (selected) {
+            mSelectedItems.put(position, true);
+        } else {
+            mSelectedItems.delete(position);
+        }
 
         if (oldValue != selected) {
             if (selected) {
@@ -68,8 +81,12 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
     }
 
     public void clearSelectedItems() {
+        List<Integer> selection = getSelectedItemPositions();
         mSelectedItems.clear();
         mSelectedItemsCount = 0;
+        for (Integer i: selection) {
+            notifyItemChanged(i);
+        }
     }
 
     public boolean isChoiceMode() {
@@ -104,7 +121,9 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
                 for (int i = 0; i < size; i++) {
                     final int key = in.readInt();
                     final boolean value = (in.readInt() == TRUE);
-                    put(key, value);
+                    if (value) {
+                        put(key, value);
+                    }
                 }
             }
         }
