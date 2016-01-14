@@ -80,7 +80,7 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
         }
     }
 
-    public void clearSelectedItems() {
+    public void clearSelection() {
         List<Integer> selection = getSelectedItemPositions();
         mSelectedItems.clear();
         mSelectedItemsCount = 0;

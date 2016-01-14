@@ -43,7 +43,7 @@ public abstract class SingleSelectionAdapter<VH extends RecyclerView.ViewHolder>
         if (selected) {
             // First, check if another item was previously selected
             if (mSelectedItemPosition != position) {
-                clearSelectedItem();
+                clearSelection();
             }
             mSelectedItemPosition = position;
             notifyItemChanged(position);
@@ -56,7 +56,7 @@ public abstract class SingleSelectionAdapter<VH extends RecyclerView.ViewHolder>
         }
     }
 
-    public void clearSelectedItem() {
+    public void clearSelection() {
         int oldPosition = mSelectedItemPosition;
         if (oldPosition != INVALID_POSITION) {
             mSelectedItemPosition = INVALID_POSITION;
