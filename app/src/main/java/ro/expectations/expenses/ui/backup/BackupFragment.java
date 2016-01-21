@@ -1,12 +1,11 @@
 package ro.expectations.expenses.ui.backup;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,9 +25,12 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
+import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
+import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 
 public class BackupFragment extends Fragment {
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({BACKUP_TYPE_LOCAL, BACKUP_TYPE_FINANCISTO})
     public @interface BackupType {
@@ -40,18 +42,13 @@ public class BackupFragment extends Fragment {
     private static final String ARG_BACKUP_TYPE = "backup_type";
 
     private int mBackupType;
-    private boolean mIsTaskRunning;
-
-    private ProgressDialog mProgressDialog;
-    private AlertDialog mAlertDialog;
-
 
     static BackupFragment newInstance(@BackupType int backupType) {
-        BackupFragment fragment = new BackupFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_BACKUP_TYPE, backupType);
+
+        BackupFragment fragment = new BackupFragment();
         fragment.setArguments(args);
-        fragment.setRetainInstance(true);
         return fragment;
     }
 
@@ -100,29 +97,9 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (mIsTaskRunning) {
-            showProgressDialog();
-        }
-    }
-
-    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
-        if (mAlertDialog != null && mAlertDialog.isShowing()) {
-            mAlertDialog.dismiss();
-        }
-        super.onDetach();
     }
 
     @Subscribe(threadMode = ThreadMode.MainThread)
@@ -134,11 +111,11 @@ public class BackupFragment extends Fragment {
         hideProgressDialog();
 
         if (getActivity() != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
-            builder.setTitle(getString(R.string.title_success));
-            builder.setMessage(getString(R.string.financisto_import_successful));
-            builder.setPositiveButton(getString(R.string.button_ok), null);
-            mAlertDialog = builder.show();
+            AlertDialogFragment.newInstance(
+                    getString(R.string.title_success),
+                    getString(R.string.financisto_import_successful),
+                    true
+            ).show(getActivity().getSupportFragmentManager(), "AlertDialogFragment");
         }
     }
 
@@ -151,29 +128,36 @@ public class BackupFragment extends Fragment {
         hideProgressDialog();
 
         if (getActivity() != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog);
-            builder.setTitle(getString(R.string.title_success));
-            builder.setMessage(getString(R.string.database_restore_successful));
-            builder.setPositiveButton(getString(R.string.button_ok), null);
-            builder.show();
+            AlertDialogFragment.newInstance(
+                    getString(R.string.title_success),
+                    getString(R.string.database_restore_successful),
+                    true
+            ).show(getActivity().getSupportFragmentManager(), "AlertDialogFragment");
         }
     }
 
     private void showProgressDialog() {
         int stringId;
-        mIsTaskRunning = true;
         if (mBackupType == BACKUP_TYPE_FINANCISTO) {
             stringId = R.string.financisto_import_progress;
         } else {
             stringId = R.string.database_restore_progress;
         }
-        mProgressDialog = ProgressDialog.show(getActivity(), null, getString(stringId), true);
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            ProgressDialogFragment.newInstance(getString(stringId), true)
+                    .show(activity.getSupportFragmentManager(), "ProgressDialogFragment");
+        }
     }
 
     private void hideProgressDialog() {
-        mIsTaskRunning = false;
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            ProgressDialogFragment progressDialogFragment = (ProgressDialogFragment) activity
+                    .getSupportFragmentManager().findFragmentByTag("ProgressDialogFragment");
+            if (progressDialogFragment != null) {
+                progressDialogFragment.dismiss();
+            }
         }
     }
 
