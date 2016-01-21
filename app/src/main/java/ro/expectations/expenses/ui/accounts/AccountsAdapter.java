@@ -56,7 +56,7 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         } else {
             holder.mAccountIconBackground.setVisibility(View.VISIBLE);
             holder.mSelectedIconBackground.setVisibility(View.GONE);
-            mContext.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, iconBackgroundTypedValue, true);
+            mContext.getTheme().resolveAttribute(R.attr.selectableItemBackground, iconBackgroundTypedValue, true);
             holder.itemView.setActivated(false);
         }
         holder.itemView.setBackgroundResource(iconBackgroundTypedValue.resourceId);

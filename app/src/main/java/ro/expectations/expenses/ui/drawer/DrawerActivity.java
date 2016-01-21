@@ -27,7 +27,7 @@ abstract public class DrawerActivity extends AppCompatActivity
     // Delay to launch nav drawer item, to allow close animation to play.
     private static final int NAV_DRAWER_LAUNCH_DELAY = 250;
 
-    private DrawerLayout mDrawer;
+    private DrawerLayout mDrawerLayout;
     private Handler mHandler;
 
     protected ViewStub mMainContent;
@@ -45,10 +45,10 @@ abstract public class DrawerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(toggle);
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -63,8 +63,8 @@ abstract public class DrawerActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
-            mDrawer.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -72,7 +72,7 @@ abstract public class DrawerActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        mDrawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
 
         int id = item.getItemId();
 
@@ -99,6 +99,14 @@ abstract public class DrawerActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    public void lockNavigationDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public void unlockNavigationDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     /**

@@ -6,7 +6,7 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
     android:baselineAligned="false">
 

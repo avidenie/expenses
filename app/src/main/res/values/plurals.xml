@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="selected_accounts">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+</resources>
