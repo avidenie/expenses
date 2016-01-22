@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.io.File;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ListHelper;
 import ro.expectations.expenses.widget.recyclerview.SingleSelectionAdapter;
 
 public class FinancistoImportAdapter extends SingleSelectionAdapter<FinancistoImportAdapter.ViewHolder> {
@@ -36,15 +37,7 @@ public class FinancistoImportAdapter extends SingleSelectionAdapter<FinancistoIm
         File currentFile = mFiles[position];
 
         // Set the row background
-        TypedValue iconBackgroundTypedValue = new TypedValue();
-        if (isItemSelected(position)) {
-            mContext.getTheme().resolveAttribute(android.R.attr.activatedBackgroundIndicator, iconBackgroundTypedValue, true);
-            holder.itemView.setActivated(true);
-        } else {
-            mContext.getTheme().resolveAttribute(R.attr.selectableItemBackground, iconBackgroundTypedValue, true);
-            holder.itemView.setActivated(false);
-        }
-        holder.itemView.setBackgroundResource(iconBackgroundTypedValue.resourceId);
+        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position));
 
         // Set the backup file details
         holder.mBackupFilename.setText(currentFile.getName());

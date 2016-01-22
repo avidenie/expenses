@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ListHelper;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
@@ -47,19 +48,8 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         mCursor.moveToPosition(position);
 
         // Set the row background
-        TypedValue iconBackgroundTypedValue = new TypedValue();
-        if (isItemSelected(position)) {
-            holder.mAccountIconBackground.setVisibility(View.GONE);
-            holder.mSelectedIconBackground.setVisibility(View.VISIBLE);
-            mContext.getTheme().resolveAttribute(android.R.attr.activatedBackgroundIndicator, iconBackgroundTypedValue, true);
-            holder.itemView.setActivated(true);
-        } else {
-            holder.mAccountIconBackground.setVisibility(View.VISIBLE);
-            holder.mSelectedIconBackground.setVisibility(View.GONE);
-            mContext.getTheme().resolveAttribute(R.attr.selectableItemBackground, iconBackgroundTypedValue, true);
-            holder.itemView.setActivated(false);
-        }
-        holder.itemView.setBackgroundResource(iconBackgroundTypedValue.resourceId);
+        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
+                holder.mAccountIconBackground, holder.mSelectedIconBackground);
 
         // Set the icon
         String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TYPE));
