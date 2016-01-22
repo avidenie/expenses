@@ -68,7 +68,7 @@ public class TransactionsActivity extends DrawerActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mSelectedAccountId = id;
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment, TransactionsFragment.newInstance(id))
+                        .replace(R.id.fragment, TransactionsFragment.newInstance(id, true))
                         .commit();
             }
 

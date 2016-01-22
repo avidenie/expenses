@@ -12,6 +12,8 @@
     <string name="action_delete_payee">Delete payee</string>
     <string name="action_edit_category">Edit category</string>
     <string name="action_delete_category">Delete category</string>
+    <string name="action_edit_transaction">Edit transaction</string>
+    <string name="action_delete_transaction">Delete transaction</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

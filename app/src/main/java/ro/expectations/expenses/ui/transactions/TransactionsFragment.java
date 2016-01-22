@@ -1,14 +1,20 @@
 package ro.expectations.expenses.ui.transactions;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,11 +29,14 @@ import ro.expectations.expenses.provider.ExpensesContract.ToAccounts;
 import ro.expectations.expenses.provider.ExpensesContract.ToRunningBalances;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
+import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     protected static final String ARG_ACCOUNT_ID = "account_id";
+    protected static final String ARG_HANDLE_CLICKS = "handle_clicks";
 
     private static final String[] PROJECTION = {
             Transactions._ID,
@@ -78,14 +87,69 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_ORIGINAL_AMOUNT = 21;
     static final int COLUMN_ORIGINAL_CURRENCY = 22;
 
-    private RecyclerView mRecyclerView;
-    private TextView mEmptyView;
     private long mSelectedAccountId;
+    private boolean mHandleClicks = false;
+    private TransactionsAdapter mAdapter;
+    private TextView mEmptyView;
 
-    public static TransactionsFragment newInstance(long accountId) {
+    private ActionMode mActionMode;
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_menu_transactions, menu);
+            Activity activity = getActivity();
+            ((DrawerActivity) activity).lockNavigationDrawer();
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            int selectedTransactions = mAdapter.getSelectedItemCount();
+            mode.setTitle(getResources().getQuantityString(
+                    R.plurals.selected_transactions,
+                    selectedTransactions,
+                    selectedTransactions
+            ));
+            if (selectedTransactions == 1) {
+                menu.findItem(R.id.action_edit_transaction).setVisible(true);
+            } else {
+                menu.findItem(R.id.action_edit_transaction).setVisible(false);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int id = item.getItemId();
+            switch(id) {
+                case R.id.action_edit_transaction:
+                    mode.finish();
+                    return true;
+                case R.id.action_delete_transaction:
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            if (mAdapter.isChoiceMode()) {
+                mAdapter.clearSelection();
+            }
+            ((DrawerActivity) getActivity()).unlockNavigationDrawer();
+        }
+    };
+
+    public static TransactionsFragment newInstance(long accountId, boolean handleClicks) {
         TransactionsFragment fragment = new TransactionsFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ACCOUNT_ID, accountId);
+        args.putBoolean(ARG_HANDLE_CLICKS, handleClicks);
         fragment.setArguments(args);
         return fragment;
     }
@@ -99,6 +163,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mSelectedAccountId = getArguments().getLong(ARG_ACCOUNT_ID);
+            mHandleClicks = getArguments().getBoolean(ARG_HANDLE_CLICKS);
         }
     }
 
@@ -107,27 +172,82 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_transactions);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_transactions);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setHasFixedSize(true);
 
         mEmptyView = (TextView) rootView.findViewById(R.id.list_transactions_empty);
 
-        TransactionsAdapter adapter = new TransactionsAdapter(getActivity(), mSelectedAccountId, new TransactionsAdapter.OnClickListener() {
-            @Override
-            public void onClick(long accountId, TransactionsAdapter.ViewHolder vh) {
-            }
-        });
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new TransactionsAdapter(getActivity(), mSelectedAccountId);
+        recyclerView.setAdapter(mAdapter);
+
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
+        if (mHandleClicks) {
+            itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
+                @Override
+                public void onItemClick(RecyclerView parent, View view, int position) {
+                    boolean isItemSelected = mAdapter.isItemSelected(position);
+                    if (isItemSelected) {
+                        mAdapter.setItemSelected(position, false);
+                        if (!mAdapter.isChoiceMode()) {
+                            mActionMode.finish();
+                        } else {
+                            mActionMode.invalidate();
+                        }
+                    } else if (mAdapter.isChoiceMode()) {
+                        mAdapter.setItemSelected(position, true);
+                        mActionMode.invalidate();
+                    }
+                }
+            });
+            itemClickHelper.setOnItemLongClickListener(new ItemClickHelper.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(RecyclerView parent, View view, int position) {
+                    mAdapter.setItemSelected(position, !mAdapter.isItemSelected(position));
+                    if (mAdapter.isChoiceMode()) {
+                        if (mActionMode == null) {
+                            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                        } else {
+                            mActionMode.invalidate();
+                        }
+                    } else {
+                        if (mActionMode != null) {
+                            mActionMode.finish();
+                        }
+                    }
+                    return true;
+                }
+            });
+        } else {
+            itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
+                @Override
+                public void onItemClick(RecyclerView parent, View view, int position) {
+                    // nothing to do, just the ripple effect
+                }
+            });
+        }
 
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        if (mHandleClicks && savedInstanceState != null) {
+            mAdapter.onRestoreInstanceState(savedInstanceState);
+            if (mAdapter.isChoiceMode() && mActionMode == null) {
+                mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+            }
+        }
         getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mHandleClicks) {
+            mAdapter.onSaveInstanceState(outState);
+        }
     }
 
     @Override
@@ -153,12 +273,12 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ((TransactionsAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mAdapter.swapCursor(data);
         mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        ((TransactionsAdapter) mRecyclerView.getAdapter()).swapCursor(null);
+        mAdapter.swapCursor(null);
     }
 }

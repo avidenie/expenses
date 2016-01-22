@@ -19,6 +19,7 @@ import android.view.View;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.transactions.TransactionsFragment;
 
 public class OverviewActivity extends DrawerActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -121,7 +122,7 @@ public class OverviewActivity extends DrawerActivity implements
 
             mCursor.moveToPosition(position);
             int idIndex = mCursor.getColumnIndex(ExpensesContract.Accounts._ID);
-            return AccountDetailsFragment.newInstance(mCursor.getLong(idIndex));
+            return TransactionsFragment.newInstance(mCursor.getLong(idIndex), false);
         }
 
         @Override

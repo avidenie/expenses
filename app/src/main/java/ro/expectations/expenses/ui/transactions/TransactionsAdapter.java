@@ -17,19 +17,21 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.ui.categories.CategoriesFragment;
 import ro.expectations.expenses.utils.NumberUtils;
+import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
-public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.ViewHolder> {
+public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAdapter.ViewHolder> {
 
     private Cursor mCursor;
     final private Context mContext;
     final private long mSelectedAccountId;
-    final private OnClickListener mClickListener;
 
-    public TransactionsAdapter(Context context, long selectedAccountId, OnClickListener clickListener) {
+    public TransactionsAdapter(Context context, long selectedAccountId) {
         mContext = context;
         mSelectedAccountId = selectedAccountId;
-        mClickListener = clickListener;
+        setHasStableIds(true);
     }
 
     @Override
@@ -55,6 +57,10 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
                 processCredit(holder, position);
             }
         }
+
+        // Set the row background
+        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
+                holder.mTransactionIconBackground, holder.mSelectedIconBackground);
 
         // Set the description
         StringBuilder description = new StringBuilder();
@@ -115,11 +121,11 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         // Set the icon
         if (fromAccountId > 0 && toAccountId > 0) {
-            holder.mIcon.setImageResource(R.drawable.ic_transfer_white_24dp);
+            holder.mTransactionIcon.setImageResource(R.drawable.ic_transfer_white_24dp);
         } else {
-            holder.mIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
+            holder.mTransactionIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
         }
-        GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) holder.mTransactionIconBackground.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
     }
 
@@ -238,15 +244,23 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         return mCursor.getCount();
     }
 
+    @Override
+    public long getItemId(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getLong(TransactionsFragment.COLUMN_TRANSACTION_ID);
+    }
+
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final RelativeLayout mIconBackgroundView;
-        public final ImageView mIcon;
+        public final RelativeLayout mTransactionIconBackground;
+        public final ImageView mTransactionIcon;
+        public final RelativeLayout mSelectedIconBackground;
+        public final ImageView mSelectedIcon;
         public final TextView mAccount;
         public final TextView mDescription;
         public final TextView mDate;
@@ -256,8 +270,10 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mIconBackgroundView = (RelativeLayout) itemView.findViewById(R.id.transaction_icon_background);
-            mIcon = (ImageView) itemView.findViewById(R.id.transaction_icon);
+            mTransactionIconBackground = (RelativeLayout) itemView.findViewById(R.id.transaction_icon_background);
+            mTransactionIcon = (ImageView) itemView.findViewById(R.id.transaction_icon);
+            mSelectedIconBackground = (RelativeLayout) itemView.findViewById(R.id.selected_icon_background);
+            mSelectedIcon = (ImageView) itemView.findViewById(R.id.selected_icon);
             mAccount = (TextView) itemView.findViewById(R.id.transaction_account);
             mDescription = (TextView) itemView.findViewById(R.id.transaction_description);
             mDate = (TextView) itemView.findViewById(R.id.transaction_date);
@@ -265,19 +281,5 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             mAmount = (TextView) itemView.findViewById(R.id.transaction_amount);
             mRunningBalance = (TextView) itemView.findViewById(R.id.account_running_balance);
         }
-
-        @Override
-        public void onClick(View v) {
-            if (mClickListener != null) {
-                mCursor.moveToPosition(getAdapterPosition());
-                mClickListener.onClick(
-                        mCursor.getLong(TransactionsFragment.COLUMN_TRANSACTION_ID),
-                        this);
-            }
-        }
-    }
-
-    public interface OnClickListener {
-        void onClick(long transactionId, ViewHolder vh);
     }
 }
