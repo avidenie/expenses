@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.greenrobot.event.EventBus;
-import ro.expectations.expenses.ui.backup.BackupFragment;
 
 public class LocalRestoreIntentService extends AbstractRestoreIntentService {
 

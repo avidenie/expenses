@@ -24,7 +24,6 @@ import de.greenrobot.event.ThreadMode;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
-import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.fragment.AlertDialogFragment;

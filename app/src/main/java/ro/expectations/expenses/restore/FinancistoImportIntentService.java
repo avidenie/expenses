@@ -19,7 +19,6 @@ import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.backup.BackupFragment;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
 
