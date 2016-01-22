@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.greenrobot.event.EventBus;
+import ro.expectations.expenses.ui.backup.BackupFragment;
 
 public class LocalRestoreIntentService extends AbstractRestoreIntentService {
 
@@ -20,26 +21,11 @@ public class LocalRestoreIntentService extends AbstractRestoreIntentService {
 
     @Override
     protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new FailedEvent(e));
+        EventBus.getDefault().post(new BackupFragment.FailedEvent(e));
     }
 
     @Override
     protected void notifySuccess() {
-        EventBus.getDefault().post(new SuccessEvent());
-    }
-
-    public static class SuccessEvent {
-    }
-
-    public static class FailedEvent {
-        private Exception mException;
-
-        public FailedEvent(Exception e) {
-            mException = e;
-        }
-
-        public Exception getException() {
-            return mException;
-        }
+        EventBus.getDefault().post(new BackupFragment.SuccessEvent());
     }
 }

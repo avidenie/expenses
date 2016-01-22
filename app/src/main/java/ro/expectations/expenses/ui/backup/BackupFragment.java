@@ -42,6 +42,8 @@ public class BackupFragment extends Fragment {
     private static final String ARG_BACKUP_TYPE = "backup_type";
 
     private int mBackupType;
+    private boolean mDismissProgressBar = false;
+    private boolean mLaunchAlertDialog = false;
 
     static BackupFragment newInstance(@BackupType int backupType) {
         Bundle args = new Bundle();
@@ -97,42 +99,48 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mDismissProgressBar) {
+            hideProgressDialog();
+            mDismissProgressBar = false;
+        }
+
+        if (mLaunchAlertDialog) {
+            showAlertDialog();
+            mLaunchAlertDialog = false;
+        }
+    }
+
+    @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MainThread)
-    public void onEvent(FinancistoImportIntentService.SuccessEvent successEvent) {
-        if (mBackupType != BACKUP_TYPE_FINANCISTO) {
-            return;
-        }
-
+    public void onEvent(SuccessEvent successEvent) {
         hideProgressDialog();
-
-        if (getActivity() != null) {
-            AlertDialogFragment.newInstance(
-                    getString(R.string.title_success),
-                    getString(R.string.financisto_import_successful),
-                    true
-            ).show(getActivity().getSupportFragmentManager(), "AlertDialogFragment");
-        }
+        showAlertDialog();
     }
 
-    @Subscribe(threadMode = ThreadMode.MainThread)
-    public void onEvent(LocalRestoreIntentService.SuccessEvent successEvent) {
-        if (mBackupType != BACKUP_TYPE_LOCAL) {
-            return;
+    private void showAlertDialog() {
+        int stringId;
+        if (mBackupType == BACKUP_TYPE_FINANCISTO) {
+            stringId = R.string.financisto_import_successful;
+        } else {
+            stringId = R.string.database_restore_successful;
         }
-
-        hideProgressDialog();
-
-        if (getActivity() != null) {
+        FragmentActivity activity = getActivity();
+        if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
                     getString(R.string.title_success),
-                    getString(R.string.database_restore_successful),
+                    getString(stringId),
                     true
-            ).show(getActivity().getSupportFragmentManager(), "AlertDialogFragment");
+            ).show(activity.getSupportFragmentManager(), "AlertDialogFragment");
+        } else {
+            mLaunchAlertDialog = true;
         }
     }
 
@@ -145,7 +153,7 @@ public class BackupFragment extends Fragment {
         }
         FragmentActivity activity = getActivity();
         if (activity != null) {
-            ProgressDialogFragment.newInstance(getString(stringId), true)
+            ProgressDialogFragment.newInstance(getString(stringId), false)
                     .show(activity.getSupportFragmentManager(), "ProgressDialogFragment");
         }
     }
@@ -155,8 +163,10 @@ public class BackupFragment extends Fragment {
         if (activity != null) {
             ProgressDialogFragment progressDialogFragment = (ProgressDialogFragment) activity
                     .getSupportFragmentManager().findFragmentByTag("ProgressDialogFragment");
-            if (progressDialogFragment != null) {
+            if (isResumed() && progressDialogFragment != null && progressDialogFragment.getDialog().isShowing()) {
                 progressDialogFragment.dismiss();
+            } else {
+                mDismissProgressBar = true;
             }
         }
     }
@@ -190,5 +200,20 @@ public class BackupFragment extends Fragment {
         }
 
         return listener;
+    }
+
+    public static class SuccessEvent {
+    }
+
+    public static class FailedEvent {
+        private Exception mException;
+
+        public FailedEvent(Exception e) {
+            mException = e;
+        }
+
+        public Exception getException() {
+            return mException;
+        }
     }
 }
