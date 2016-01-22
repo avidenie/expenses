@@ -12,14 +12,14 @@ import android.widget.TextView;
 import java.io.File;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
+import ro.expectations.expenses.widget.recyclerview.SingleSelectionAdapter;
 
-public class BackupAdapter extends MultipleSelectionAdapter<BackupAdapter.ViewHolder> {
+public class FinancistoImportAdapter extends SingleSelectionAdapter<FinancistoImportAdapter.ViewHolder> {
 
     private File[] mFiles;
     final private Context mContext;
 
-    public BackupAdapter(Context context, File[] files) {
+    public FinancistoImportAdapter(Context context, File[] files) {
         mContext = context;
         mFiles = files;
     }

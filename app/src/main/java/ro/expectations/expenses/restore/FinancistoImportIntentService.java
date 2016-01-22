@@ -81,12 +81,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     @Override
     protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new BackupFragment.FailedEvent(e));
+        EventBus.getDefault().post(new FailedEvent(e));
     }
 
     @Override
     protected void notifySuccess() {
-        EventBus.getDefault().post(new BackupFragment.SuccessEvent());
+        EventBus.getDefault().post(new SuccessEvent());
     }
 
     private void processEntry(String tableName, Map<String, String> values) {
@@ -443,5 +443,20 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
 
         return parentId;
+    }
+
+    public static class SuccessEvent {
+    }
+
+    public static class FailedEvent {
+        private Exception mException;
+
+        public FailedEvent(Exception e) {
+            mException = e;
+        }
+
+        public Exception getException() {
+            return mException;
+        }
     }
 }

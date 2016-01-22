@@ -4,4 +4,8 @@
         <item quantity="one">1 selected</item>
         <item quantity="other">%d selected</item>
     </plurals>
+    <plurals name="selected_backup_files">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
 </resources>

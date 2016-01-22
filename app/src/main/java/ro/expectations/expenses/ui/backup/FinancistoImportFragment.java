@@ -25,16 +25,14 @@ import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
-import ro.expectations.expenses.restore.LocalRestoreIntentService;
-import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
 import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
-public class BackupFragment extends Fragment {
+public class FinancistoImportFragment extends Fragment {
 
-    private BackupAdapter mAdapter;
+    private FinancistoImportAdapter mAdapter;
 
     private boolean mDismissProgressBar = false;
     private boolean mLaunchAlertDialog = false;
@@ -45,24 +43,13 @@ public class BackupFragment extends Fragment {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.context_menu_backup, menu);
-            ((DrawerActivity) getActivity()).lockNavigationDrawer();
+            inflater.inflate(R.menu.context_menu_import_financisto, menu);
             return true;
         }
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            int selectedFiles = mAdapter.getSelectedItemCount();
-            mode.setTitle(getResources().getQuantityString(
-                    R.plurals.selected_backup_files,
-                    selectedFiles,
-                    selectedFiles
-            ));
-            if (mAdapter.getSelectedItemCount() == 1) {
-                menu.findItem(R.id.action_restore).setVisible(true);
-            } else {
-                menu.findItem(R.id.action_restore).setVisible(false);
-            }
+            mode.setTitle(getString(R.string.financisto_backup_file_selected));
             return true;
         }
 
@@ -70,15 +57,12 @@ public class BackupFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             int id = item.getItemId();
             switch(id) {
-                case R.id.action_restore:
-                    File file = mAdapter.getItem(mAdapter.getSelectedItemPositions().get(0));
-                    Intent localRestoreIntent = new Intent(getActivity(), LocalRestoreIntentService.class);
-                    localRestoreIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
-                    getActivity().startService(localRestoreIntent);
+                case R.id.action_financisto_import:
+                    File file = mAdapter.getItem(mAdapter.getSelectedItemPosition());
+                    Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportIntentService.class);
+                    financistoImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
+                    getActivity().startService(financistoImportIntent);
                     showProgressDialog();
-                    return true;
-                case R.id.action_delete:
-                    mode.finish();
                     return true;
                 default:
                     return false;
@@ -91,15 +75,14 @@ public class BackupFragment extends Fragment {
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
-            ((DrawerActivity) getActivity()).unlockNavigationDrawer();
         }
     };
 
-    static BackupFragment newInstance() {
-        return new BackupFragment();
+    static FinancistoImportFragment newInstance() {
+        return new FinancistoImportFragment();
     }
 
-    public BackupFragment() {
+    public FinancistoImportFragment() {
         // Required empty public constructor
     }
 
@@ -115,51 +98,56 @@ public class BackupFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        recyclerView.setHasFixedSize(true);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.setHasFixedSize(true);
 
         TextView mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
+        mEmptyView.setText(getString(R.string.no_financisto_backup_found));
 
-        File[] files = BackupHelper.listBackups(BackupHelper.getLocalBackupFolder(getActivity()));
+        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
 
         mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
 
-        mAdapter = new BackupAdapter(getActivity(), files);
-        recyclerView.setAdapter(mAdapter);
+        mAdapter = new FinancistoImportAdapter(getActivity(), files);
+        mRecyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
                 boolean isItemSelected = mAdapter.isItemSelected(position);
                 if (isItemSelected) {
                     mAdapter.setItemSelected(position, false);
-                    if (!mAdapter.isChoiceMode()) {
+                    if (mActionMode != null) {
                         mActionMode.finish();
-                    } else {
-                        mActionMode.invalidate();
                     }
                 } else if (mAdapter.isChoiceMode()) {
                     mAdapter.setItemSelected(position, true);
-                    mActionMode.invalidate();
+                    if (mActionMode == null) {
+                        mActionMode = ((FinancistoImportActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                    } else {
+                        mActionMode.invalidate();
+                    }
                 }
             }
         });
         itemClickHelper.setOnItemLongClickListener(new ItemClickHelper.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(RecyclerView parent, View view, int position) {
-                mAdapter.setItemSelected(position, !mAdapter.isItemSelected(position));
-                if (mAdapter.isChoiceMode()) {
-                    if (mActionMode == null) {
-                        mActionMode = ((BackupActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-                    } else {
-                        mActionMode.invalidate();
-                    }
-                } else {
+                boolean isItemSelected = mAdapter.isItemSelected(position);
+                if (isItemSelected) {
+                    mAdapter.setItemSelected(position, false);
                     if (mActionMode != null) {
                         mActionMode.finish();
+                    }
+                } else {
+                    mAdapter.setItemSelected(position, true);
+                    if (mActionMode == null) {
+                        mActionMode = ((FinancistoImportActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                    } else {
+                        mActionMode.invalidate();
                     }
                 }
                 return true;
@@ -174,7 +162,7 @@ public class BackupFragment extends Fragment {
         if (savedInstanceState != null) {
             mAdapter.onRestoreInstanceState(savedInstanceState);
             if (mAdapter.isChoiceMode() && mActionMode == null) {
-                mActionMode = ((BackupActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+                mActionMode = ((FinancistoImportActivity) getActivity()).startSupportActionMode(mActionModeCallback);
             }
         }
         super.onActivityCreated(savedInstanceState);
@@ -207,7 +195,7 @@ public class BackupFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MainThread)
-    public void onEvent(LocalRestoreIntentService.SuccessEvent successEvent) {
+    public void onEvent(FinancistoImportIntentService.SuccessEvent successEvent) {
         hideProgressDialog();
         showAlertDialog();
         if (mActionMode != null) {
@@ -220,7 +208,7 @@ public class BackupFragment extends Fragment {
         if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
                     getString(R.string.title_success),
-                    getString(R.string.database_restore_successful),
+                    getString(R.string.financisto_import_successful),
                     true
             ).show(activity.getSupportFragmentManager(), "AlertDialogFragment");
         } else {
@@ -231,7 +219,7 @@ public class BackupFragment extends Fragment {
     private void showProgressDialog() {
         FragmentActivity activity = getActivity();
         if (activity != null) {
-            ProgressDialogFragment.newInstance(getString(R.string.database_restore_progress), false)
+            ProgressDialogFragment.newInstance(getString(R.string.financisto_import_progress), false)
                     .show(activity.getSupportFragmentManager(), "ProgressDialogFragment");
         }
     }
@@ -249,3 +237,4 @@ public class BackupFragment extends Fragment {
         }
     }
 }
+

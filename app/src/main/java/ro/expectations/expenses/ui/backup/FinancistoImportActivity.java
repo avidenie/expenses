@@ -30,7 +30,7 @@ public class FinancistoImportActivity extends AppCompatActivity {
         fab.setVisibility(View.GONE);
 
         if (savedInstanceState == null) {
-            BackupFragment fragment = BackupFragment.newInstance(BackupFragment.BACKUP_TYPE_FINANCISTO);
+            FinancistoImportFragment fragment = FinancistoImportFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment, fragment);
             transaction.commit();

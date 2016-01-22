@@ -34,7 +34,7 @@ public class BackupActivity extends DrawerActivity {
         });
 
         if (savedInstanceState == null) {
-            BackupFragment fragment = BackupFragment.newInstance(BackupFragment.BACKUP_TYPE_LOCAL);
+            BackupFragment fragment = BackupFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
