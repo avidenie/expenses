@@ -8,6 +8,8 @@
     <string name="action_edit_account">Edit account</string>
     <string name="action_restore">Restore</string>
     <string name="action_delete_backup">Delete backup file</string>
+    <string name="action_edit_payee">Edit payee</string>
+    <string name="action_delete_payee">Delete payee</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

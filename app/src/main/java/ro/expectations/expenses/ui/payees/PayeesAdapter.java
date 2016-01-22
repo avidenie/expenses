@@ -9,15 +9,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ListHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
-public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder> {
+public class PayeesAdapter extends MultipleSelectionAdapter<PayeesAdapter.ViewHolder> {
 
     private Cursor mCursor;
     final private Context mContext;
 
     public PayeesAdapter(Context context) {
         mContext = context;
+        setHasStableIds(true);
     }
 
     @Override
@@ -31,6 +34,9 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
+        // Set the row background
+        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position));
+
         // Set the payee name
         String name = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Payees.NAME));
         holder.mPayeeName.setText(name);
@@ -42,6 +48,12 @@ public class PayeesAdapter extends RecyclerView.Adapter<PayeesAdapter.ViewHolder
             return 0;
         }
         return mCursor.getCount();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getLong(mCursor.getColumnIndex(ExpensesContract.Accounts._ID));
     }
 
     public void swapCursor(Cursor newCursor) {
