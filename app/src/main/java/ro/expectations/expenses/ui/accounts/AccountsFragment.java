@@ -55,7 +55,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 menu.findItem(R.id.action_edit_account).setVisible(false);
             }
-            return false;
+            return true;
         }
 
         @Override
@@ -159,14 +159,6 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
         }
         getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mActionMode != null) {
-            mActionMode.finish();
-        }
     }
 
     @Override
