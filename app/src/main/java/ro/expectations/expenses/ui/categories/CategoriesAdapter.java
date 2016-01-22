@@ -13,16 +13,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
+public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapter.ViewHolder> {
 
     private Cursor mCursor;
     final private Context mContext;
-    final private OnClickListener mClickListener;
 
-    public CategoriesAdapter(Context context, OnClickListener clickListener) {
+    public CategoriesAdapter(Context context) {
         mContext = context;
-        mClickListener = clickListener;
+        setHasStableIds(true);
     }
 
     @Override
@@ -36,15 +37,19 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        // Set the icon background color.
-        GradientDrawable bgShape = (GradientDrawable) holder.mIconBackgroundView.getBackground();
+        // Set the row background
+        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
+                holder.mCategoryIconBackground, holder.mSelectedIconBackground);
+
+        // Set the icon background color
+        GradientDrawable bgShape = (GradientDrawable) holder.mCategoryIconBackground.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
 
-        // Set the category name.
+        // Set the category name
         String name = mCursor.getString(CategoriesFragment.COLUMN_CATEGORY_NAME);
         holder.mNameView.setText(name);
 
-        // Show or hide the subcategories icon.
+        // Show or hide the subcategories icon
         long parentId = mCursor.getLong(CategoriesFragment.COLUMN_CATEGORY_PARENT_ID);
         if (parentId > 0 ) {
             holder.mSubcategoriesIcon.setVisibility(View.GONE);
@@ -66,6 +71,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         return mCursor.getCount();
     }
 
+    @Override
+    public long getItemId(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getLong(CategoriesFragment.COLUMN_CATEGORY_ID);
+    }
+
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
@@ -75,33 +86,23 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         return mCursor;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final RelativeLayout mIconBackgroundView;
-        public final ImageView mIconView;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public final RelativeLayout mCategoryIconBackground;
+        public final ImageView mCategoryIcon;
+        public final RelativeLayout mSelectedIconBackground;
+        public final ImageView mSelectedIcon;
         public final TextView mNameView;
         public final ImageView mSubcategoriesIcon;
 
         public ViewHolder(View view) {
             super(view);
-            mIconBackgroundView = (RelativeLayout) view.findViewById(R.id.category_icon_background);
-            mIconView = (ImageView) view.findViewById(R.id.category_icon);
+            mCategoryIconBackground = (RelativeLayout) view.findViewById(R.id.category_icon_background);
+            mCategoryIcon = (ImageView) view.findViewById(R.id.category_icon);
+            mSelectedIconBackground = (RelativeLayout) view.findViewById(R.id.selected_icon_background);
+            mSelectedIcon = (ImageView) view.findViewById(R.id.selected_icon);
             mNameView = (TextView) view.findViewById(R.id.category_name);
             mSubcategoriesIcon = (ImageView) view.findViewById(R.id.subcategories_icon);
-            view.setOnClickListener(this);
         }
-
-        @Override
-        public void onClick(View v) {
-            if (mClickListener != null) {
-                mCursor.moveToPosition(getAdapterPosition());
-                mClickListener.onClick(
-                        mCursor.getLong(CategoriesFragment.COLUMN_CATEGORY_ID),
-                        this);
-            }
-        }
-    }
-
-    public interface OnClickListener {
-        void onClick(long categoryId, ViewHolder vh);
     }
 }

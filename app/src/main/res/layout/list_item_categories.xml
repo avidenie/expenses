@@ -26,6 +26,22 @@
             android:contentDescription="@null" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/selected_icon_background"
+        android:layout_width="@dimen/list_icon_size"
+        android:layout_height="@dimen/list_icon_size"
+        android:layout_marginEnd="?android:attr/listPreferredItemPaddingRight"
+        android:gravity="center"
+        android:background="@drawable/circle_background_grey"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/selected_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_done_white_24dp" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/category_name"
         android:layout_height="wrap_content"

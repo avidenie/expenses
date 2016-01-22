@@ -10,6 +10,8 @@
     <string name="action_delete_backup">Delete backup file</string>
     <string name="action_edit_payee">Edit payee</string>
     <string name="action_delete_payee">Delete payee</string>
+    <string name="action_edit_category">Edit category</string>
+    <string name="action_delete_category">Delete category</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
