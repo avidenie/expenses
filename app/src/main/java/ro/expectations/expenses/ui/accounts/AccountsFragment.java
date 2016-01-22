@@ -28,7 +28,6 @@ import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private AccountsAdapter mAdapter;
-    private RecyclerView mRecyclerView;
     private TextView mEmptyView;
 
     private ActionMode mActionMode;
@@ -96,15 +95,15 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
         mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setHasFixedSize(true);
 
         mAdapter = new AccountsAdapter(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
@@ -163,7 +162,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        ((AccountsAdapter) mRecyclerView.getAdapter()).onSaveInstanceState(outState);
+        mAdapter.onSaveInstanceState(outState);
     }
 
     @Override
@@ -192,12 +191,12 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ((AccountsAdapter) mRecyclerView.getAdapter()).swapCursor(data);
+        mAdapter.swapCursor(data);
         mEmptyView.setVisibility(data.getCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        ((AccountsAdapter) mRecyclerView.getAdapter()).swapCursor(null);
+        mAdapter.swapCursor(null);
     }
 }

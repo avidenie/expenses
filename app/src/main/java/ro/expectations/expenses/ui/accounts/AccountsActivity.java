@@ -3,8 +3,6 @@ package ro.expectations.expenses.ui.accounts;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import ro.expectations.expenses.R;
