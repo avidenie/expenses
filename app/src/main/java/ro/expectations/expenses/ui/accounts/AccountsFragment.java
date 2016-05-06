@@ -156,7 +156,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 mActionMode = ((AccountsActivity) getActivity()).startSupportActionMode(mActionModeCallback);
             }
         }
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 

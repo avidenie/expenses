@@ -4,6 +4,8 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.greenrobot.event.EventBus;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
@@ -22,7 +23,7 @@ import ro.expectations.expenses.provider.ExpensesContract;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
 
-    protected static final String TAG = FinancistoImportIntentService.class.getSimpleName();
+    private static final String TAG = FinancistoImportIntentService.class.getSimpleName();
 
     private List<ContentValues> mAccountContentValues = new ArrayList<>();
     private Map<String, String> mCurrencies = new HashMap<>();
@@ -80,7 +81,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     @Override
     protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new FailedEvent(e));
+        EventBus.getDefault().post(new ErrorEvent(e));
     }
 
     @Override
@@ -447,10 +448,10 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     public static class SuccessEvent {
     }
 
-    public static class FailedEvent {
+    public static class ErrorEvent {
         private Exception mException;
 
-        public FailedEvent(Exception e) {
+        public ErrorEvent(Exception e) {
             mException = e;
         }
 

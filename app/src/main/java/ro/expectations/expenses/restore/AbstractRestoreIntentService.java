@@ -97,7 +97,7 @@ abstract public class AbstractRestoreIntentService extends IntentService {
 
     abstract protected void parse(InputStream input) throws IOException;
 
-    abstract protected void notifyFailure(Exception e);
-
     abstract protected void notifySuccess();
+
+    abstract protected void notifyFailure(Exception e);
 }

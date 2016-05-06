@@ -111,9 +111,9 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
         holder.mAccountBalance.setText(format.format(balance));
         if (balance > 0) {
-            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.colorGreen700));
         } else if (balance < 0) {
-            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+            holder.mAccountBalance.setTextColor(ContextCompat.getColor(mContext, R.color.colorRed700));
         }
     }
 

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,11 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 
-import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
-import de.greenrobot.event.ThreadMode;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
@@ -31,6 +33,8 @@ import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class FinancistoImportFragment extends Fragment {
+
+    private static final String TAG = FinancistoImportFragment.class.getSimpleName();
 
     private FinancistoImportAdapter mAdapter;
 
@@ -87,8 +91,8 @@ public class FinancistoImportFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
     }
 
@@ -189,18 +193,24 @@ public class FinancistoImportFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
         EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
-    @Subscribe(threadMode = ThreadMode.MainThread)
-    public void onEvent(FinancistoImportIntentService.SuccessEvent successEvent) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSuccess(FinancistoImportIntentService.SuccessEvent successEvent) {
         hideProgressDialog();
         showAlertDialog();
         if (mActionMode != null) {
             mActionMode.finish();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFailure(FinancistoImportIntentService.ErrorEvent errorEvent) {
+        Log.e(TAG, "An error occurred while importing Financisto backup: "
+                + errorEvent.getException().getMessage(), errorEvent.getException());
     }
 
     private void showAlertDialog() {

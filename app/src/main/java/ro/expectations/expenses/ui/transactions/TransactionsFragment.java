@@ -239,7 +239,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
                 mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
             }
         }
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 

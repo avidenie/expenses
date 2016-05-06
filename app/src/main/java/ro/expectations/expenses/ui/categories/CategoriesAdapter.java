@@ -43,7 +43,7 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
 
         // Set the icon background color
         GradientDrawable bgShape = (GradientDrawable) holder.mCategoryIconBackground.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
+        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
 
         // Set the category name
         String name = mCursor.getString(CategoriesFragment.COLUMN_CATEGORY_NAME);

@@ -2,10 +2,10 @@ package ro.expectations.expenses.restore;
 
 import android.os.SystemClock;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import de.greenrobot.event.EventBus;
 
 public class LocalRestoreIntentService extends AbstractRestoreIntentService {
 
@@ -19,22 +19,22 @@ public class LocalRestoreIntentService extends AbstractRestoreIntentService {
     }
 
     @Override
-    protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new FailedEvent(e));
+    protected void notifySuccess() {
+        EventBus.getDefault().post(new SuccessEvent());
     }
 
     @Override
-    protected void notifySuccess() {
-        EventBus.getDefault().post(new SuccessEvent());
+    protected void notifyFailure(Exception e) {
+        EventBus.getDefault().post(new ErrorEvent(e));
     }
 
     public static class SuccessEvent {
     }
 
-    public static class FailedEvent {
+    public static class ErrorEvent {
         private Exception mException;
 
-        public FailedEvent(Exception e) {
+        public ErrorEvent(Exception e) {
             mException = e;
         }
 

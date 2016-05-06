@@ -126,7 +126,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
             holder.mTransactionIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
         }
         GradientDrawable bgShape = (GradientDrawable) holder.mTransactionIconBackground.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.primary));
+        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
     }
 
     private void processTransfer(ViewHolder holder, int position) {
@@ -173,16 +173,16 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
 
         // Set the color for the amount and the transaction type icon
         if (mSelectedAccountId == 0) {
-            holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.orange_700));
+            holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorOrange700));
             holder.mTypeIcon.setImageResource(R.drawable.ic_swap_horiz_orange_24dp);
         } else {
             long fromAccountId = mCursor.getLong(TransactionsFragment.COLUMN_FROM_ACCOUNT_ID);
             long toAccountId = mCursor.getLong(TransactionsFragment.COLUMN_TO_ACCOUNT_ID);
             if (mSelectedAccountId == fromAccountId) {
-                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorRed700));
                 holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
             } else if (mSelectedAccountId == toAccountId) {
-                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+                holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorGreen700));
                 holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);
             }
         }
@@ -203,7 +203,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         format.setCurrency(fromCurrency);
         format.setMaximumFractionDigits(fromCurrency.getDefaultFractionDigits());
         holder.mAmount.setText(format.format(fromAmount));
-        holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.red_700));
+        holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorRed700));
 
         double fromBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_FROM_BALANCE) / 100.0);
         holder.mRunningBalance.setText(format.format(fromBalance));
@@ -227,7 +227,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         format.setCurrency(toCurrency);
         format.setMaximumFractionDigits(toCurrency.getDefaultFractionDigits());
         holder.mAmount.setText(format.format(toAmount));
-        holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_700));
+        holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorGreen700));
 
         double toBalance = NumberUtils.roundToTwoPlaces(mCursor.getLong(TransactionsFragment.COLUMN_TO_BALANCE) / 100.0);
         holder.mRunningBalance.setText(format.format(toBalance));
