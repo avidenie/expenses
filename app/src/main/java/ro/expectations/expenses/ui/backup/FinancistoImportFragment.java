@@ -1,13 +1,18 @@
 package ro.expectations.expenses.ui.backup;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +20,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,8 +42,13 @@ import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 public class FinancistoImportFragment extends Fragment {
 
     private static final String TAG = FinancistoImportFragment.class.getSimpleName();
+    private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
 
     private FinancistoImportAdapter mAdapter;
+    private TextView mEmptyView;
+    private LinearLayout mRequestPermissionRationale;
+    private TextView mPermissionRationale;
+    private Button mAllowAccess;
 
     private boolean mDismissProgressBar = false;
     private boolean mLaunchAlertDialog = false;
@@ -53,7 +65,7 @@ public class FinancistoImportFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle(getString(R.string.financisto_backup_file_selected));
+            mode.setTitle(getResources().getQuantityString(R.plurals.selected_backup_files, 1, 1));
             return true;
         }
 
@@ -102,19 +114,17 @@ public class FinancistoImportFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
 
+        mRequestPermissionRationale = (LinearLayout) rootView.findViewById(R.id.request_permission_rationale);
+        mPermissionRationale = (TextView) rootView.findViewById(R.id.permission_rationale);
+        mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
+
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
 
-        TextView mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
-        mEmptyView.setText(getString(R.string.no_financisto_backup_found));
-
-        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
-
-        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
-
-        mAdapter = new FinancistoImportAdapter(getActivity(), files);
+        mAdapter = new FinancistoImportAdapter(getActivity(), new File[0]);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
@@ -158,7 +168,52 @@ public class FinancistoImportFragment extends Fragment {
             }
         });
 
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            setupRecyclerView();
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            showRequestPermissionRationale();
+            mAllowAccess.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+                }
+            });
+            mAllowAccess.setVisibility(View.VISIBLE);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_PERMISSION_READ_EXTERNAL_STORAGE) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setupRecyclerView();
+            } else {
+                showRequestPermissionRationale();
+                mAllowAccess.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void showRequestPermissionRationale() {
+        String app = getString(R.string.app_name);
+        String permissionRationale = String.format(getString(R.string.read_storage_rationale_financisto_import), app, app);
+        mPermissionRationale.setText(Html.fromHtml(permissionRationale));
+        mRequestPermissionRationale.setVisibility(View.VISIBLE);
+    }
+
+    private void setupRecyclerView() {
+        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
+        mAdapter.setFiles(files);
+        mRequestPermissionRationale.setVisibility(View.GONE);
+        mEmptyView.setText(getString(R.string.no_financisto_backup_found));
+        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override

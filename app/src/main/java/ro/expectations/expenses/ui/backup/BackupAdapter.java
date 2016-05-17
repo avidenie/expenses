@@ -24,6 +24,11 @@ public class BackupAdapter extends MultipleSelectionAdapter<BackupAdapter.ViewHo
         mFiles = files;
     }
 
+    public void setFiles(File[] files) {
+        mFiles = files;
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(

@@ -82,6 +82,9 @@
     <string name="default_transfer_description">Transfer</string>
     <string name="default_debit_description">Debit</string>
     <string name="default_credit_description">Credit</string>
-    <string name="financisto_backup_file_selected">1 selected</string>
+    <string name="allow_access">Allow access</string>
+    <string name="read_storage_rationale_title">Access denied</string>
+    <string name="read_storage_rationale"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list backup files or create new backups.]]></string>
+    <string name="read_storage_rationale_financisto_import"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list Financisto backup files that can be imported.]]></string>
 
 </resources>
