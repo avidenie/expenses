@@ -1,11 +1,13 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -31,9 +33,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.backup.BackupIntentService;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
+import ro.expectations.expenses.ui.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
 import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
@@ -45,6 +49,8 @@ public class BackupFragment extends Fragment {
     private static final String TAG = BackupFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
 
+    private FloatingActionButtonProvider mFloatingActionButtonProvider;
+
     private BackupAdapter mAdapter;
     private TextView mEmptyView;
     private LinearLayout mRequestPermissionRationale;
@@ -52,7 +58,7 @@ public class BackupFragment extends Fragment {
     private Button mAllowAccess;
 
     private boolean mDismissProgressBar = false;
-    private boolean mLaunchAlertDialog = false;
+    private boolean mLaunchRestoreAlertDialog = false;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -90,7 +96,7 @@ public class BackupFragment extends Fragment {
                     Intent localRestoreIntent = new Intent(getActivity(), LocalRestoreIntentService.class);
                     localRestoreIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
                     getActivity().startService(localRestoreIntent);
-                    showProgressDialog();
+                    showProgressDialog(R.string.database_restore_progress);
                     return true;
                 case R.id.action_delete:
                     mode.finish();
@@ -119,9 +125,14 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FloatingActionButtonProvider) {
+            mFloatingActionButtonProvider = (FloatingActionButtonProvider) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FloatingActionButtonProvider");
+        }
     }
 
     @Override
@@ -192,40 +203,12 @@ public class BackupFragment extends Fragment {
                 }
             });
             mAllowAccess.setVisibility(View.VISIBLE);
+            mFloatingActionButtonProvider.getFloatingActionButton().hide();
         } else {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == REQUEST_PERMISSION_READ_EXTERNAL_STORAGE) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupRecyclerView();
-            } else {
-                showRequestPermissionRationale();
-                mAllowAccess.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void showRequestPermissionRationale() {
-        String app = getString(R.string.app_name);
-        String permissionRationale = String.format(getString(R.string.read_storage_rationale), app, app);
-        mPermissionRationale.setText(Html.fromHtml(permissionRationale));
-        mRequestPermissionRationale.setVisibility(View.VISIBLE);
-    }
-
-    private void setupRecyclerView() {
-        File[] files = BackupHelper.listBackups(BackupHelper.getLocalBackupFolder(getActivity()));
-        mAdapter.setFiles(files);
-        mRequestPermissionRationale.setVisibility(View.GONE);
-        mEmptyView.setText(getString(R.string.no_database_backup_found));
-        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -240,6 +223,12 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -248,9 +237,9 @@ public class BackupFragment extends Fragment {
             mDismissProgressBar = false;
         }
 
-        if (mLaunchAlertDialog) {
-            showAlertDialog();
-            mLaunchAlertDialog = false;
+        if (mLaunchRestoreAlertDialog) {
+            showRestoreAlertDialog();
+            mLaunchRestoreAlertDialog = false;
         }
     }
 
@@ -265,10 +254,31 @@ public class BackupFragment extends Fragment {
         super.onStop();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mFloatingActionButtonProvider = null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_PERMISSION_READ_EXTERNAL_STORAGE) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setupRecyclerView();
+            } else {
+                showRequestPermissionRationale();
+                mAllowAccess.setVisibility(View.GONE);
+                mFloatingActionButtonProvider.getFloatingActionButton().hide();
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSuccess(LocalRestoreIntentService.SuccessEvent successEvent) {
         hideProgressDialog();
-        showAlertDialog();
+        showRestoreAlertDialog();
         if (mActionMode != null) {
             mActionMode.finish();
         }
@@ -280,23 +290,74 @@ public class BackupFragment extends Fragment {
                 + errorEvent.getException().getMessage(), errorEvent.getException());
     }
 
-    private void showAlertDialog() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSuccess(BackupIntentService.SuccessEvent successEvent) {
+        hideProgressDialog();
+        showBackupAlertDialog();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFailure(BackupIntentService.ErrorEvent errorEvent) {
+        Log.e(TAG, "An error occurred while backing up database: "
+                + errorEvent.getException().getMessage(), errorEvent.getException());
+    }
+
+    public void fabAction() {
+        Intent backupIntent = new Intent(getActivity(), BackupIntentService.class);
+        getActivity().startService(backupIntent);
+        showProgressDialog(R.string.database_backup_progress);
+    }
+
+    private void showRequestPermissionRationale() {
+        String app = getString(R.string.app_name);
+        String permissionRationale = String.format(getString(R.string.read_storage_rationale), app, app);
+        mPermissionRationale.setText(Html.fromHtml(permissionRationale));
+        mRequestPermissionRationale.setVisibility(View.VISIBLE);
+    }
+
+    private void setupRecyclerView() {
+        File[] files = BackupHelper.listBackups(BackupHelper.getLocalBackupFolder(getActivity()));
+        mAdapter.setFiles(files);
+        mFloatingActionButtonProvider.getFloatingActionButton().show();
+        mRequestPermissionRationale.setVisibility(View.GONE);
+        mEmptyView.setText(getString(R.string.no_database_backup_found));
+        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
+    }
+
+    private void showBackupAlertDialog() {
+        FragmentActivity activity = getActivity();
+        if (activity != null && isResumed()) {
+            AlertDialogFragment.newInstance(
+                    getString(R.string.title_success),
+                    getString(R.string.database_backup_successful),
+                    true
+            ).show(activity.getSupportFragmentManager(), "BackupAlertDialogFragment");
+        } else {
+            mLaunchRestoreAlertDialog = true;
+        }
+    }
+
+    private void showRestoreAlertDialog() {
         FragmentActivity activity = getActivity();
         if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
                     getString(R.string.title_success),
                     getString(R.string.database_restore_successful),
                     true
-            ).show(activity.getSupportFragmentManager(), "AlertDialogFragment");
+            ).show(activity.getSupportFragmentManager(), "RestoreAlertDialogFragment");
         } else {
-            mLaunchAlertDialog = true;
+            mLaunchRestoreAlertDialog = true;
         }
     }
 
-    private void showProgressDialog() {
+    private void showProgressDialog(@StringRes int resId) {
+        showProgressDialog(getString(resId));
+    }
+
+    private void showProgressDialog(String message) {
         FragmentActivity activity = getActivity();
         if (activity != null) {
-            ProgressDialogFragment.newInstance(getString(R.string.database_restore_progress), false)
+            ProgressDialogFragment.newInstance(message, false)
                     .show(activity.getSupportFragmentManager(), "ProgressDialogFragment");
         }
     }

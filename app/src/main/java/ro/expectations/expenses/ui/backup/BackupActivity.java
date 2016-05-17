@@ -4,18 +4,20 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 
-public class BackupActivity extends DrawerActivity {
+public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider {
 
     private boolean mIsFinancistoInstalled = false;
+
+    private FloatingActionButton mFloatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +26,14 @@ public class BackupActivity extends DrawerActivity {
         mMainContent.setLayoutResource(R.layout.content_backup);
         mMainContent.inflate();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
+                BackupFragment backupFragment = (BackupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                if (backupFragment != null && backupFragment.isVisible()) {
+                    backupFragment.fabAction();
+                }
             }
         });
 
@@ -79,5 +83,10 @@ public class BackupActivity extends DrawerActivity {
             installed = false;
         }
         return installed;
+    }
+
+    @Override
+    public FloatingActionButton getFloatingActionButton() {
+        return mFloatingActionButton;
     }
 }

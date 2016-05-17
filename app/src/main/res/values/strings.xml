@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Expenses</string>
 
+    <!-- Action bar actions -->
     <string name="action_settings">Settings</string>
     <string name="action_financisto_import">Import from Financisto</string>
     <string name="action_close_account">Close account</string>
@@ -15,10 +16,12 @@
     <string name="action_edit_transaction">Edit transaction</string>
     <string name="action_delete_transaction">Delete transaction</string>
 
+    <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="navigation_drawer_manage">Manage</string>
 
+    <!-- Activity titles -->
     <string name="title_activity_overview">Overview</string>
     <string name="title_activity_accounts">Accounts</string>
     <string name="title_activity_new_account">Add new account</string>
@@ -31,6 +34,7 @@
     <string name="title_activity_payees">Payees</string>
     <string name="title_activity_exchange_rates">Exchange Rates</string>
 
+    <!-- Account types -->
     <string name="account_type_cash">Cash</string>
     <string name="account_type_bank">Bank Account</string>
     <string name="account_type_debit_card">Debit Card</string>
@@ -40,6 +44,7 @@
     <string name="account_type_electronic">Electronic</string>
     <string name="account_type_other">Other</string>
 
+    <!-- Card issuers -->
     <string name="card_issuer_american_express">American Express (Amex)</string>
     <string name="card_issuer_visa">Visa</string>
     <string name="card_issuer_visa_electron">Visa Electron</string>
@@ -53,6 +58,7 @@
     <string name="card_issuer_diners">Diners Club</string>
     <string name="card_issuer_other">Other</string>
 
+    <!-- Electronic payments -->
     <string name="electronic_payment_paypal">Paypal</string>
     <string name="electronic_payment_google_wallet">Google Wallet</string>
     <string name="electronic_payment_amazon">Amazon</string>
@@ -60,6 +66,7 @@
     <string name="electronic_payment_bitcoin">Bitcoin</string>
     <string name="electronic_payment_other">Other</string>
 
+    <!-- Empty listings -->
     <string name="no_account_defined">You haven\'t created an account yet.</string>
     <string name="no_database_backup_found">You haven\'t backed up your database yet. Why don\'t you try to back it up now?</string>
     <string name="no_financisto_backup_found">Could not find any Financisto backups. Open Financisto, back up your database and try again.</string>
@@ -68,13 +75,21 @@
     <string name="no_categories_defined">You haven\'t created a category yet.</string>
     <string name="no_subcategories_defined">You haven\'t created a subcategory yet.</string>
 
+    <!-- Backup/restore and import from Financisto -->
+    <string name="read_storage_rationale_title">Access denied</string>
+    <string name="read_storage_rationale"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list backup files or create new backups.]]></string>
+    <string name="read_storage_rationale_financisto_import"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list Financisto backup files that can be imported.]]></string>
+    <string name="allow_access">Allow access</string>
+    <string name="database_backup_progress">Backing up database…</string>
+    <string name="database_backup_successful">The database has been successfully backed up.</string>
     <string name="database_restore_progress">Restoring database…</string>
     <string name="database_restore_successful">The database has been successfully restored.</string>
     <string name="financisto_import_progress">Importing Financisto backup…</string>
     <string name="financisto_import_successful">The Financisto backup has been successfully imported.</string>
-
     <string name="title_success">Success</string>
     <string name="button_ok">OK</string>
+
+    <!-- Transactions -->
     <string name="all_accounts">All Accounts</string>
     <string name="breadcrumbs">%1$s » %2$s</string>
     <string name="negative_amount">-%s</string>
@@ -82,9 +97,5 @@
     <string name="default_transfer_description">Transfer</string>
     <string name="default_debit_description">Debit</string>
     <string name="default_credit_description">Credit</string>
-    <string name="allow_access">Allow access</string>
-    <string name="read_storage_rationale_title">Access denied</string>
-    <string name="read_storage_rationale"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list backup files or create new backups.]]></string>
-    <string name="read_storage_rationale_financisto_import"><![CDATA[You haven\'t allowed <b>%1$s</b> to access your files. Without access, <b>%2$s</b> cannot list Financisto backup files that can be imported.]]></string>
 
 </resources>
