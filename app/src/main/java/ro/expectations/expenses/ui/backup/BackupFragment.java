@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -48,6 +49,9 @@ public class BackupFragment extends Fragment {
 
     private static final String TAG = BackupFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
+
+    private boolean mReadStorageAllowed = false;
+    private boolean mIsFinancistoInstalled = false;
 
     private FloatingActionButtonProvider mFloatingActionButtonProvider;
 
@@ -133,6 +137,13 @@ public class BackupFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement FloatingActionButtonProvider");
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mIsFinancistoInstalled = isFinancistoInstalled();
     }
 
     @Override
@@ -244,6 +255,26 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (mIsFinancistoInstalled && mReadStorageAllowed) {
+            menu.add(Menu.NONE, R.id.action_financisto_import, Menu.NONE, R.string.action_financisto_import);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_financisto_import) {
+            Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportActivity.class);
+            startActivity(financistoImportIntent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         mAdapter.onSaveInstanceState(outState);
     }
@@ -322,6 +353,8 @@ public class BackupFragment extends Fragment {
         mRequestPermissionRationale.setVisibility(View.GONE);
         mEmptyView.setText(getString(R.string.no_database_backup_found));
         mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
+        mReadStorageAllowed = true;
+        getActivity().invalidateOptionsMenu();
     }
 
     private void showBackupAlertDialog() {
@@ -373,5 +406,17 @@ public class BackupFragment extends Fragment {
                 mDismissProgressBar = true;
             }
         }
+    }
+
+    private boolean isFinancistoInstalled() {
+        PackageManager pm = getActivity().getPackageManager();
+        boolean installed;
+        try {
+            pm.getPackageInfo("ru.orangesoftware.financisto", PackageManager.GET_ACTIVITIES);
+            installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            installed = false;
+        }
+        return installed;
     }
 }
