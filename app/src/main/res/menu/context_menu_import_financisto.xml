@@ -7,6 +7,6 @@
         android:id="@+id/action_financisto_import"
         android:orderInCategory="100"
         android:title="@string/action_financisto_import"
-        android:icon="@drawable/ic_settings_backup_restore_white_24dp"
+        android:icon="@drawable/ic_restore_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>
