@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.FloatingActionButtonProvider;
+import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 
 public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider {

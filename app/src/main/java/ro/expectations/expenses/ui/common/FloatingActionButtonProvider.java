@@ -1,4 +1,4 @@
-package ro.expectations.expenses.ui;
+package ro.expectations.expenses.ui.common;
 
 import android.support.design.widget.FloatingActionButton;
 

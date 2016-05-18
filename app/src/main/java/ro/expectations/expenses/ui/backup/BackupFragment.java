@@ -38,7 +38,7 @@ import ro.expectations.expenses.backup.BackupIntentService;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
-import ro.expectations.expenses.ui.FloatingActionButtonProvider;
+import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
 import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
