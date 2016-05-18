@@ -66,19 +66,18 @@ public class TransactionsActivity extends DrawerActivity
         mAccountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedAccountId = id;
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment, TransactionsFragment.newInstance(id, true))
-                        .commit();
+                if (id != mSelectedAccountId) {
+                    mSelectedAccountId = id;
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment, TransactionsFragment.newInstance(mSelectedAccountId, true))
+                            .commit();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        if (mSelectedAccountId > 0) {
-            setSpinnerItemById(mSelectedAccountId);
-        }
 
         getSupportLoaderManager().restartLoader(0, null, this);
 
@@ -90,6 +89,12 @@ public class TransactionsActivity extends DrawerActivity
                         .setAction("OK", null).show();
             }
         });
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, TransactionsFragment.newInstance(mSelectedAccountId, true))
+                    .commit();
+        }
     }
 
     @Override

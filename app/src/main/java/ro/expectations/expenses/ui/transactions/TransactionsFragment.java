@@ -1,6 +1,5 @@
 package ro.expectations.expenses.ui.transactions;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -99,8 +98,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_transactions, menu);
-            Activity activity = getActivity();
-            ((DrawerActivity) activity).lockNavigationDrawer();
+            ((DrawerActivity) getActivity()).lockNavigationDrawer();
             return true;
         }
 
@@ -172,12 +170,12 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
 
+        mEmptyView = (TextView) rootView.findViewById(R.id.list_transactions_empty);
+
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_transactions);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
-
-        mEmptyView = (TextView) rootView.findViewById(R.id.list_transactions_empty);
 
         mAdapter = new TransactionsAdapter(getActivity(), mSelectedAccountId);
         recyclerView.setAdapter(mAdapter);
