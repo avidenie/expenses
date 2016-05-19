@@ -34,8 +34,8 @@ import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
-import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
-import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
+import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
+import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 

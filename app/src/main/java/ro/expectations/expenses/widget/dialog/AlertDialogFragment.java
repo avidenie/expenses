@@ -1,4 +1,4 @@
-package ro.expectations.expenses.widget.fragment;
+package ro.expectations.expenses.widget.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;

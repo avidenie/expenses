@@ -40,8 +40,8 @@ import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.widget.fragment.AlertDialogFragment;
-import ro.expectations.expenses.widget.fragment.ProgressDialogFragment;
+import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
+import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
