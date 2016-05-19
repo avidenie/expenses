@@ -21,6 +21,7 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
         mMainContent.inflate();
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        mFloatingActionButton.setImageResource(R.drawable.ic_backup_white_24dp);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
