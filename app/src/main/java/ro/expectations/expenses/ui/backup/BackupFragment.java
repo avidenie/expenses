@@ -361,7 +361,7 @@ public class BackupFragment extends Fragment {
         FragmentActivity activity = getActivity();
         if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
-                    getString(R.string.title_success),
+                    getString(R.string.success),
                     getString(R.string.database_backup_successful),
                     true
             ).show(activity.getSupportFragmentManager(), "BackupAlertDialogFragment");
@@ -374,7 +374,7 @@ public class BackupFragment extends Fragment {
         FragmentActivity activity = getActivity();
         if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
-                    getString(R.string.title_success),
+                    getString(R.string.success),
                     getString(R.string.database_restore_successful),
                     true
             ).show(activity.getSupportFragmentManager(), "RestoreAlertDialogFragment");

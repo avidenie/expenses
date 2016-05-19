@@ -34,6 +34,14 @@
     <string name="title_activity_payees">Payees</string>
     <string name="title_activity_exchange_rates">Exchange Rates</string>
 
+    <!-- Generic messages -->
+    <string name="success">Success</string>
+
+    <!-- Buttons -->
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_import">Import</string>
+
     <!-- Account types -->
     <string name="account_type_cash">Cash</string>
     <string name="account_type_bank">Bank Account</string>
@@ -84,10 +92,10 @@
     <string name="database_backup_successful">The database has been successfully backed up.</string>
     <string name="database_restore_progress">Restoring database…</string>
     <string name="database_restore_successful">The database has been successfully restored.</string>
+    <string name="financisto_import_confirmation_title">Import Financisto backup file?</string>
+    <string name="financisto_import_confirmation_message">Your existing database will be removed and replaced with the contents of the Financisto backup file.</string>
     <string name="financisto_import_progress">Importing Financisto backup…</string>
     <string name="financisto_import_successful">The Financisto backup has been successfully imported.</string>
-    <string name="title_success">Success</string>
-    <string name="button_ok">OK</string>
 
     <!-- Transactions -->
     <string name="all_accounts">All Accounts</string>

@@ -35,14 +35,18 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
+import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
-public class FinancistoImportFragment extends Fragment {
+public class FinancistoImportFragment extends Fragment
+        implements ConfirmationDialogFragment.OnConfirmationListener {
 
     private static final String TAG = FinancistoImportFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
+    private static final int CONFIRMATION_DIALOG_REQUEST_CODE = 0;
+    private static final String KEY_SELECTED_FILE = "selected_file";
 
     private FinancistoImportAdapter mAdapter;
     private TextView mEmptyView;
@@ -52,6 +56,8 @@ public class FinancistoImportFragment extends Fragment {
 
     private boolean mDismissProgressBar = false;
     private boolean mLaunchAlertDialog = false;
+
+    private File mSelectedFile;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -74,11 +80,18 @@ public class FinancistoImportFragment extends Fragment {
             int id = item.getItemId();
             switch(id) {
                 case R.id.action_financisto_import:
-                    File file = mAdapter.getItem(mAdapter.getSelectedItemPosition());
-                    Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportIntentService.class);
-                    financistoImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(file).getPath());
-                    getActivity().startService(financistoImportIntent);
-                    showProgressDialog();
+                    mSelectedFile = mAdapter.getItem(mAdapter.getSelectedItemPosition());
+
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        ConfirmationDialogFragment confirmationDialogFragment = ConfirmationDialogFragment.newInstance(
+                                activity.getString(R.string.financisto_import_confirmation_title),
+                                activity.getString(R.string.financisto_import_confirmation_message),
+                                activity.getString(R.string.button_import),
+                                activity.getString(R.string.button_cancel), false);
+                        confirmationDialogFragment.setTargetFragment(FinancistoImportFragment.this, CONFIRMATION_DIALOG_REQUEST_CODE);
+                        confirmationDialogFragment.show(activity.getSupportFragmentManager(), "ConfirmationDialogFragment");
+                    }
                     return true;
                 default:
                     return false;
@@ -100,12 +113,6 @@ public class FinancistoImportFragment extends Fragment {
 
     public FinancistoImportFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -188,43 +195,21 @@ public class FinancistoImportFragment extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == REQUEST_PERMISSION_READ_EXTERNAL_STORAGE) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupRecyclerView();
-            } else {
-                showRequestPermissionRationale();
-                mAllowAccess.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void showRequestPermissionRationale() {
-        String app = getString(R.string.app_name);
-        String permissionRationale = String.format(getString(R.string.read_storage_rationale_financisto_import), app, app);
-        mPermissionRationale.setText(Html.fromHtml(permissionRationale));
-        mRequestPermissionRationale.setVisibility(View.VISIBLE);
-    }
-
-    private void setupRecyclerView() {
-        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
-        mAdapter.setFiles(files);
-        mRequestPermissionRationale.setVisibility(View.GONE);
-        mEmptyView.setText(getString(R.string.no_financisto_backup_found));
-        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mAdapter.onRestoreInstanceState(savedInstanceState);
+            mSelectedFile = (File) savedInstanceState.getSerializable(KEY_SELECTED_FILE);
             if (mAdapter.isChoiceMode() && mActionMode == null) {
                 mActionMode = ((FinancistoImportActivity) getActivity()).startSupportActionMode(mActionModeCallback);
             }
         }
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -245,12 +230,37 @@ public class FinancistoImportFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mAdapter.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_SELECTED_FILE, mSelectedFile);
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_PERMISSION_READ_EXTERNAL_STORAGE) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setupRecyclerView();
+            } else {
+                showRequestPermissionRationale();
+                mAllowAccess.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onConfirmation(int targetRequestCode) {
+        if (targetRequestCode == CONFIRMATION_DIALOG_REQUEST_CODE) {
+            Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportIntentService.class);
+            financistoImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(mSelectedFile).getPath());
+            getActivity().startService(financistoImportIntent);
+            showProgressDialog();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -268,11 +278,26 @@ public class FinancistoImportFragment extends Fragment {
                 + errorEvent.getException().getMessage(), errorEvent.getException());
     }
 
+    private void showRequestPermissionRationale() {
+        String app = getString(R.string.app_name);
+        String permissionRationale = String.format(getString(R.string.read_storage_rationale_financisto_import), app, app);
+        mPermissionRationale.setText(Html.fromHtml(permissionRationale));
+        mRequestPermissionRationale.setVisibility(View.VISIBLE);
+    }
+
+    private void setupRecyclerView() {
+        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
+        mAdapter.setFiles(files);
+        mRequestPermissionRationale.setVisibility(View.GONE);
+        mEmptyView.setText(getString(R.string.no_financisto_backup_found));
+        mEmptyView.setVisibility(files.length > 0 ? View.GONE : View.VISIBLE);
+    }
+
     private void showAlertDialog() {
         FragmentActivity activity = getActivity();
         if (activity != null && isResumed()) {
             AlertDialogFragment.newInstance(
-                    getString(R.string.title_success),
+                    getString(R.string.success),
                     getString(R.string.financisto_import_successful),
                     true
             ).show(activity.getSupportFragmentManager(), "AlertDialogFragment");
