@@ -263,19 +263,21 @@ public class FinancistoImportFragment extends Fragment
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onSuccess(FinancistoImportIntentService.SuccessEvent successEvent) {
         hideProgressDialog();
         showAlertDialog();
         if (mActionMode != null) {
             mActionMode.finish();
         }
+        EventBus.getDefault().removeStickyEvent(successEvent);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onFailure(FinancistoImportIntentService.ErrorEvent errorEvent) {
         Log.e(TAG, "An error occurred while importing Financisto backup: "
                 + errorEvent.getException().getMessage(), errorEvent.getException());
+        EventBus.getDefault().removeStickyEvent(errorEvent);
     }
 
     private void showRequestPermissionRationale() {

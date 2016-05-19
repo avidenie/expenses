@@ -81,12 +81,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     @Override
     protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new ErrorEvent(e));
+        EventBus.getDefault().postSticky(new ErrorEvent(e));
     }
 
     @Override
     protected void notifySuccess() {
-        EventBus.getDefault().post(new SuccessEvent());
+        EventBus.getDefault().postSticky(new SuccessEvent());
     }
 
     private void processEntry(String tableName, Map<String, String> values) {
