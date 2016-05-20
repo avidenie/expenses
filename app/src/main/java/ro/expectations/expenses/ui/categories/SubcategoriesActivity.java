@@ -57,7 +57,7 @@ public class SubcategoriesActivity extends AppCompatActivity
         setContentView(R.layout.app_bar);
 
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
-        mainContent.setLayoutResource(R.layout.content_backup);
+        mainContent.setLayoutResource(R.layout.content_categories);
         mainContent.inflate();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
