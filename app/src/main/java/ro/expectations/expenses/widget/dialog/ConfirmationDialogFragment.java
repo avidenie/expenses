@@ -19,7 +19,6 @@
 
 package ro.expectations.expenses.widget.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -29,12 +28,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 
-import ro.expectations.expenses.R;
-
 public class ConfirmationDialogFragment extends DialogFragment {
 
-    public interface OnConfirmationListener {
-        void onConfirmation(int targetRequestCode);
+    public interface Listener {
+        void onConfirmed(int targetRequestCode);
+        void onDenied(int targetRequestCode);
     }
 
     private static final String ARG_TITLE = "title";
@@ -42,7 +40,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
     private static final String ARG_POSITIVE_BUTTON_LABEL = "positive_button_label";
     private static final String ARG_NEGATIVE_BUTTON_LABEL = "negative_button_label";
 
-    private OnConfirmationListener callback;
+    private Listener callback;
 
     public static ConfirmationDialogFragment newInstance(String title, String message,
                                                   String positiveButtonLabel,
@@ -64,11 +62,11 @@ public class ConfirmationDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         Fragment target = getTargetFragment();
-        if (target instanceof OnConfirmationListener) {
-            callback = (OnConfirmationListener) getTargetFragment();
+        if (target instanceof Listener) {
+            callback = (Listener) getTargetFragment();
         } else {
             throw new RuntimeException(getTargetFragment().toString()
-                    + " must implement ConfirmationDialogFragment.OnConfirmationListener");
+                    + " must implement ConfirmationDialogFragment.Listener");
         }
     }
 
@@ -88,13 +86,13 @@ public class ConfirmationDialogFragment extends DialogFragment {
         builder.setPositiveButton(arguments.getString(ARG_POSITIVE_BUTTON_LABEL), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                callback.onConfirmation(getTargetRequestCode());
+                callback.onConfirmed(getTargetRequestCode());
             }
         });
         builder.setNegativeButton(arguments.getString(ARG_NEGATIVE_BUTTON_LABEL), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dismiss();
+                callback.onDenied(getTargetRequestCode());
             }
         });
         return builder.create();

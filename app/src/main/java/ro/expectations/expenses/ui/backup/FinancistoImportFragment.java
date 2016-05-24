@@ -60,7 +60,7 @@ import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class FinancistoImportFragment extends Fragment
-        implements ConfirmationDialogFragment.OnConfirmationListener {
+        implements ConfirmationDialogFragment.Listener {
 
     private static final String TAG = FinancistoImportFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
@@ -273,13 +273,18 @@ public class FinancistoImportFragment extends Fragment
     }
 
     @Override
-    public void onConfirmation(int targetRequestCode) {
+    public void onConfirmed(int targetRequestCode) {
         if (targetRequestCode == CONFIRMATION_DIALOG_REQUEST_CODE) {
             Intent financistoImportIntent = new Intent(getActivity(), FinancistoImportIntentService.class);
             financistoImportIntent.putExtra(AbstractRestoreIntentService.ARG_FILE_URI, Uri.fromFile(mSelectedFile).getPath());
             getActivity().startService(financistoImportIntent);
             showProgressDialog();
         }
+    }
+
+    @Override
+    public void onDenied(int targetRequestCode) {
+        // nothing to do
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
