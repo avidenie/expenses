@@ -86,7 +86,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     selectedCategories,
                     selectedCategories
             ));
-            if (mAdapter.getSelectedItemCount() == 1) {
+            if (selectedCategories == 1) {
                 menu.findItem(R.id.action_edit_category).setVisible(true);
             } else {
                 menu.findItem(R.id.action_edit_category).setVisible(false);
