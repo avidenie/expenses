@@ -55,6 +55,7 @@ import java.io.File;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.backup.BackupIntentService;
 import ro.expectations.expenses.helper.BackupHelper;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
@@ -91,6 +92,10 @@ public class BackupFragment extends Fragment {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_backup, menu);
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
+            MenuItem actionRestore = menu.findItem(R.id.action_restore);
+            actionRestore.setIcon(DrawableHelper.tint(getContext(), actionRestore.getIcon(), R.color.colorWhite));
+            MenuItem actionDelete = menu.findItem(R.id.action_delete);
+            actionDelete.setIcon(DrawableHelper.tint(getContext(), actionDelete.getIcon(), R.color.colorWhite));
             return true;
         }
 
@@ -436,6 +441,6 @@ public class BackupFragment extends Fragment {
         } catch (PackageManager.NameNotFoundException e) {
             installed = false;
         }
-        return installed;
+        return true; //installed;
     }
 }

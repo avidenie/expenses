@@ -36,8 +36,8 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.helper.ListHelper;
-import ro.expectations.expenses.ui.categories.CategoriesFragment;
 import ro.expectations.expenses.utils.NumberUtils;
 import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
@@ -140,9 +140,9 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
 
         // Set the icon
         if (fromAccountId > 0 && toAccountId > 0) {
-            holder.mTransactionIcon.setImageResource(R.drawable.ic_transfer_white_24dp);
+            holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_transfer_black_24dp, R.color.colorWhite));
         } else {
-            holder.mTransactionIcon.setImageResource(R.drawable.ic_question_mark_white_24dp);
+            holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_question_mark_black_24dp, R.color.colorWhite));
         }
         GradientDrawable bgShape = (GradientDrawable) holder.mTransactionIconBackground.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
@@ -193,16 +193,16 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         // Set the color for the amount and the transaction type icon
         if (mSelectedAccountId == 0) {
             holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorOrange700));
-            holder.mTypeIcon.setImageResource(R.drawable.ic_swap_horiz_orange_24dp);
+            holder.mTypeIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_swap_horiz_black_24dp, R.color.colorOrange700));
         } else {
             long fromAccountId = mCursor.getLong(TransactionsFragment.COLUMN_FROM_ACCOUNT_ID);
             long toAccountId = mCursor.getLong(TransactionsFragment.COLUMN_TO_ACCOUNT_ID);
             if (mSelectedAccountId == fromAccountId) {
                 holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorRed700));
-                holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
+                holder.mTypeIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_call_made_black_24dp, R.color.colorRed700));
             } else if (mSelectedAccountId == toAccountId) {
                 holder.mAmount.setTextColor(ContextCompat.getColor(mContext, R.color.colorGreen700));
-                holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);
+                holder.mTypeIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_call_received_black_24dp, R.color.colorGreen700));
             }
         }
     }
@@ -228,7 +228,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         holder.mRunningBalance.setText(format.format(fromBalance));
 
         // Set the transaction type icon
-        holder.mTypeIcon.setImageResource(R.drawable.ic_call_made_red_24dp);
+        holder.mTypeIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_call_made_black_24dp, R.color.colorRed700));
     }
 
     private void processCredit(ViewHolder holder, int position) {
@@ -252,7 +252,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         holder.mRunningBalance.setText(format.format(toBalance));
 
         // Set the transaction type icon
-        holder.mTypeIcon.setImageResource(R.drawable.ic_call_received_green_24dp);
+        holder.mTypeIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_call_received_black_24dp, R.color.colorGreen700));
     }
 
     @Override

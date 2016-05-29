@@ -18,20 +18,12 @@
   ~ along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.backup.BackupActivity">
-    <item
-        android:id="@+id/action_restore"
-        android:orderInCategory="100"
-        android:title="@string/action_restore"
-        android:icon="@drawable/ic_restore_black_24dp"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_delete"
-        android:orderInCategory="200"
-        android:title="@string/action_delete_backup"
-        android:icon="@drawable/ic_delete_black_24dp"
-        app:showAsAction="ifRoom" />
-</menu>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20,4L4,4c-1.11,0 -1.99,0.89 -1.99,2L2,18c0,1.11 0.89,2 2,2h16c1.11,0 2,-0.89 2,-2L22,6c0,-1.11 -0.89,-2 -2,-2zM20,18L4,18v-6h16v6zM20,8L4,8L4,6h16v2z"/>
+</vector>

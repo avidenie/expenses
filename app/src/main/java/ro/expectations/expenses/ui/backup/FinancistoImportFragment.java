@@ -51,6 +51,7 @@ import java.io.File;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.BackupHelper;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
@@ -85,6 +86,8 @@ public class FinancistoImportFragment extends Fragment
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_import_financisto, menu);
+            MenuItem actionFinancistoImport = menu.findItem(R.id.action_financisto_import);
+            actionFinancistoImport.setIcon(DrawableHelper.tint(getContext(), actionFinancistoImport.getIcon(), R.color.colorWhite));
             return true;
         }
 

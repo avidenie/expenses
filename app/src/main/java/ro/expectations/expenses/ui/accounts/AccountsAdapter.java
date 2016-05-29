@@ -36,6 +36,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.helper.ListHelper;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
@@ -84,7 +85,7 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
                     cardIssuer = CardIssuer.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageResource(cardIssuer.iconId);
+            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, cardIssuer.iconId, R.color.colorWhite));
         } else if (accountType == AccountType.ELECTRONIC) {
             String paymentType = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
             ElectronicPaymentType electronicPaymentType;
@@ -97,9 +98,9 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
                     electronicPaymentType = ElectronicPaymentType.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageResource(electronicPaymentType.iconId);
+            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, electronicPaymentType.iconId, R.color.colorWhite));
         } else {
-            holder.mAccountIcon.setImageResource(accountType.iconId);
+            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, accountType.iconId, R.color.colorWhite));
         }
 
         // Set the icon background color

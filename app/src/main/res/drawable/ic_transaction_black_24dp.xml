@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright © 2016 Adrian Videnie
+  ~
+  ~ This file is part of Expenses.
+  ~
+  ~ Expenses is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Expenses is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="474.172"
+        android:viewportHeight="474.172">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M118.4,117.8c-5.6,0 -11.3,3.6 -12.6,8L17.1,412.5c-1.4,4.4 2.1,8 7.7,8h166.1L284.5,117.8H118.4V117.8zM113.6,387.7H81.1l29.6,-95.6h32.6L113.6,387.7z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M0,53.7v92.9h74.3l10.3,-33.4c3.3,-10.5 16.8,-19.1 30.2,-19.1h271.3c13.4,0 21.7,8.5 18.4,19.1l-10.3,33.4h80V53.7H0z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M367.9,117.8h-46.8l-93.5,302.7h46.8c5.6,0 11.3,-3.6 12.6,-8l88.6,-286.8C377,121.4 373.5,117.8 367.9,117.8z" />
+</vector>

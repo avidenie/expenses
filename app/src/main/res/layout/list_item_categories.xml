@@ -41,7 +41,7 @@
             android:id="@+id/category_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_question_mark_white_24dp"
+            android:src="@drawable/ic_question_mark_black_24dp"
             android:contentDescription="@null" />
     </RelativeLayout>
 
@@ -58,7 +58,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@null"
-            android:src="@drawable/ic_done_white_24dp" />
+            android:src="@drawable/ic_done_black_24dp"
+            android:tint="@color/colorWhite" />
     </RelativeLayout>
 
     <TextView
@@ -73,7 +74,7 @@
         android:id="@+id/subcategories_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_keyboard_arrow_right_grey_24dp"
+        android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
         android:contentDescription="@null" />
 
 </LinearLayout>

@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
@@ -56,6 +57,10 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_payees, menu);
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
+            MenuItem actionEditPayee = menu.findItem(R.id.action_edit_payee);
+            actionEditPayee.setIcon(DrawableHelper.tint(getContext(), actionEditPayee.getIcon(), R.color.colorWhite));
+            MenuItem actionDeletePayee = menu.findItem(R.id.action_delete_payee);
+            actionDeletePayee.setIcon(DrawableHelper.tint(getContext(), actionDeletePayee.getIcon(), R.color.colorWhite));
             return true;
         }
 

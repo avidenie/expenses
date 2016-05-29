@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
@@ -75,6 +76,10 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             if (activity instanceof DrawerActivity) {
                 ((DrawerActivity) activity).lockNavigationDrawer();
             }
+            MenuItem actionEditCategory = menu.findItem(R.id.action_edit_category);
+            actionEditCategory.setIcon(DrawableHelper.tint(getContext(), actionEditCategory.getIcon(), R.color.colorWhite));
+            MenuItem actionDeleteCategory = menu.findItem(R.id.action_delete_category);
+            actionDeleteCategory.setIcon(DrawableHelper.tint(getContext(), actionDeleteCategory.getIcon(), R.color.colorWhite));
             return true;
         }
 

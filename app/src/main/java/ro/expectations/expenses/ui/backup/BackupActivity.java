@@ -19,9 +19,12 @@
 
 package ro.expectations.expenses.ui.backup;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 
 import ro.expectations.expenses.R;
@@ -40,7 +43,9 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
         mMainContent.inflate();
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatingActionButton.setImageResource(R.drawable.ic_backup_white_24dp);
+        Drawable icon = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_cloud_upload_black_24dp));
+        DrawableCompat.setTint(icon, ContextCompat.getColor(this, R.color.colorWhite));
+        mFloatingActionButton.setImageDrawable(icon);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

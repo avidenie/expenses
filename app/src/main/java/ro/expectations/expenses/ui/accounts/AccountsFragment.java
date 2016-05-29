@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
@@ -57,6 +58,10 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_accounts, menu);
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
+            MenuItem actionEditAccount = menu.findItem(R.id.action_edit_account);
+            actionEditAccount.setIcon(DrawableHelper.tint(getContext(), actionEditAccount.getIcon(), R.color.colorWhite));
+            MenuItem actionCloseAccount = menu.findItem(R.id.action_close_account);
+            actionCloseAccount.setIcon(DrawableHelper.tint(getContext(), actionCloseAccount.getIcon(), R.color.colorWhite));
             return true;
         }
 
