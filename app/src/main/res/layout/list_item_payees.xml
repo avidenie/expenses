@@ -22,10 +22,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingStart="?android:attr/listPreferredItemPaddingLeft"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingRight"
-    android:background="?android:attr/selectableItemBackground"
+    android:minHeight="?attr/listPreferredItemHeight"
+    android:paddingStart="?attr/listPreferredItemPaddingLeft"
+    android:paddingEnd="?attr/listPreferredItemPaddingRight"
+    android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
     android:baselineAligned="false">
 
@@ -33,6 +33,6 @@
         android:id="@+id/payee_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        android:textAppearance="?attr/textAppearanceListItem" />
 
 </LinearLayout>
