@@ -441,6 +441,6 @@ public class BackupFragment extends Fragment {
         } catch (PackageManager.NameNotFoundException e) {
             installed = false;
         }
-        return true; //installed;
+        return installed;
     }
 }
