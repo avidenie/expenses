@@ -20,4 +20,5 @@
 
 <resources>
     <item name="action_financisto_import" type="id" />
+    <item name="action_save" type="id" />
 </resources>

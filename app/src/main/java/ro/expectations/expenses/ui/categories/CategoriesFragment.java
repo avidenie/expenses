@@ -48,17 +48,6 @@ import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class CategoriesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String[] PROJECTION = {
-            ExpensesContract.Categories._ID,
-            ExpensesContract.Categories.NAME,
-            ExpensesContract.Categories.PARENT_ID,
-            ExpensesContract.Categories.CHILDREN
-    };
-    static final int COLUMN_CATEGORY_ID = 0;
-    static final int COLUMN_CATEGORY_NAME = 1;
-    static final int COLUMN_CATEGORY_PARENT_ID = 2;
-    static final int COLUMN_CATEGORY_CHILDREN = 3;
-
     private static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
 
     private long mParentCategoryId;
@@ -104,7 +93,14 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             int id = item.getItemId();
             switch(id) {
                 case R.id.action_edit_category:
-                    mode.finish();
+                    if (mAdapter.getSelectedItemCount() == 1) {
+                        int position = mAdapter.getSelectedItemPositions().get(0);
+                        long categoryId = mAdapter.getItemId(position);
+                        Intent editCategoryIntent = new Intent(getActivity(), EditCategoryActivity.class);
+                        editCategoryIntent.putExtra(EditCategoryActivity.ARG_CATEGORY_ID, categoryId);
+                        startActivity(editCategoryIntent);
+                        mode.finish();
+                    }
                     return true;
                 case R.id.action_delete_category:
                     mode.finish();
@@ -245,7 +241,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
         return new CursorLoader(
                 getActivity(),
                 ExpensesContract.Categories.CONTENT_URI,
-                PROJECTION,
+                CategoriesAdapter.PROJECTION,
                 selection,
                 selectionArgs,
                 sortOrder);

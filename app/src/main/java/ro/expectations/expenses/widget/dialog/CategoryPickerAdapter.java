@@ -17,42 +17,41 @@
  * along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.ui.categories;
+package ro.expectations.expenses.widget.dialog;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
-public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapter.ViewHolder> {
+public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAdapter.ViewHolder> {
 
     static final String[] PROJECTION = {
             ExpensesContract.Categories._ID,
-            ExpensesContract.Categories.NAME,
-            ExpensesContract.Categories.PARENT_ID,
-            ExpensesContract.Categories.CHILDREN
+            ExpensesContract.Categories.NAME
     };
     static final int COLUMN_CATEGORY_ID = 0;
     static final int COLUMN_CATEGORY_NAME = 1;
-    static final int COLUMN_CATEGORY_PARENT_ID = 2;
-    static final int COLUMN_CATEGORY_CHILDREN = 3;
 
     private Cursor mCursor;
     final private Context mContext;
 
-    public CategoriesAdapter(Context context) {
+    public CategoryPickerAdapter(Context context) {
         mContext = context;
         setHasStableIds(true);
     }
@@ -68,30 +67,35 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        // Set the row background
-        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
-                holder.mCategoryIconBackground, holder.mSelectedIconBackground);
-
         // Set the icon background color
         GradientDrawable bgShape = (GradientDrawable) holder.mCategoryIconBackground.getBackground();
         bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
 
+        // Set the icon
+        int iconId;
+        if (getItemId(position) == 0) {
+            iconId = R.drawable.ic_clear_black_24dp;
+        } else {
+            iconId = R.drawable.ic_question_mark_black_24dp;
+        }
+        holder.mCategoryIcon.setImageDrawable(DrawableHelper.tint(mContext, iconId, R.color.colorWhite));
+
         // Set the category name
         String name = mCursor.getString(COLUMN_CATEGORY_NAME);
-        holder.mNameView.setText(name);
+        holder.mCategoryName.setText(name);
 
-        // Show or hide the subcategories icon
-        long parentId = mCursor.getLong(COLUMN_CATEGORY_PARENT_ID);
-        if (parentId > 0 ) {
-            holder.mSubcategoriesIcon.setVisibility(View.GONE);
-        } else {
-            long children = mCursor.getLong(COLUMN_CATEGORY_CHILDREN);
-            if (children > 0) {
-                holder.mSubcategoriesIcon.setVisibility(View.VISIBLE);
-            } else {
-                holder.mSubcategoriesIcon.setVisibility(View.GONE);
-            }
-        }
+        // Set the proper padding for a dialog.
+        TypedValue value = new TypedValue();
+        mContext.getTheme().resolveAttribute(R.attr.dialogPreferredPadding, value, true);
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
+        int padding = (int) value.getDimension(metrics);
+        holder.mCategoryItem.setPadding(
+                padding,
+                holder.mCategoryItem.getPaddingTop(),
+                padding,
+                holder.mCategoryItem.getPaddingBottom()
+        );
     }
 
     @Override
@@ -119,21 +123,19 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        public final LinearLayout mCategoryItem;
         public final RelativeLayout mCategoryIconBackground;
         public final ImageView mCategoryIcon;
-        public final RelativeLayout mSelectedIconBackground;
-        public final ImageView mSelectedIcon;
-        public final TextView mNameView;
-        public final ImageView mSubcategoriesIcon;
+        public final TextView mCategoryName;
 
         public ViewHolder(View view) {
             super(view);
+
+            mCategoryItem = (LinearLayout) view.findViewById(R.id.category_item);
             mCategoryIconBackground = (RelativeLayout) view.findViewById(R.id.category_icon_background);
             mCategoryIcon = (ImageView) view.findViewById(R.id.category_icon);
-            mSelectedIconBackground = (RelativeLayout) view.findViewById(R.id.selected_icon_background);
-            mSelectedIcon = (ImageView) view.findViewById(R.id.selected_icon);
-            mNameView = (TextView) view.findViewById(R.id.category_name);
-            mSubcategoriesIcon = (ImageView) view.findViewById(R.id.subcategories_icon);
+            mCategoryName = (TextView) view.findViewById(R.id.category_name);
         }
     }
 }
+

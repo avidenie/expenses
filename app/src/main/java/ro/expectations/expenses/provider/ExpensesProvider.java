@@ -133,7 +133,7 @@ public class ExpensesProvider extends ContentProvider {
                 queryBuilder.setTables(Accounts.TABLE_NAME);
                 break;
             case ROUTE_ACCOUNT_ID:
-                queryBuilder.appendWhere(Accounts._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.appendWhere(Accounts._ID + " = " + ContentUris.parseId(uri));
                 queryBuilder.setTables(Accounts.TABLE_NAME);
                 break;
             case ROUTE_CATEGORIES:
@@ -150,14 +150,28 @@ public class ExpensesProvider extends ContentProvider {
                 groupBy = Categories.TABLE_NAME + "." + Categories._ID;
                 break;
             case ROUTE_CATEGORY_ID:
-                queryBuilder.appendWhere(Categories._ID + "=" + ContentUris.parseId(uri));
-                queryBuilder.setTables(Categories.TABLE_NAME);
+                queryBuilder.setTables(Categories.TABLE_NAME + " " +
+                        "LEFT OUTER JOIN " + Categories.TABLE_NAME + " AS " + Subcategories.TABLE_NAME + " ON " +
+                        Categories.TABLE_NAME + "." + Categories._ID + " = " +
+                        Subcategories.TABLE_NAME + "." + Subcategories.PARENT_ID + " " +
+                        "LEFT JOIN " + Categories.TABLE_NAME + " AS " + ParentCategories.TABLE_NAME + " ON (" +
+                        Categories.TABLE_NAME + "." + Categories.PARENT_ID + " = " +
+                        ParentCategories.TABLE_NAME + "." + ParentCategories._ID + ")");
+                projectionMap = new HashMap<>();
+                projectionMap.put(Categories._ID, Categories.TABLE_NAME + "." + Categories._ID);
+                projectionMap.put(Categories.NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
+                projectionMap.put(ParentCategories.PARENT_NAME, ParentCategories.TABLE_NAME + "." + ParentCategories.NAME);
+                projectionMap.put(Categories.CHILDREN, "COUNT(" + Subcategories.TABLE_NAME + "." + Subcategories._ID + ")");
+                queryBuilder.setProjectionMap(projectionMap);
+                groupBy = Categories.TABLE_NAME + "." + Categories._ID;
+                queryBuilder.appendWhere(Categories.TABLE_NAME + "." + Categories._ID + " = " + ContentUris.parseId(uri));
                 break;
             case ROUTE_PAYEES:
                 queryBuilder.setTables(Payees.TABLE_NAME);
                 break;
             case ROUTE_PAYEE_ID:
-                queryBuilder.appendWhere(Payees._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.appendWhere(Payees._ID + " = " + ContentUris.parseId(uri));
                 queryBuilder.setTables(Payees.TABLE_NAME);
                 break;
             case ROUTE_TRANSACTIONS:
@@ -219,14 +233,14 @@ public class ExpensesProvider extends ContentProvider {
                 queryBuilder.setProjectionMap(projectionMap);
                 break;
             case ROUTE_TRANSACTION_ID:
-                queryBuilder.appendWhere(Transactions._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.appendWhere(Transactions._ID + " = " + ContentUris.parseId(uri));
                 queryBuilder.setTables(Transactions.TABLE_NAME);
                 break;
             case ROUTE_TRANSACTION_DETAILS:
                 queryBuilder.setTables(TransactionDetails.TABLE_NAME);
                 break;
             case ROUTE_TRANSACTION_DETAILS_ID:
-                queryBuilder.appendWhere(TransactionDetails._ID + "=" + ContentUris.parseId(uri));
+                queryBuilder.appendWhere(TransactionDetails._ID + " = " + ContentUris.parseId(uri));
                 queryBuilder.setTables(TransactionDetails.TABLE_NAME);
                 break;
             default:
@@ -296,7 +310,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_ACCOUNT_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Accounts._ID).append("=").append(id);
+                newSelection.append(Accounts._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -308,7 +322,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_CATEGORY_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Categories._ID).append("=").append(id);
+                newSelection.append(Categories._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -320,7 +334,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_PAYEE_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Payees._ID).append("=").append(id);
+                newSelection.append(Payees._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -332,7 +346,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Transactions._ID).append("=").append(id);
+                newSelection.append(Transactions._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -344,7 +358,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_DETAILS_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(TransactionDetails._ID).append("=").append(id);
+                newSelection.append(TransactionDetails._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -375,7 +389,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_ACCOUNT_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Accounts._ID).append("=").append(id);
+                newSelection.append(Accounts._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -390,7 +404,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_CATEGORY_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Categories._ID).append("=").append(id);
+                newSelection.append(Categories._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -405,7 +419,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_PAYEE_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Payees._ID).append("=").append(id);
+                newSelection.append(Payees._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -420,7 +434,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(Transactions._ID).append("=").append(id);
+                newSelection.append(Transactions._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
@@ -435,7 +449,7 @@ public class ExpensesProvider extends ContentProvider {
             case ROUTE_TRANSACTION_DETAILS_ID:
                 id = ContentUris.parseId(uri);
                 newSelection = new StringBuilder();
-                newSelection.append(TransactionDetails._ID).append("=").append(id);
+                newSelection.append(TransactionDetails._ID).append(" = ").append(id);
                 if (!TextUtils.isEmpty(selection)) {
                     newSelection.append(" AND ").append(selection);
                 }
