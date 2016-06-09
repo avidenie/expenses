@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -31,9 +32,10 @@ import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
 
-public class EditCategoryActivity extends AppCompatActivity {
+public class EditCategoryActivity extends AppCompatActivity implements EditCategoryFragment.Listener {
 
     public static final String ARG_CATEGORY_ID = "category_id";
+    public static final String TAG_FRAGMENT_EDIT_CATEGORY = "fragment_edit_category";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +60,8 @@ public class EditCategoryActivity extends AppCompatActivity {
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
+                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
+                    if (editCategoryFragment != null) {
                         editCategoryFragment.changeIcon();
                     }
                 }
@@ -71,8 +73,8 @@ public class EditCategoryActivity extends AppCompatActivity {
             categoryIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
+                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
+                    if (editCategoryFragment != null) {
                         editCategoryFragment.changeIcon();
                     }
                 }
@@ -84,8 +86,8 @@ public class EditCategoryActivity extends AppCompatActivity {
             changeColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
+                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
+                    if (editCategoryFragment != null) {
                         editCategoryFragment.changeColor();
                     }
                 }
@@ -95,7 +97,7 @@ public class EditCategoryActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             EditCategoryFragment fragment = EditCategoryFragment.newInstance(categoryId);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment, fragment);
+            transaction.replace(R.id.fragment, fragment, TAG_FRAGMENT_EDIT_CATEGORY);
             transaction.commit();
         }
     }
@@ -105,21 +107,43 @@ public class EditCategoryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
-                    // TODO: dirty check and confirm discarding changes
+                EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
+                if (editCategoryFragment != null) {
+                    if (editCategoryFragment.confirmNavigateUp()) {
+                        return true;
+                    }
                 }
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
-            // TODO: dirty check and confirm discarding changes
+        EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
+        if (editCategoryFragment != null) {
+            if (editCategoryFragment.confirmBackPressed()) {
+                return;
+            }
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public void onNavigateUpConfirmed() {
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
+    @Override
+    public void onBackPressedConfirmed() {
+        super.onBackPressed();
+    }
+
+    private EditCategoryFragment getVisibleEditCategoryFragment() {
+        EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT_EDIT_CATEGORY);
+        if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
+            return editCategoryFragment;
+        } else {
+            return null;
+        }
     }
 }

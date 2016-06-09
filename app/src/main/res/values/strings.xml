@@ -59,11 +59,14 @@
     <!-- Generic messages -->
     <string name="success">Success</string>
     <string name="none">None</string>
+    <string name="confirm_discard_changes">Discard your changes and quit editing?</string>
 
     <!-- Buttons -->
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_import">Import</string>
+    <string name="button_discard">Discard</string>
+    <string name="button_keep_editing">Keep editing</string>
 
     <!-- Account types -->
     <string name="account_type_cash">Cash</string>
