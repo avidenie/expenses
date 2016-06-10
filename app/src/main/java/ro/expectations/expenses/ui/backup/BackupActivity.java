@@ -21,6 +21,7 @@ package ro.expectations.expenses.ui.backup;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -29,9 +30,14 @@ import android.view.View;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.utils.LayoutUtils;
 
-public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider {
+public class BackupActivity extends DrawerActivity
+        implements FloatingActionButtonProvider, OnAppBarHeightChangeListener {
+
+    private AppBarLayout mAppBarLayout;
 
     private FloatingActionButton mFloatingActionButton;
 
@@ -56,6 +62,8 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
             }
         });
 
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
         if (savedInstanceState == null) {
             BackupFragment fragment = BackupFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -72,5 +80,10 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
     @Override
     public FloatingActionButton getFloatingActionButton() {
         return mFloatingActionButton;
+    }
+
+    @Override
+    public void onAppBarHeightChange(boolean expand) {
+        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
     }
 }

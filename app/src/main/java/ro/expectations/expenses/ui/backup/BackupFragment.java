@@ -59,6 +59,7 @@ import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
 import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
@@ -74,6 +75,7 @@ public class BackupFragment extends Fragment {
     private boolean mIsFinancistoInstalled = false;
 
     private FloatingActionButtonProvider mFloatingActionButtonProvider;
+    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
 
     private BackupAdapter mAdapter;
     private TextView mEmptyView;
@@ -112,6 +114,7 @@ public class BackupFragment extends Fragment {
             } else {
                 menu.findItem(R.id.action_restore).setVisible(false);
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
             return true;
         }
 
@@ -141,6 +144,7 @@ public class BackupFragment extends Fragment {
                 mAdapter.clearSelection();
             }
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
         }
     };
 
@@ -160,6 +164,12 @@ public class BackupFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement FloatingActionButtonProvider");
+        }
+        try {
+            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnAppBarHeightChangeListener");
         }
     }
 

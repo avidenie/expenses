@@ -21,13 +21,18 @@ package ro.expectations.expenses.ui.accounts;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.utils.LayoutUtils;
 
-public class AccountsActivity extends DrawerActivity {
+public class AccountsActivity extends DrawerActivity implements OnAppBarHeightChangeListener {
+
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +50,17 @@ public class AccountsActivity extends DrawerActivity {
             }
         });
         fab.setVisibility(View.VISIBLE);
+
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
     }
 
     @Override
     protected int getSelfNavDrawerItem() {
         return R.id.nav_accounts;
+    }
+
+    @Override
+    public void onAppBarHeightChange(boolean expand) {
+        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
     }
 }

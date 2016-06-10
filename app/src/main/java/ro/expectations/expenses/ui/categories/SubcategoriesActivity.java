@@ -23,12 +23,14 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -36,11 +38,15 @@ import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
+import ro.expectations.expenses.utils.LayoutUtils;
 
 public class SubcategoriesActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements OnAppBarHeightChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
+
+    private AppBarLayout mAppBarLayout;
 
     private long mParentCategoryId;
 
@@ -62,8 +68,11 @@ public class SubcategoriesActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
 
         getSupportLoaderManager().initLoader(0, null, this);
 
@@ -76,12 +85,19 @@ public class SubcategoriesActivity extends AppCompatActivity
             }
         });
 
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
         if (savedInstanceState == null) {
             CategoriesFragment fragment = CategoriesFragment.newInstance(mParentCategoryId);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public void onAppBarHeightChange(boolean expand) {
+        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
     }
 
     @Override

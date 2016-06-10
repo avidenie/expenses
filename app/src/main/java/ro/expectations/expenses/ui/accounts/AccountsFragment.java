@@ -19,6 +19,7 @@
 
 package ro.expectations.expenses.ui.accounts;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import android.widget.TextView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
@@ -49,6 +51,8 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
     private AccountsAdapter mAdapter;
     private TextView mEmptyView;
+
+    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -78,6 +82,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 menu.findItem(R.id.action_edit_account).setVisible(false);
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
             return true;
         }
 
@@ -105,11 +110,24 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 mAdapter.clearSelection();
             }
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
         }
     };
 
     public AccountsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnAppBarHeightChangeListener");
+        }
     }
 
     @Override

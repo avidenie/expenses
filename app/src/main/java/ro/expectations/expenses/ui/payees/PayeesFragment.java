@@ -19,6 +19,7 @@
 
 package ro.expectations.expenses.ui.payees;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -40,6 +41,7 @@ import android.widget.TextView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
@@ -48,6 +50,8 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
 
     private PayeesAdapter mAdapter;
     private TextView mEmptyView;
+
+    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -77,6 +81,7 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
             } else {
                 menu.findItem(R.id.action_edit_payee).setVisible(false);
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
             return true;
         }
 
@@ -102,11 +107,24 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
                 mAdapter.clearSelection();
             }
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
         }
     };
 
     public PayeesFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnAppBarHeightChangeListener");
+        }
     }
 
     @Nullable

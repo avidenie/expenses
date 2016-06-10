@@ -20,6 +20,7 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -54,6 +55,7 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
 import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
@@ -79,6 +81,8 @@ public class FinancistoImportFragment extends Fragment
 
     private File mSelectedFile;
 
+    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
+
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
@@ -94,6 +98,7 @@ public class FinancistoImportFragment extends Fragment
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             mode.setTitle(getResources().getQuantityString(R.plurals.selected_backup_files, 1, 1));
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
             return true;
         }
 
@@ -126,6 +131,7 @@ public class FinancistoImportFragment extends Fragment
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
         }
     };
 
@@ -135,6 +141,18 @@ public class FinancistoImportFragment extends Fragment
 
     public FinancistoImportFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnAppBarHeightChangeListener");
+        }
     }
 
     @Override

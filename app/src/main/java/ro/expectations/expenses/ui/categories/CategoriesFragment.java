@@ -20,6 +20,7 @@
 package ro.expectations.expenses.ui.categories;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
@@ -53,6 +55,8 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     private long mParentCategoryId;
     private CategoriesAdapter mAdapter;
     private TextView mEmptyView;
+
+    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -85,6 +89,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             } else {
                 menu.findItem(R.id.action_edit_category).setVisible(false);
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
             return true;
         }
 
@@ -120,6 +125,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             if (activity instanceof DrawerActivity) {
                 ((DrawerActivity) activity).unlockNavigationDrawer();
             }
+            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
         }
     };
 
@@ -133,6 +139,18 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
 
     public CategoriesFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnAppBarHeightChangeListener");
+        }
     }
 
     @Override

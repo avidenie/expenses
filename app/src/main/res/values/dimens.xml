@@ -27,4 +27,5 @@
     <dimen name="list_icon_size">40dp</dimen>
     <dimen name="title_area_bottom_padding">8dp</dimen>
     <dimen name="app_bar_height_category">230dp</dimen>
+    <dimen name="app_bar_extended_height">128dp</dimen>
 </resources>

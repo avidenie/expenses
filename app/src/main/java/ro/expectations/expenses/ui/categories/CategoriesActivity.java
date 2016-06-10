@@ -20,15 +20,20 @@
 package ro.expectations.expenses.ui.categories;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.utils.LayoutUtils;
 
-public class CategoriesActivity extends DrawerActivity {
+public class CategoriesActivity extends DrawerActivity implements OnAppBarHeightChangeListener {
+
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class CategoriesActivity extends DrawerActivity {
             }
         });
 
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
         if (savedInstanceState == null) {
             CategoriesFragment fragment = CategoriesFragment.newInstance(0L);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -57,5 +64,10 @@ public class CategoriesActivity extends DrawerActivity {
     @Override
     protected int getSelfNavDrawerItem() {
         return R.id.nav_categories;
+    }
+
+    @Override
+    public void onAppBarHeightChange(boolean expand) {
+        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
     }
 }

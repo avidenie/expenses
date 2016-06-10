@@ -20,6 +20,7 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +29,12 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
+import ro.expectations.expenses.utils.LayoutUtils;
 
-public class FinancistoImportActivity extends AppCompatActivity {
+public class FinancistoImportActivity extends AppCompatActivity implements OnAppBarHeightChangeListener {
+
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +53,18 @@ public class FinancistoImportActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
 
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
         if (savedInstanceState == null) {
             FinancistoImportFragment fragment = FinancistoImportFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public void onAppBarHeightChange(boolean expand) {
+        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
     }
 }
