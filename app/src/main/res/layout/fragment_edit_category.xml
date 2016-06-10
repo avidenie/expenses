@@ -38,6 +38,7 @@
             android:id="@+id/category_name_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/title_area_bottom_padding"
             app:hintAnimationEnabled="false">
 
             <android.support.design.widget.TextInputEditText
