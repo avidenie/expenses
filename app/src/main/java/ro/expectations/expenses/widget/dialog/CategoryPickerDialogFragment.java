@@ -49,7 +49,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
 
     public static final String ARG_SKIP_CATEGORY_ID = "skip_category_id";
 
-    private Listener callback;
+    private Listener mCallback;
     private CategoryPickerAdapter mAdapter;
 
     public static CategoryPickerDialogFragment newInstance() {
@@ -75,7 +75,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
 
         Fragment target = getTargetFragment();
         if (target instanceof Listener) {
-            callback = (Listener) getTargetFragment();
+            mCallback = (Listener) getTargetFragment();
         } else {
             throw new RuntimeException(getTargetFragment().toString()
                     + " must implement CategoryPickerDialogFragment.Listener");
@@ -107,7 +107,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
                 cursor.moveToPosition(position);
                 int categoryId = cursor.getInt(CategoryPickerAdapter.COLUMN_CATEGORY_ID);
                 String categoryName = cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_NAME);
-                callback.onCategorySelected(getTargetRequestCode(), categoryId, categoryName);
+                mCallback.onCategorySelected(getTargetRequestCode(), categoryId, categoryName);
                 dismiss();
             }
         });
