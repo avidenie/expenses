@@ -47,6 +47,8 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
         void onCategorySelected(int targetRequestCode, int categoryId, String categoryName);
     }
 
+    public static final String ARG_SKIP_CATEGORY_ID = "skip_category_id";
+
     private Listener callback;
     private CategoryPickerAdapter mAdapter;
 
@@ -55,6 +57,17 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
         categoryPickerDialogFragment.setCancelable(true);
         return categoryPickerDialogFragment;
     }
+
+    public static CategoryPickerDialogFragment newInstance(long skipCategoryId) {
+        Bundle args = new Bundle();
+        args.putLong(ARG_SKIP_CATEGORY_ID, skipCategoryId);
+
+        CategoryPickerDialogFragment categoryPickerDialogFragment = new CategoryPickerDialogFragment();
+        categoryPickerDialogFragment.setArguments(args);
+        categoryPickerDialogFragment.setCancelable(true);
+        return categoryPickerDialogFragment;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,8 +119,8 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, getArguments(), this);
     }
 
     @Override
@@ -115,6 +128,15 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
 
         String selection = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories._ID  + " > 0 AND "
                 + ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.PARENT_ID  + " IS NULL";
+        String[] selectionArgs = null;
+
+        if (args != null) {
+            long skipCategoryId = args.getLong(ARG_SKIP_CATEGORY_ID, -1);
+            if (skipCategoryId > 0) {
+                selection += " AND " + ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories._ID + " != ?";
+                selectionArgs = new String[]{String.valueOf(skipCategoryId)};
+            }
+        }
 
         String sortOrder = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.NAME + " ASC";
 
@@ -123,7 +145,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
                 ExpensesContract.Categories.CONTENT_URI,
                 CategoryPickerAdapter.PROJECTION,
                 selection,
-                null,
+                selectionArgs,
                 sortOrder);
     }
 

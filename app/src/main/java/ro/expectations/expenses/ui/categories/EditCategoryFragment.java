@@ -136,7 +136,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
         mCategoryParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CategoryPickerDialogFragment categoryPickerDialogFragment = CategoryPickerDialogFragment.newInstance();
+                CategoryPickerDialogFragment categoryPickerDialogFragment = CategoryPickerDialogFragment.newInstance(mCategoryId);
                 categoryPickerDialogFragment.setTargetFragment(EditCategoryFragment.this, CATEGORY_PICKER_DIALOG_REQUEST_CODE);
                 categoryPickerDialogFragment.show(getFragmentManager(), "category_picker");
             }
