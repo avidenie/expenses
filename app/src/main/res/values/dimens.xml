@@ -28,4 +28,6 @@
     <dimen name="title_area_bottom_padding">8dp</dimen>
     <dimen name="app_bar_height_category">230dp</dimen>
     <dimen name="app_bar_extended_height">128dp</dimen>
+    <dimen name="color_picker_padding_vertical">50dp</dimen>
+    <dimen name="color_picker_item_padding_bottom">10dp</dimen>
 </resources>

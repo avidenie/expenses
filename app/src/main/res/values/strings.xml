@@ -138,4 +138,7 @@
     <string name="no_category">No category</string>
     <string name="choose_category">Choose category</string>
 
+    <!-- Color picker -->
+    <string name="choose_color">Choose color</string>
+
 </resources>

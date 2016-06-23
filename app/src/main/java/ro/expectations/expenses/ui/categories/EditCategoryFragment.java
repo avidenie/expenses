@@ -25,14 +25,18 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,19 +51,24 @@ import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.model.Category;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.dialog.CategoryPickerDialogFragment;
+import ro.expectations.expenses.widget.dialog.ColorPickerDialogFragment;
 import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
 
 public class EditCategoryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        CategoryPickerDialogFragment.Listener, ConfirmationDialogFragment.Listener {
+        CategoryPickerDialogFragment.Listener,
+        ColorPickerDialogFragment.Listener,
+        ConfirmationDialogFragment.Listener {
 
     public interface Listener {
         void onBackPressedConfirmed();
         void onNavigateUpConfirmed();
+        void onColorSelected(@ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor);
     }
 
-    private static final int CATEGORY_PICKER_DIALOG_REQUEST_CODE = 0;
-    private static final int ON_NAVIGATE_UP_DIALOG_REQUEST_CODE = 1;
-    private static final int ON_BACK_PRESSED_DIALOG_REQUEST_CODE = 2;
+    private static final int CATEGORY_PICKER_DIALOG_REQUEST_CODE = 0x100;
+    private static final int ON_NAVIGATE_UP_DIALOG_REQUEST_CODE = 0x101;
+    private static final int ON_BACK_PRESSED_DIALOG_REQUEST_CODE = 0x102;
+    private static final int COLOR_PICKER_DIALOG_REQUEST_CODE = 0x103;
 
     private static final String ARG_CATEGORY_ID = "category_id";
 
@@ -235,6 +244,11 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onColorSelected(int targetRequestCode, @ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor) {
+        mListener.onColorSelected(0xFF000000 | color, 0xFF000000 | darkColor, 0xFF000000 | accentColor);
+    }
+
+    @Override
     public void onConfirmed(int targetRequestCode) {
         switch(targetRequestCode) {
             case ON_NAVIGATE_UP_DIALOG_REQUEST_CODE:
@@ -252,7 +266,9 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     public void changeColor() {
-        // TODO: implement change color
+        ColorPickerDialogFragment colorPickerDialogFragment = ColorPickerDialogFragment.newInstance(ContextCompat.getColor(getActivity(), R.color.colorAmber500));
+        colorPickerDialogFragment.setTargetFragment(this, COLOR_PICKER_DIALOG_REQUEST_CODE);
+        colorPickerDialogFragment.show(getFragmentManager(), "ColorPickerDialogFragment");
     }
 
     public void changeIcon() {
@@ -289,15 +305,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     private boolean isDirty() {
-        if (mOriginalCategory == null && mCurrentCategory == null) {
-            return false;
-        }
-
-        if (mOriginalCategory == null || mCurrentCategory == null) {
-            return true;
-        }
-
-        return !mOriginalCategory.equals(mCurrentCategory);
+        return mOriginalCategory == null || mCurrentCategory == null || !mOriginalCategory.equals(mCurrentCategory);
     }
 
     private void save() {

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright © 2016 Adrian Videnie
+  ~
+  ~ This file is part of Expenses.
+  ~
+  ~ Expenses is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Expenses is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+
+    <!-- Color picker colors -->
+    <integer-array name="colorPicker">
+        <item>@color/colorRed500</item>
+        <item>@color/colorPink500</item>
+        <item>@color/colorPurple500</item>
+        <item>@color/colorDeepPurple500</item>
+        <item>@color/colorIndigo500</item>
+        <item>@color/colorBlue500</item>
+        <item>@color/colorLightBlue500</item>
+        <item>@color/colorCyan500</item>
+        <item>@color/colorTeal500</item>
+        <item>@color/colorGreen500</item>
+        <item>@color/colorLightGreen500</item>
+        <item>@color/colorLime500</item>
+        <item>@color/colorYellow500</item>
+        <item>@color/colorAmber500</item>
+        <item>@color/colorOrange500</item>
+        <item>@color/colorDeepOrange500</item>
+        <item>@color/colorBrown500</item>
+        <item>@color/colorGrey500</item>
+        <item>@color/colorBlueGrey500</item>
+    </integer-array>
+
+    <integer-array name="colorPickerDark">
+        <item>@color/colorRed700</item>
+        <item>@color/colorPink700</item>
+        <item>@color/colorPurple700</item>
+        <item>@color/colorDeepPurple700</item>
+        <item>@color/colorIndigo700</item>
+        <item>@color/colorBlue700</item>
+        <item>@color/colorLightBlue700</item>
+        <item>@color/colorCyan700</item>
+        <item>@color/colorTeal700</item>
+        <item>@color/colorGreen700</item>
+        <item>@color/colorLightGreen700</item>
+        <item>@color/colorLime700</item>
+        <item>@color/colorYellow700</item>
+        <item>@color/colorAmber700</item>
+        <item>@color/colorOrange700</item>
+        <item>@color/colorDeepOrange700</item>
+        <item>@color/colorBrown700</item>
+        <item>@color/colorGrey700</item>
+        <item>@color/colorBlueGrey700</item>
+    </integer-array>
+
+    <integer-array name="colorPickerAccent">
+        <item>@color/colorBlueA200</item>
+        <item>@color/colorIndigoA200</item>
+        <item>@color/colorGreenA200</item>
+        <item>@color/colorLightGreenA200</item>
+        <item>@color/colorPinkA200</item>
+        <item>@color/colorRedA200</item>
+        <item>@color/colorOrangeA200</item>
+        <item>@color/colorDeepOrangeA200</item>
+        <item>@color/colorAmberA200</item>
+        <item>@color/colorPurpleA200</item>
+        <item>@color/colorDeepPurpleA200</item>
+        <item>@color/colorPinkA200</item>
+        <item>@color/colorDeepPurpleA200</item>
+        <item>@color/colorRedA200</item>
+        <item>@color/colorPurpleA200</item>
+        <item>@color/colorDeepPurpleA200</item>
+        <item>@color/colorBlueA200</item>
+        <item>@color/colorDeepOrangeA200</item>
+        <item>@color/colorPinkA200</item>
+    </integer-array>
+
+</resources>

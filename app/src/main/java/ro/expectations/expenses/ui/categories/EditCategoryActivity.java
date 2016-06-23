@@ -20,10 +20,17 @@
 package ro.expectations.expenses.ui.categories;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -36,6 +43,10 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
 
     public static final String ARG_CATEGORY_ID = "category_id";
     public static final String TAG_FRAGMENT_EDIT_CATEGORY = "fragment_edit_category";
+
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private FloatingActionButton mFloatingActionButton;
+    private ImageView mChangeColorIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +66,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        if (floatingActionButton != null) {
-            floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        if (mFloatingActionButton != null) {
+            mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
@@ -81,9 +92,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
-        ImageView changeColor = (ImageView) findViewById(R.id.change_color);
-        if (changeColor != null) {
-            changeColor.setOnClickListener(new View.OnClickListener() {
+        mChangeColorIcon = (ImageView) findViewById(R.id.change_color);
+        if (mChangeColorIcon != null) {
+            mChangeColorIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
@@ -93,6 +104,8 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
                 }
             });
         }
+
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         if (savedInstanceState == null) {
             EditCategoryFragment fragment = EditCategoryFragment.newInstance(categoryId);
@@ -131,6 +144,30 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
     @Override
     public void onNavigateUpConfirmed() {
         NavUtils.navigateUpFromSameTask(this);
+    }
+
+    @Override
+    public void onColorSelected(@ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor) {
+
+        // change the collapsing toolbar layout
+        mCollapsingToolbarLayout.setBackgroundColor(color);
+
+        // change the support action bar
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setBackgroundDrawable(new ColorDrawable(color));
+        }
+
+        // change the status bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(darkColor);
+        }
+
+        // change the floating action button
+        mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
+
+        // change the change icon color
+        DrawableCompat.setTint(DrawableCompat.wrap(mChangeColorIcon.getDrawable()), accentColor);
     }
 
     @Override
