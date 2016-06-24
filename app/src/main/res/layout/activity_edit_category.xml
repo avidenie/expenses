@@ -62,7 +62,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:layout_collapseMode="pin" />
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/change_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,9 +70,21 @@
                 android:layout_marginStart="@dimen/fab_margin"
                 android:layout_marginBottom="@dimen/fab_margin"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_color_lens_black_24dp"
-                android:tint="?attr/colorAccent"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax">
+                <FrameLayout
+                    android:id="@+id/change_color_background"
+                    android:layout_width="@dimen/list_icon_size"
+                    android:layout_height="@dimen/list_icon_size"
+                    android:background="@drawable/circle_background_grey">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_color_lens_black_24dp"
+                        android:tint="@color/colorWhite"
+                        android:contentDescription="@null" />
+                </FrameLayout>
+            </FrameLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

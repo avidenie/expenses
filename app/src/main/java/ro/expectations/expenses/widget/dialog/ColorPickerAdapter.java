@@ -90,14 +90,14 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final FrameLayout mContainer;
-        public final RelativeLayout mColorBackground;
+        public final FrameLayout mColorBackground;
         public final ImageView mColorSelected;
 
         public ViewHolder(View view) {
             super(view);
 
             mContainer = (FrameLayout) view.findViewById(R.id.container);
-            mColorBackground = (RelativeLayout) view.findViewById(R.id.color_background);
+            mColorBackground = (FrameLayout) view.findViewById(R.id.color_background);
             mColorSelected = (ImageView) view.findViewById(R.id.color_selected);
         }
     }

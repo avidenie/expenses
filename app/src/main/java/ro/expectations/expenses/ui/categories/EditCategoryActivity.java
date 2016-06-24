@@ -22,6 +22,7 @@ package ro.expectations.expenses.ui.categories;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -29,12 +30,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
@@ -46,7 +47,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
 
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mFloatingActionButton;
-    private ImageView mChangeColorIcon;
+    private FrameLayout mChangeColorBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +93,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
-        mChangeColorIcon = (ImageView) findViewById(R.id.change_color);
-        if (mChangeColorIcon != null) {
-            mChangeColorIcon.setOnClickListener(new View.OnClickListener() {
+        FrameLayout changeColorContainer = (FrameLayout) findViewById(R.id.change_color);
+        if (changeColorContainer != null) {
+            changeColorContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
@@ -104,6 +105,8 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
                 }
             });
         }
+
+        mChangeColorBackground = (FrameLayout) findViewById(R.id.change_color_background);
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
@@ -167,7 +170,8 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        DrawableCompat.setTint(DrawableCompat.wrap(mChangeColorIcon.getDrawable()), accentColor);
+        GradientDrawable bgShape = (GradientDrawable) mChangeColorBackground.getBackground();
+        bgShape.setColor(0xFF000000 | accentColor);
     }
 
     @Override
