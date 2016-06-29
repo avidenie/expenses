@@ -148,7 +148,7 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
 
         // Set the icon background color
         int color = ColorHelper.fromRGB(mCursor.getString(TransactionsFragment.COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
-        Drawable background = DrawableHelper.tintWithColor(holder.mTransactionIconBackground.getBackground(), color);
+        Drawable background = DrawableHelper.tintWithColor(holder.mTransactionIconBackground.getBackground().mutate(), color);
         holder.mTransactionIconBackground.setBackground(background);
     }
 

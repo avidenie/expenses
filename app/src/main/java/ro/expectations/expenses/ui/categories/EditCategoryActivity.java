@@ -96,9 +96,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
-        FrameLayout changeColorContainer = (FrameLayout) findViewById(R.id.change_color);
-        if (changeColorContainer != null) {
-            changeColorContainer.setOnClickListener(new View.OnClickListener() {
+        mChangeColor = (FrameLayout) findViewById(R.id.change_color);
+        if (mChangeColor != null) {
+            mChangeColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
@@ -109,7 +109,6 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
-        mChangeColor = (FrameLayout) findViewById(R.id.change_color);
         mChangeColorBackground = (FrameLayout) findViewById(R.id.change_color_background);
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -179,7 +178,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey), accentColor);
+        Drawable background = DrawableHelper.tintWithColor(mChangeColorBackground.getBackground().mutate(), accentColor);
         mChangeColorBackground.setBackground(background);
     }
 

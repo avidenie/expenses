@@ -63,7 +63,7 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
         int color = mColors[position];
 
         // Set the icon background color
-        Drawable background = DrawableHelper.tintWithColor(holder.mColorBackground.getBackground(), color);
+        Drawable background = DrawableHelper.tintWithColor(holder.mColorBackground.getBackground().mutate(), color);
         holder.mColorBackground.setBackground(background);
 
         // Set the checked icon

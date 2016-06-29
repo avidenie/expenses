@@ -78,7 +78,7 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
 
         // Set the icon background color
         int color = ColorHelper.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
-        Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground(), color);
+        Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
         holder.mCategoryIconBackground.setBackground(background);
 
         // Set the category name

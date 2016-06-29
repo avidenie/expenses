@@ -104,7 +104,7 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         }
 
         // Set the icon background color
-        Drawable background = DrawableHelper.tintWithColor(holder.mAccountIconBackground.getBackground(), ContextCompat.getColor(mContext, accountType.colorId));
+        Drawable background = DrawableHelper.tintWithColor(holder.mAccountIconBackground.getBackground().mutate(), ContextCompat.getColor(mContext, accountType.colorId));
         holder.mAccountIconBackground.setBackground(background);
 
         // Set the description
