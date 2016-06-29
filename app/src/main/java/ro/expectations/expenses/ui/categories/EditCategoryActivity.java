@@ -178,7 +178,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        Drawable background = DrawableHelper.tintWithColor(mChangeColorBackground.getBackground().mutate(), accentColor);
+        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey), accentColor);
         mChangeColorBackground.setBackground(background);
     }
 
