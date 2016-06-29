@@ -23,20 +23,23 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class Category implements Parcelable {
 
     public static final String[] PROJECTION = {
             ExpensesContract.Categories.NAME,
+            ExpensesContract.Categories.COLOR,
             ExpensesContract.Categories.PARENT_ID,
             ExpensesContract.ParentCategories.PARENT_NAME,
             ExpensesContract.Categories.CHILDREN
     };
     public static final int COLUMN_CATEGORY_NAME = 0;
-    public static final int COLUMN_CATEGORY_PARENT_ID = 1;
-    public static final int COLUMN_CATEGORY_PARENT_NAME = 2;
-    public static final int COLUMN_CATEGORY_CHILDREN = 3;
+    public static final int COLUMN_CATEGORY_COLOR = 1;
+    public static final int COLUMN_CATEGORY_PARENT_ID = 2;
+    public static final int COLUMN_CATEGORY_PARENT_NAME = 3;
+    public static final int COLUMN_CATEGORY_CHILDREN = 4;
 
     public static final Parcelable.Creator<Category> CREATOR = new Creator<Category>() {
         @Override
@@ -52,12 +55,14 @@ public class Category implements Parcelable {
 
     private long id;
     private String name;
+    private int color;
     private long parentId;
     private int children;
 
-    public Category(long id, String name, long parentId, int children) {
+    public Category(long id, String name, int color, long parentId, int children) {
         this.id = id;
         this.name = name;
+        this.color = color;
         this.parentId = parentId;
         this.children = children;
     }
@@ -65,6 +70,7 @@ public class Category implements Parcelable {
     public Category(Parcel in) {
         id = in.readLong();
         name = in.readString();
+        color = in.readInt();
         parentId = in.readLong();
         children = in.readInt();
     }
@@ -72,6 +78,7 @@ public class Category implements Parcelable {
     public Category(Category other) {
         id = other.getId();
         name = other.getName();
+        color = other.getColor();
         parentId = other.getParentId();
         children = other.getChildren();
     }
@@ -86,6 +93,7 @@ public class Category implements Parcelable {
 
         return id == that.id
                 && name.equals(that.name)
+                && color == that.color
                 && parentId == that.parentId
                 && children == that.children;
     }
@@ -96,6 +104,7 @@ public class Category implements Parcelable {
 
         hashCode = hashCode * 37 + Long.valueOf(id).hashCode();
         hashCode = hashCode * 37 + name.hashCode();
+        hashCode = hashCode * 37 + Integer.valueOf(color).hashCode();
         hashCode = hashCode * 37 + Long.valueOf(parentId).hashCode();
         hashCode = hashCode * 37 + children;
 
@@ -111,6 +120,7 @@ public class Category implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeInt(color);
         dest.writeLong(parentId);
         dest.writeInt(children);
     }
@@ -129,6 +139,14 @@ public class Category implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public long getParentId() {
@@ -150,6 +168,7 @@ public class Category implements Parcelable {
     public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ExpensesContract.Categories.NAME, name);
+        contentValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(color));
         if (parentId > 0) {
             contentValues.put(ExpensesContract.Categories.PARENT_ID, parentId);
         } else {

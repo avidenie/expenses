@@ -19,7 +19,8 @@
 
 package ro.expectations.expenses.widget.dialog;
 
-import android.graphics.drawable.GradientDrawable;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,9 +28,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.widget.recyclerview.SingleSelectionAdapter;
 
 public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapter.ViewHolder> {
@@ -38,10 +39,12 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
         void onItemClick(View view, int position);
     }
 
+    final private Context mContext;
     @ColorInt private int[] mColors;
     final private OnItemClickListener mOnItemClickListener;
 
-    public ColorPickerAdapter(@ColorInt int[] colors, OnItemClickListener onClickListener) {
+    public ColorPickerAdapter(Context context, @ColorInt int[] colors, OnItemClickListener onClickListener) {
+        mContext = context;
         mColors = colors;
         mOnItemClickListener = onClickListener;
         setHasStableIds(true);
@@ -60,8 +63,8 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
         int color = mColors[position];
 
         // Set the icon background color
-        GradientDrawable bgShape = (GradientDrawable) holder.mColorBackground.getBackground();
-        bgShape.setColor(0xFF000000 | color);
+        Drawable background = DrawableHelper.tintWithColor(holder.mColorBackground.getBackground(), color);
+        holder.mColorBackground.setBackground(background);
 
         // Set the checked icon
         holder.mColorSelected.setVisibility(isItemSelected(position) ? View.VISIBLE : View.GONE);

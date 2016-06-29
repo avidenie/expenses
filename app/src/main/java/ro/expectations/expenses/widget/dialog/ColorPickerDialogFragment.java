@@ -85,7 +85,7 @@ public class ColorPickerDialogFragment extends DialogFragment {
         int[] colors = getResources().getIntArray(R.array.colorPicker);
         final int[] darkColors = getResources().getIntArray(R.array.colorPickerDark);
         final int[] accentColors = getResources().getIntArray(R.array.colorPickerAccent);
-        mAdapter = new ColorPickerAdapter(colors, new ColorPickerAdapter.OnItemClickListener() {
+        mAdapter = new ColorPickerAdapter(getActivity(), colors, new ColorPickerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 boolean isItemSelected = mAdapter.isItemSelected(position);

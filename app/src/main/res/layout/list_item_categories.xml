@@ -36,7 +36,7 @@
         android:layout_height="@dimen/list_icon_size"
         android:layout_marginEnd="?attr/listPreferredItemPaddingRight"
         android:gravity="center"
-        android:background="@drawable/circle_background">
+        android:background="@drawable/circle_background_grey">
         <ImageView
             android:id="@+id/category_icon"
             android:layout_width="wrap_content"

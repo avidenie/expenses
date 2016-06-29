@@ -26,7 +26,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -36,7 +35,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +45,7 @@ import android.view.ViewGroup;
 import java.lang.ref.WeakReference;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.model.Category;
 import ro.expectations.expenses.provider.ExpensesContract;
@@ -161,6 +160,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
         } else {
             mOriginalCategory = savedInstanceState.getParcelable(INSTANCE_ORIGINAL_CATEGORY);
             mCurrentCategory = savedInstanceState.getParcelable(INSTANCE_CURRENT_CATEGORY);
+            renderCurrentColor();
         }
     }
 
@@ -209,10 +209,15 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
 
             long parentId = data.getLong(Category.COLUMN_CATEGORY_PARENT_ID);
             String categoryName = data.getString(Category.COLUMN_CATEGORY_NAME);
+            String categoryColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
             String parentName = data.getString(Category.COLUMN_CATEGORY_PARENT_NAME);
             int children = data.getInt(Category.COLUMN_CATEGORY_CHILDREN);
 
-            mOriginalCategory = new Category(mCategoryId, categoryName, parentId, children);
+            mOriginalCategory = new Category(mCategoryId,
+                    categoryName,
+                    ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorAmber500)),
+                    parentId,
+                    children);
             mCurrentCategory = new Category(mOriginalCategory);
 
             mCategoryName.setText(categoryName);
@@ -225,6 +230,8 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
                     mCategoryParent.setText(R.string.none);
                 }
             }
+
+            renderCurrentColor();
         }
     }
 
@@ -245,6 +252,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onColorSelected(int targetRequestCode, @ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor) {
+        mCurrentCategory.setColor(color);
         mListener.onColorSelected(0xFF000000 | color, 0xFF000000 | darkColor, 0xFF000000 | accentColor);
     }
 
@@ -266,7 +274,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     public void changeColor() {
-        ColorPickerDialogFragment colorPickerDialogFragment = ColorPickerDialogFragment.newInstance(ContextCompat.getColor(getActivity(), R.color.colorAmber500));
+        ColorPickerDialogFragment colorPickerDialogFragment = ColorPickerDialogFragment.newInstance(mCurrentCategory.getColor());
         colorPickerDialogFragment.setTargetFragment(this, COLOR_PICKER_DIALOG_REQUEST_CODE);
         colorPickerDialogFragment.show(getFragmentManager(), "ColorPickerDialogFragment");
     }
@@ -281,6 +289,18 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
 
     public boolean confirmBackPressed() {
         return confirmDiscard(ON_BACK_PRESSED_DIALOG_REQUEST_CODE);
+    }
+
+    private void renderCurrentColor() {
+        int[] colors = getResources().getIntArray(R.array.colorPicker);
+        for(int i = 0, n = colors.length; i < n; i++) {
+            if (colors[i] == mCurrentCategory.getColor()) {
+                int[] darkColors = getResources().getIntArray(R.array.colorPickerDark);
+                int[] accentColors = getResources().getIntArray(R.array.colorPickerAccent);
+                onColorSelected(-1, colors[i], darkColors[i], accentColors[i]);
+                break;
+            }
+        }
     }
 
     private boolean confirmDiscard(int requestCode) {

@@ -21,7 +21,7 @@ package ro.expectations.expenses.widget.dialog;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 
@@ -43,10 +44,12 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
 
     static final String[] PROJECTION = {
             ExpensesContract.Categories._ID,
-            ExpensesContract.Categories.NAME
+            ExpensesContract.Categories.NAME,
+            ExpensesContract.Categories.COLOR
     };
     static final int COLUMN_CATEGORY_ID = 0;
     static final int COLUMN_CATEGORY_NAME = 1;
+    static final int COLUMN_CATEGORY_COLOR = 2;
 
     private Cursor mCursor;
     final private Context mContext;
@@ -68,8 +71,9 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
         mCursor.moveToPosition(position);
 
         // Set the icon background color
-        GradientDrawable bgShape = (GradientDrawable) holder.mCategoryIconBackground.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
+        int color = ColorHelper.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
+        Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground(), color);
+        holder.mCategoryIconBackground.setBackground(background);
 
         // Set the icon
         int iconId;

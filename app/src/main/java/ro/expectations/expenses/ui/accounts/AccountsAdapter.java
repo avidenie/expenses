@@ -21,7 +21,7 @@ package ro.expectations.expenses.ui.accounts;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -104,8 +104,8 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         }
 
         // Set the icon background color
-        GradientDrawable bgShape = (GradientDrawable) holder.mAccountIconBackground.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, accountType.colorId));
+        Drawable background = DrawableHelper.tintWithColor(holder.mAccountIconBackground.getBackground(), ContextCompat.getColor(mContext, accountType.colorId));
+        holder.mAccountIconBackground.setBackground(background);
 
         // Set the description
         holder.mAccountDescription.setText(accountType.titleId);

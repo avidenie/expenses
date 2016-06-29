@@ -21,6 +21,7 @@ package ro.expectations.expenses.restore;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,11 +31,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
@@ -232,8 +237,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     }
 
     private void processCategoryEntries() {
-        List<Map<String, String>> mParentCategories = new ArrayList<>();
-        List<Map<String, String>> mChildCategories = new ArrayList<>();
+        List<Map<String, String>> parentCategories = new ArrayList<>();
+        List<Map<String, String>> childCategories = new ArrayList<>();
+        Map<Long, String> parentColors = new HashMap<>();
 
         for(Map<String, String> values: mCategories) {
             long id = Long.parseLong(values.get("_id"));
@@ -243,26 +249,58 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             String parentId = getParentCategoryId(values);
             values.put("parent_id", parentId);
             if (parentId.equals("0")) {
-                mParentCategories.add(values);
+                parentCategories.add(values);
             } else {
-                mChildCategories.add(values);
+                childCategories.add(values);
             }
         }
+
+        // sort parent categories for best color distribution
+        Collections.sort(parentCategories, new Comparator<Map<String, String>>() {
+            @Override
+            public int compare(Map<String, String> category2, Map<String, String> category1) {
+                return  category2.get("title").compareTo(category1.get("title"));
+            }
+        });
+
+        // special category for split transactions
         mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                 .withValue(ExpensesContract.Categories._ID, -1)
                 .withValue(ExpensesContract.Categories.NAME, "SPLIT")
                 .build());
-        for(Map<String, String> values: mParentCategories) {
+
+        // process parent categories
+        int[] colors = getResources().getIntArray(R.array.colorPicker);
+        int colorIndex = 0;
+        for(Map<String, String> values: parentCategories) {
+            long id = Long.parseLong(values.get("_id"));
+            String color = ColorHelper.toRGB(colors[colorIndex]);
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
-                    .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
+                    .withValue(ExpensesContract.Categories._ID, id)
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
+                    .withValue(ExpensesContract.Categories.COLOR, color)
                     .build());
+            parentColors.put(id, color);
+            colorIndex++;
+            if (colorIndex == colors.length) {
+                colorIndex = 0;
+            }
         }
-        for(Map<String, String> values: mChildCategories) {
+
+        // process child categories
+        for(Map<String, String> values: childCategories) {
+            long parentId = Long.parseLong(values.get("parent_id"));
+            String color;
+            if (parentColors.containsKey(parentId)) {
+                color = parentColors.get(parentId);
+            } else {
+                color = ColorHelper.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
+            }
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                     .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
-                    .withValue(ExpensesContract.Categories.PARENT_ID, Long.parseLong(values.get("parent_id")))
+                    .withValue(ExpensesContract.Categories.PARENT_ID, parentId)
+                    .withValue(ExpensesContract.Categories.COLOR, color)
                     .build());
         }
     }

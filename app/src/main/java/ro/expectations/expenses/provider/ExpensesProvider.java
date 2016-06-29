@@ -144,6 +144,7 @@ public class ExpensesProvider extends ContentProvider {
                 projectionMap = new HashMap<>();
                 projectionMap.put(Categories._ID, Categories.TABLE_NAME + "." + Categories._ID);
                 projectionMap.put(Categories.NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.COLOR, Categories.TABLE_NAME + "." + Categories.COLOR);
                 projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
                 projectionMap.put(Categories.CHILDREN, "COUNT(" + Subcategories.TABLE_NAME + "." + Subcategories._ID + ")");
                 queryBuilder.setProjectionMap(projectionMap);
@@ -160,6 +161,7 @@ public class ExpensesProvider extends ContentProvider {
                 projectionMap = new HashMap<>();
                 projectionMap.put(Categories._ID, Categories.TABLE_NAME + "." + Categories._ID);
                 projectionMap.put(Categories.NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.COLOR, Categories.TABLE_NAME + "." + Categories.COLOR);
                 projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
                 projectionMap.put(ParentCategories.PARENT_NAME, ParentCategories.TABLE_NAME + "." + ParentCategories.NAME);
                 projectionMap.put(Categories.CHILDREN, "COUNT(" + Subcategories.TABLE_NAME + "." + Subcategories._ID + ")");
@@ -218,6 +220,7 @@ public class ExpensesProvider extends ContentProvider {
                 projectionMap.put(ToRunningBalances.TO_BALANCE, ToRunningBalances.TABLE_NAME + "." + ToRunningBalances.BALANCE);
                 projectionMap.put(Categories.CATEGORY_ID, TransactionDetails.TABLE_NAME + "." + TransactionDetails.CATEGORY_ID);
                 projectionMap.put(Categories.CATEGORY_NAME, Categories.TABLE_NAME + "." + Categories.NAME);
+                projectionMap.put(Categories.COLOR, Categories.TABLE_NAME + "." + Categories.COLOR);
                 projectionMap.put(Categories.PARENT_ID, Categories.TABLE_NAME + "." + Categories.PARENT_ID);
                 projectionMap.put(ParentCategories.PARENT_NAME, ParentCategories.TABLE_NAME + "." + ParentCategories.NAME);
                 projectionMap.put(Transactions.NOTE, Transactions.TABLE_NAME + "." + Transactions.NOTE);

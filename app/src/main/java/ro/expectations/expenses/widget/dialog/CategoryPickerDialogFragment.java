@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
@@ -152,10 +153,11 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         MatrixCursor matrixCursor = new MatrixCursor(new String[] {
-                ExpensesContract.Accounts._ID,
-                ExpensesContract.Accounts.TITLE
+                ExpensesContract.Categories._ID,
+                ExpensesContract.Categories.NAME,
+                ExpensesContract.Categories.COLOR
         });
-        matrixCursor.addRow(new Object[] { "0", getString(R.string.no_category) });
+        matrixCursor.addRow(new Object[] { "0", getString(R.string.no_category), ContextCompat.getColor(getActivity(), R.color.colorPrimary)});
         MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, data });
 
         mAdapter.swapCursor(mergeCursor);

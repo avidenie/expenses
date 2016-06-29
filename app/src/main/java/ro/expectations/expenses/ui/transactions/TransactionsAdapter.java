@@ -21,7 +21,7 @@ package ro.expectations.expenses.ui.transactions;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -36,6 +36,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.helper.ListHelper;
 import ro.expectations.expenses.utils.NumberUtils;
@@ -144,8 +145,11 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         } else {
             holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_question_mark_black_24dp, R.color.colorWhite));
         }
-        GradientDrawable bgShape = (GradientDrawable) holder.mTransactionIconBackground.getBackground();
-        bgShape.setColor(0xFF000000 | ContextCompat.getColor(mContext, R.color.colorPrimary));
+
+        // Set the icon background color
+        int color = ColorHelper.fromRGB(mCursor.getString(TransactionsFragment.COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
+        Drawable background = DrawableHelper.tintWithColor(holder.mTransactionIconBackground.getBackground(), color);
+        holder.mTransactionIconBackground.setBackground(background);
     }
 
     private void processTransfer(ViewHolder holder, int position) {

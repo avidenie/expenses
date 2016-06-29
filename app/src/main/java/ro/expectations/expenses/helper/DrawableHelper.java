@@ -33,8 +33,12 @@ public class DrawableHelper {
     }
 
     public static Drawable tint(Context context, Drawable drawable, @ColorRes int colorId) {
+        return tintWithColor(drawable, ContextCompat.getColor(context, colorId));
+    }
+
+    public static Drawable tintWithColor(Drawable drawable, int color) {
         Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, colorId));
+        DrawableCompat.setTint(wrappedDrawable, color);
         return wrappedDrawable;
     }
 }

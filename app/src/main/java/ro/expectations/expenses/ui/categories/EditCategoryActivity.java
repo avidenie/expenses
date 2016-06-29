@@ -22,7 +22,7 @@ package ro.expectations.expenses.ui.categories;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -30,6 +30,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.DrawableHelper;
 
 public class EditCategoryActivity extends AppCompatActivity implements EditCategoryFragment.Listener {
 
@@ -170,8 +172,8 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        GradientDrawable bgShape = (GradientDrawable) mChangeColorBackground.getBackground();
-        bgShape.setColor(0xFF000000 | accentColor);
+        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey), accentColor);
+        mChangeColorBackground.setBackground(background);
     }
 
     @Override
