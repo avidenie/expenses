@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -39,13 +40,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class CategoryPickerDialogFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public interface Listener {
-        void onCategorySelected(int targetRequestCode, int categoryId, String categoryName);
+        void onCategorySelected(int targetRequestCode, int categoryId, String categoryName, @ColorInt int color);
     }
 
     public static final String ARG_SKIP_CATEGORY_ID = "skip_category_id";
@@ -108,7 +110,8 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
                 cursor.moveToPosition(position);
                 int categoryId = cursor.getInt(CategoryPickerAdapter.COLUMN_CATEGORY_ID);
                 String categoryName = cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_NAME);
-                mCallback.onCategorySelected(getTargetRequestCode(), categoryId, categoryName);
+                int color = ColorHelper.fromRGB(cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_COLOR), ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+                mCallback.onCategorySelected(getTargetRequestCode(), categoryId, categoryName, color);
                 dismiss();
             }
         });

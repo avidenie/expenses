@@ -22,6 +22,7 @@ package ro.expectations.expenses.ui.categories;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -62,6 +63,8 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
         void onBackPressedConfirmed();
         void onNavigateUpConfirmed();
         void onColorSelected(@ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor);
+        void showChangeColor();
+        void hideChangeColor();
     }
 
     private static final int CATEGORY_PICKER_DIALOG_REQUEST_CODE = 0x100;
@@ -161,6 +164,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
             mOriginalCategory = savedInstanceState.getParcelable(INSTANCE_ORIGINAL_CATEGORY);
             mCurrentCategory = savedInstanceState.getParcelable(INSTANCE_CURRENT_CATEGORY);
             renderCurrentColor();
+            renderCurrentParentCategory();
         }
     }
 
@@ -232,6 +236,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
             }
 
             renderCurrentColor();
+            renderCurrentParentCategory();
         }
     }
 
@@ -241,13 +246,21 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onCategorySelected(int targetRequestCode, int parentId, String parentName) {
+    public void onCategorySelected(int targetRequestCode, int parentId, String parentName, @ColorInt int color) {
         if (parentId == 0) {
             mCategoryParent.setText(R.string.none);
+            if (mOriginalCategory.getParentId() > 0) {
+                mCurrentCategory.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+            } else {
+                mCurrentCategory.setColor(mOriginalCategory.getColor());
+            }
         } else {
             mCategoryParent.setText(parentName);
+            mCurrentCategory.setColor(color);
         }
         mCurrentCategory.setParentId(parentId);
+        renderCurrentColor();
+        renderCurrentParentCategory();
     }
 
     @Override
@@ -303,6 +316,14 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
         }
     }
 
+    private void renderCurrentParentCategory() {
+        if (mCurrentCategory.getParentId() > 0) {
+            mListener.hideChangeColor();
+        } else {
+            mListener.showChangeColor();
+        }
+    }
+
     private boolean confirmDiscard(int requestCode) {
         if (!isDirty()) {
             return false;
@@ -338,11 +359,27 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
                             mListener.onNavigateUpConfirmed();
                         }
                     });
-            saveQueryHandler.startUpdate(1, null,
+
+            // update the child categories color based on parent's color
+            if (mCurrentCategory.getParentId() == 0) {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(mCurrentCategory.getColor()));
+                String selection = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.PARENT_ID + " = ?";
+                String[] selectionArgs = new String[]{String.valueOf(mCurrentCategory.getId())};
+                saveQueryHandler.startUpdate(1, null,
+                        ExpensesContract.Categories.CONTENT_URI,
+                        updateValues,
+                        selection,
+                        selectionArgs);
+            }
+
+            // update the category details
+            saveQueryHandler.startUpdate(2, null,
                     ContentUris.withAppendedId(ExpensesContract.Categories.CONTENT_URI, mCategoryId),
                     mCurrentCategory.toContentValues(),
                     null,
                     null);
+
         } else {
             mListener.onNavigateUpConfirmed();
         }
@@ -372,7 +409,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
         @Override
         protected void onUpdateComplete(int token, Object cookie, int result) {
             final AsyncQueryListener listener = mListener.get();
-            if (listener != null) {
+            if (listener != null && token == 2) {
                 listener.onQueryComplete(token, cookie, result);
             }
         }

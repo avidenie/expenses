@@ -49,6 +49,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
 
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mFloatingActionButton;
+    private FrameLayout mChangeColor;
     private FrameLayout mChangeColorBackground;
 
     @Override
@@ -108,6 +109,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
+        mChangeColor = (FrameLayout) findViewById(R.id.change_color);
         mChangeColorBackground = (FrameLayout) findViewById(R.id.change_color_background);
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -147,6 +149,11 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
     }
 
     @Override
+    public void onBackPressedConfirmed() {
+        super.onBackPressed();
+    }
+
+    @Override
     public void onNavigateUpConfirmed() {
         NavUtils.navigateUpFromSameTask(this);
     }
@@ -177,8 +184,13 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
     }
 
     @Override
-    public void onBackPressedConfirmed() {
-        super.onBackPressed();
+    public void showChangeColor() {
+        mChangeColor.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideChangeColor() {
+        mChangeColor.setVisibility(View.GONE);
     }
 
     private EditCategoryFragment getVisibleEditCategoryFragment() {

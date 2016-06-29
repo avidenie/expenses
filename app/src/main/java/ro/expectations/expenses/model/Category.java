@@ -22,6 +22,7 @@ package ro.expectations.expenses.model;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.ColorInt;
 
 import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
@@ -55,11 +56,12 @@ public class Category implements Parcelable {
 
     private long id;
     private String name;
+    @ColorInt
     private int color;
     private long parentId;
     private int children;
 
-    public Category(long id, String name, int color, long parentId, int children) {
+    public Category(long id, String name, @ColorInt int color, long parentId, int children) {
         this.id = id;
         this.name = name;
         this.color = color;
