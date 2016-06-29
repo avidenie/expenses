@@ -22,12 +22,16 @@ package ro.expectations.expenses.ui.categories;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -37,6 +41,7 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.utils.LayoutUtils;
@@ -46,6 +51,7 @@ public class SubcategoriesActivity extends AppCompatActivity
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
 
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private AppBarLayout mAppBarLayout;
 
     private long mParentCategoryId;
@@ -86,6 +92,7 @@ public class SubcategoriesActivity extends AppCompatActivity
         });
 
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         if (savedInstanceState == null) {
             CategoriesFragment fragment = CategoriesFragment.newInstance(mParentCategoryId);
@@ -103,7 +110,8 @@ public class SubcategoriesActivity extends AppCompatActivity
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
-                ExpensesContract.Categories.NAME
+                ExpensesContract.Categories.NAME,
+                ExpensesContract.Categories.COLOR
         };
 
         return new CursorLoader(
@@ -119,9 +127,38 @@ public class SubcategoriesActivity extends AppCompatActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data.getCount() > 0) {
             data.moveToPosition(0);
+
+            ActionBar supportActionBar = getSupportActionBar();
+
+            // set the title
             String categoryName = data.getString(data.getColumnIndex(ExpensesContract.Categories.NAME));
             setTitle(categoryName);
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            if (supportActionBar != null) {
+                supportActionBar.setDisplayShowTitleEnabled(true);
+            }
+
+            // retrieve the parent category color
+            int color = ColorHelper.fromRGB(data.getString(data.getColumnIndex(ExpensesContract.Categories.COLOR)), ContextCompat.getColor(this, R.color.colorPrimary));
+
+            // change the collapsing toolbar layout
+            mCollapsingToolbarLayout.setBackgroundColor(color);
+
+            // change the support action bar
+            if (supportActionBar != null) {
+                supportActionBar.setBackgroundDrawable(new ColorDrawable(color));
+            }
+
+            // change the status bar
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int[] colors = getResources().getIntArray(R.array.colorPicker);
+                for(int i = 0, n = colors.length; i < n; i++) {
+                    if (colors[i] == color) {
+                        int[] darkColors = getResources().getIntArray(R.array.colorPickerDark);
+                        getWindow().setStatusBarColor(darkColors[i]);
+                        break;
+                    }
+                }
+            }
         }
     }
 
