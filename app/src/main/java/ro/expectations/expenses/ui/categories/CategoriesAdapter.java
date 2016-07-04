@@ -44,14 +44,16 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
             ExpensesContract.Categories._ID,
             ExpensesContract.Categories.NAME,
             ExpensesContract.Categories.COLOR,
+            ExpensesContract.Categories.ICON,
             ExpensesContract.Categories.PARENT_ID,
             ExpensesContract.Categories.CHILDREN
     };
     static final int COLUMN_CATEGORY_ID = 0;
     static final int COLUMN_CATEGORY_NAME = 1;
     static final int COLUMN_CATEGORY_COLOR = 2;
-    static final int COLUMN_CATEGORY_PARENT_ID = 3;
-    static final int COLUMN_CATEGORY_CHILDREN = 4;
+    static final int COLUMN_CATEGORY_ICON = 3;
+    static final int COLUMN_CATEGORY_PARENT_ID = 4;
+    static final int COLUMN_CATEGORY_CHILDREN = 5;
 
     private Cursor mCursor;
     final private Context mContext;
@@ -80,6 +82,10 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
         int color = ColorHelper.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
         Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
         holder.mCategoryIconBackground.setBackground(background);
+
+        // Set the icon
+        int iconId = DrawableHelper.getIdentifier(mContext, mCursor.getString(COLUMN_CATEGORY_ICON));
+        holder.mCategoryIcon.setImageResource(iconId);
 
         // Set the category name
         String name = mCursor.getString(COLUMN_CATEGORY_NAME);

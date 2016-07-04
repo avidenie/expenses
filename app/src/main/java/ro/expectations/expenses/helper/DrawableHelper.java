@@ -26,6 +26,8 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 
+import ro.expectations.expenses.R;
+
 public class DrawableHelper {
 
     public static Drawable tint(Context context, @DrawableRes int resId, @ColorRes int colorId) {
@@ -40,5 +42,18 @@ public class DrawableHelper {
         Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(wrappedDrawable, color);
         return wrappedDrawable;
+    }
+
+    public static @DrawableRes int getIdentifier(Context context, String iconName, @DrawableRes int defaultResourceId) {
+        int iconResourceId = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
+        if (iconResourceId == 0) {
+            iconResourceId = defaultResourceId;
+        }
+
+        return iconResourceId;
+    }
+
+    public static @DrawableRes int getIdentifier(Context context, String iconName) {
+        return getIdentifier(context, iconName, R.drawable.ic_question_mark_black_24dp);
     }
 }

@@ -27,6 +27,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -53,16 +54,20 @@ import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.dialog.CategoryPickerDialogFragment;
 import ro.expectations.expenses.widget.dialog.ColorPickerDialogFragment;
 import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
+import ro.expectations.expenses.widget.dialog.IconPickerDialogFragment;
 
-public class EditCategoryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class EditCategoryFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
         CategoryPickerDialogFragment.Listener,
         ColorPickerDialogFragment.Listener,
+        IconPickerDialogFragment.Listener,
         ConfirmationDialogFragment.Listener {
 
     public interface Listener {
         void onBackPressedConfirmed();
         void onNavigateUpConfirmed();
         void onColorSelected(@ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor);
+        void onIconSelected(@DrawableRes int icon);
         void showChangeColor();
         void hideChangeColor();
     }
@@ -71,6 +76,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     private static final int ON_NAVIGATE_UP_DIALOG_REQUEST_CODE = 0x101;
     private static final int ON_BACK_PRESSED_DIALOG_REQUEST_CODE = 0x102;
     private static final int COLOR_PICKER_DIALOG_REQUEST_CODE = 0x103;
+    private static final int ICON_PICKER_DIALOG_REQUEST_CODE = 0x104;
 
     private static final String ARG_CATEGORY_ID = "category_id";
 
@@ -164,6 +170,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
             mOriginalCategory = savedInstanceState.getParcelable(INSTANCE_ORIGINAL_CATEGORY);
             mCurrentCategory = savedInstanceState.getParcelable(INSTANCE_CURRENT_CATEGORY);
             renderCurrentColor();
+            renderCurrentIcon();
             renderCurrentParentCategory();
         }
     }
@@ -214,12 +221,14 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
             long parentId = data.getLong(Category.COLUMN_CATEGORY_PARENT_ID);
             String categoryName = data.getString(Category.COLUMN_CATEGORY_NAME);
             String categoryColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
+            String categoryIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
             String parentName = data.getString(Category.COLUMN_CATEGORY_PARENT_NAME);
             int children = data.getInt(Category.COLUMN_CATEGORY_CHILDREN);
 
             mOriginalCategory = new Category(mCategoryId,
                     categoryName,
-                    ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorAmber500)),
+                    ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
+                    categoryIcon,
                     parentId,
                     children);
             mCurrentCategory = new Category(mOriginalCategory);
@@ -236,6 +245,7 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
             }
 
             renderCurrentColor();
+            renderCurrentIcon();
             renderCurrentParentCategory();
         }
     }
@@ -270,6 +280,12 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onIconSelected(int targetRequestCode, String icon) {
+        mCurrentCategory.setIcon(icon);
+        mListener.onIconSelected(DrawableHelper.getIdentifier(getActivity(), icon));
+    }
+
+    @Override
     public void onConfirmed(int targetRequestCode) {
         switch(targetRequestCode) {
             case ON_NAVIGATE_UP_DIALOG_REQUEST_CODE:
@@ -293,7 +309,9 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
     }
 
     public void changeIcon() {
-        // TODO: implement change icon
+        IconPickerDialogFragment iconPickerDialogFragment = IconPickerDialogFragment.newInstance();
+        iconPickerDialogFragment.setTargetFragment(this, ICON_PICKER_DIALOG_REQUEST_CODE);
+        iconPickerDialogFragment.show(getFragmentManager(), "IconPickerDialogFragment");
     }
 
     public boolean confirmNavigateUp() {
@@ -314,6 +332,10 @@ public class EditCategoryFragment extends Fragment implements LoaderManager.Load
                 break;
             }
         }
+    }
+
+    private void renderCurrentIcon() {
+        onIconSelected(-1, mCurrentCategory.getIcon());
     }
 
     private void renderCurrentParentCategory() {

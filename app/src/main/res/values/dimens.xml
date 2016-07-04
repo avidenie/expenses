@@ -30,4 +30,6 @@
     <dimen name="app_bar_extended_height">128dp</dimen>
     <dimen name="color_picker_padding_vertical">50dp</dimen>
     <dimen name="color_picker_item_padding_bottom">10dp</dimen>
+    <dimen name="icon_picker_padding_vertical">10dp</dimen>
+    <dimen name="icon_picker_item_padding_bottom">10dp</dimen>
 </resources>

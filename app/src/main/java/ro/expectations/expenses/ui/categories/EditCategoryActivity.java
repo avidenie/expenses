@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -51,6 +52,7 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
     private FloatingActionButton mFloatingActionButton;
     private FrameLayout mChangeColor;
     private FrameLayout mChangeColorBackground;
+    private ImageView mCategoryIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +85,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             });
         }
 
-        ImageView categoryIcon = (ImageView) findViewById(R.id.category_icon);
-        if (categoryIcon != null) {
-            categoryIcon.setOnClickListener(new View.OnClickListener() {
+        mCategoryIcon = (ImageView) findViewById(R.id.category_icon);
+        if (mCategoryIcon != null) {
+            mCategoryIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
@@ -180,6 +182,11 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         // change the change icon color
         Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey), accentColor);
         mChangeColorBackground.setBackground(background);
+    }
+
+    @Override
+    public void onIconSelected(@DrawableRes int icon) {
+        mCategoryIcon.setImageResource(icon);
     }
 
     @Override

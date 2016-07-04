@@ -34,7 +34,7 @@ public enum CardIssuer {
     DINERS(R.string.card_issuer_diners, R.drawable.ic_card_dinners_black_24dp),
     UNIONPAY(R.string.card_issuer_unionpay, R.drawable.ic_card_unionpay_black_24dp),
     EPS(R.string.card_issuer_eps, R.drawable.ic_card_eps_black_24dp),
-    OTHER(R.string.card_issuer_other, R.drawable.ic_payment_black_24dp);
+    OTHER(R.string.card_issuer_other, R.drawable.ic_credit_card_black_24dp);
 
     public final int titleId;
     public final int iconId;

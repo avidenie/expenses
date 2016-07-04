@@ -240,6 +240,8 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         List<Map<String, String>> parentCategories = new ArrayList<>();
         List<Map<String, String>> childCategories = new ArrayList<>();
         Map<Long, String> parentColors = new HashMap<>();
+        String defaultColor = ColorHelper.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
+        String defaultIcon = "ic_question_mark_black_24dp";
 
         for(Map<String, String> values: mCategories) {
             long id = Long.parseLong(values.get("_id"));
@@ -267,6 +269,8 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                 .withValue(ExpensesContract.Categories._ID, -1)
                 .withValue(ExpensesContract.Categories.NAME, "SPLIT")
+                .withValue(ExpensesContract.Categories.COLOR, defaultColor)
+                .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                 .build());
 
         // process parent categories
@@ -279,6 +283,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                     .withValue(ExpensesContract.Categories._ID, id)
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
                     .withValue(ExpensesContract.Categories.COLOR, color)
+                    .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                     .build());
             parentColors.put(id, color);
             colorIndex++;
@@ -294,13 +299,14 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             if (parentColors.containsKey(parentId)) {
                 color = parentColors.get(parentId);
             } else {
-                color = ColorHelper.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
+                color = defaultColor;
             }
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                     .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
                     .withValue(ExpensesContract.Categories.PARENT_ID, parentId)
                     .withValue(ExpensesContract.Categories.COLOR, color)
+                    .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                     .build());
         }
     }

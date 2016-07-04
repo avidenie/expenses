@@ -103,6 +103,7 @@ public final class ExpensesContract {
         public static final String NAME = "name";
         public static final String PARENT_ID = "parent_id";
         public static final String COLOR = "color";
+        public static final String ICON = "icon";
 
         // Database table columns aliases.
         public static final String CATEGORY_ID = "category_id";

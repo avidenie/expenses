@@ -72,6 +72,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
             Categories.CATEGORY_ID,
             Categories.CATEGORY_NAME,
             Categories.COLOR,
+            Categories.ICON,
             Categories.PARENT_ID,
             ParentCategories.PARENT_NAME,
             Transactions.PAYEE_ID,
@@ -97,16 +98,17 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     static final int COLUMN_CATEGORY_ID = 11;
     static final int COLUMN_CATEGORY_NAME = 12;
     static final int COLUMN_CATEGORY_COLOR = 13;
-    static final int COLUMN_PARENT_CATEGORY_ID = 14;
-    static final int COLUMN_PARENT_CATEGORY_NAME = 15;
-    static final int COLUMN_PAYEE_ID = 16;
-    static final int COLUMN_PAYEE_NAME = 17;
-    static final int COLUMN_NOTE = 18;
-    static final int COLUMN_IS_SPLIT = 19;
-    static final int COLUMN_OCCURED_AT = 20;
-    static final int COLUMN_CREATED_AT = 21;
-    static final int COLUMN_ORIGINAL_AMOUNT = 22;
-    static final int COLUMN_ORIGINAL_CURRENCY = 23;
+    static final int COLUMN_CATEGORY_ICON = 14;
+    static final int COLUMN_PARENT_CATEGORY_ID = 15;
+    static final int COLUMN_PARENT_CATEGORY_NAME = 16;
+    static final int COLUMN_PAYEE_ID = 17;
+    static final int COLUMN_PAYEE_NAME = 18;
+    static final int COLUMN_NOTE = 19;
+    static final int COLUMN_IS_SPLIT = 20;
+    static final int COLUMN_OCCURED_AT = 21;
+    static final int COLUMN_CREATED_AT = 22;
+    static final int COLUMN_ORIGINAL_AMOUNT = 23;
+    static final int COLUMN_ORIGINAL_CURRENCY = 24;
 
     private long mSelectedAccountId;
     private boolean mHandleClicks = false;

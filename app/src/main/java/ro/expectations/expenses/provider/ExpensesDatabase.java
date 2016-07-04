@@ -53,7 +53,8 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Categories._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 Categories.NAME + " TEXT NOT NULL," +
                 Categories.PARENT_ID + " INTEGER DEFAULT NULL," +
-                Categories.COLOR + " TEXT NOT NULL DEFAULT '3F51B5'," +
+                Categories.COLOR + " TEXT NOT NULL," +
+                Categories.ICON + " TEXT NOT NULL, " +
                 "CONSTRAINT fk_parent_id FOREIGN KEY (" + Categories.PARENT_ID + ") REFERENCES " +
                 Categories.TABLE_NAME + " (" + Categories._ID +
                 ") ON DELETE RESTRICT ON UPDATE CASCADE)");

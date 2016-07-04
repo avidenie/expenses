@@ -87,4 +87,210 @@
         <item>@color/colorPinkA200</item>
     </integer-array>
 
+    <string-array name="iconPicker">
+        <item>ic_ac_unit_black_24dp</item>
+        <item>ic_account_balance_black_24dp</item>
+        <item>ic_account_balance_wallet_black_24dp</item>
+        <item>ic_account_box_black_24dp</item>
+        <item>ic_airline_seat_recline_normal_black_24dp</item>
+        <item>ic_airport_shuttle_black_24dp</item>
+        <item>ic_alarm_on_black_24dp</item>
+        <item>ic_art_track_black_24dp</item>
+        <item>ic_beach_access_black_24dp</item>
+        <item>ic_book_black_24dp</item>
+        <item>ic_build_black_24dp</item>
+        <item>ic_business_black_24dp</item>
+        <item>ic_business_center_black_24dp</item>
+        <item>ic_cake_black_24dp</item>
+        <item>ic_card_amex_black_24dp</item>
+        <item>ic_card_discover_black_24dp</item>
+        <item>ic_card_giftcard_black_24dp</item>
+        <item>ic_card_mastercard_black_24dp</item>
+        <item>ic_card_membership_black_24dp</item>
+        <item>ic_card_visa_black_24dp</item>
+        <item>ic_casino_black_24dp</item>
+        <item>ic_chat_black_24dp</item>
+        <item>ic_child_care_black_24dp</item>
+        <item>ic_child_friendly_black_24dp</item>
+        <item>ic_color_lens_black_24dp</item>
+        <item>ic_credit_card_black_24dp</item>
+        <item>ic_currency_black_24dp</item>
+        <item>ic_desktop_windows_black_24dp</item>
+        <item>ic_directions_bike_black_24dp</item>
+        <item>ic_directions_boat_black_24dp</item>
+        <item>ic_directions_bus_black_24dp</item>
+        <item>ic_directions_car_black_24dp</item>
+        <item>ic_directions_railway_black_24dp</item>
+        <item>ic_directions_run_black_24dp</item>
+        <item>ic_directions_subway_black_24dp</item>
+        <item>ic_electronic_payment_black_24dp</item>
+        <item>ic_email_black_24dp</item>
+        <item>ic_explore_black_24dp</item>
+        <item>ic_face_black_24dp</item>
+        <item>ic_favorite_black_24dp</item>
+        <item>ic_fitness_center_black_24dp</item>
+        <item>ic_flight_black_24dp</item>
+        <item>ic_flight_takeoff_black_24dp</item>
+        <item>ic_free_breakfast_black_24dp</item>
+        <item>ic_golf_course_black_24dp</item>
+        <item>ic_headset_black_24dp</item>
+        <item>ic_home_black_24dp</item>
+        <item>ic_hot_tub_black_24dp</item>
+        <item>ic_hotel_black_24dp</item>
+        <item>ic_kitchen_black_24dp</item>
+        <item>ic_laptop_black_24dp</item>
+        <item>ic_library_books_black_24dp</item>
+        <item>ic_library_music_black_24dp</item>
+        <item>ic_loan_account_black_24dp</item>
+        <item>ic_local_bar_black_24dp</item>
+        <item>ic_local_cafe_black_24dp</item>
+        <item>ic_local_car_wash_black_24dp</item>
+        <item>ic_local_convenience_store_black_24dp</item>
+        <item>ic_local_dining_black_24dp</item>
+        <item>ic_local_drink_black_24dp</item>
+        <item>ic_local_florist_black_24dp</item>
+        <item>ic_local_gas_station_black_24dp</item>
+        <item>ic_local_hospital_black_24dp</item>
+        <item>ic_local_laundry_service_black_24dp</item>
+        <item>ic_local_library_black_24dp</item>
+        <item>ic_local_mall_black_24dp</item>
+        <item>ic_local_pharmacy_black_24dp</item>
+        <item>ic_local_pizza_black_24dp</item>
+        <item>ic_local_play_black_24dp</item>
+        <item>ic_local_shipping_black_24dp</item>
+        <item>ic_local_taxi_black_24dp</item>
+        <item>ic_money_bag_black_24dp</item>
+        <item>ic_movie_black_24dp</item>
+        <item>ic_payee_black_24dp</item>
+        <item>ic_pets_black_24dp</item>
+        <item>ic_phone_android_black_24dp</item>
+        <item>ic_photo_camera_black_24dp</item>
+        <item>ic_pool_black_24dp</item>
+        <item>ic_power_black_24dp</item>
+        <item>ic_pregnant_woman_black_24dp</item>
+        <item>ic_radio_black_24dp</item>
+        <item>ic_room_service_black_24dp</item>
+        <item>ic_school_black_24dp</item>
+        <item>ic_settings_black_24dp</item>
+        <item>ic_shop_black_24dp</item>
+        <item>ic_shopping_cart_black_24dp</item>
+        <item>ic_spa_black_24dp</item>
+        <item>ic_speaker_black_24dp</item>
+        <item>ic_store_black_24dp</item>
+        <item>ic_supervisor_account_black_24dp</item>
+        <item>ic_terrain_black_24dp</item>
+        <item>ic_theaters_black_24dp</item>
+        <item>ic_today_black_24dp</item>
+        <item>ic_toys_black_24dp</item>
+        <item>ic_transaction_black_24dp</item>
+        <item>ic_tv_black_24dp</item>
+        <item>ic_videocam_black_24dp</item>
+        <item>ic_watch_black_24dp</item>
+        <item>ic_weekend_black_24dp</item>
+        <item>ic_work_black_24dp</item>
+    </string-array>
+
+    <string-array name="iconPickerTitle">
+        <item>ac unit</item>
+        <item>account balance</item>
+        <item>account balance wallet</item>
+        <item>account box</item>
+        <item>airline seat recline normal</item>
+        <item>airport shuttle</item>
+        <item>alarm on</item>
+        <item>art track</item>
+        <item>beach access</item>
+        <item>book</item>
+        <item>build</item>
+        <item>business</item>
+        <item>business center</item>
+        <item>cake</item>
+        <item>card amex</item>
+        <item>card discover</item>
+        <item>card giftcard</item>
+        <item>card mastercard</item>
+        <item>card membership</item>
+        <item>card visa</item>
+        <item>casino</item>
+        <item>chat</item>
+        <item>child care</item>
+        <item>child friendly</item>
+        <item>color lens</item>
+        <item>credit card</item>
+        <item>currency</item>
+        <item>desktop windows</item>
+        <item>directions bike</item>
+        <item>directions boat</item>
+        <item>directions bus</item>
+        <item>directions car</item>
+        <item>directions railway</item>
+        <item>directions run</item>
+        <item>directions subway</item>
+        <item>electronic payment</item>
+        <item>email</item>
+        <item>explore</item>
+        <item>face</item>
+        <item>favorite</item>
+        <item>fitness center</item>
+        <item>flight</item>
+        <item>flight takeoff</item>
+        <item>free breakfast</item>
+        <item>golf course</item>
+        <item>headset</item>
+        <item>home</item>
+        <item>hot tub</item>
+        <item>hotel</item>
+        <item>kitchen</item>
+        <item>laptop</item>
+        <item>library books</item>
+        <item>library music</item>
+        <item>loan account</item>
+        <item>local bar</item>
+        <item>local cafe</item>
+        <item>local car wash</item>
+        <item>local convenience store</item>
+        <item>local dining</item>
+        <item>local drink</item>
+        <item>local florist</item>
+        <item>local gas station</item>
+        <item>local hospital</item>
+        <item>local laundry service</item>
+        <item>local library</item>
+        <item>local mall</item>
+        <item>local pharmacy</item>
+        <item>local pizza</item>
+        <item>local play</item>
+        <item>local shipping</item>
+        <item>local taxi</item>
+        <item>money bag</item>
+        <item>movie</item>
+        <item>payee</item>
+        <item>pets</item>
+        <item>phone android</item>
+        <item>photo camera</item>
+        <item>pool</item>
+        <item>power</item>
+        <item>pregnant woman</item>
+        <item>radio</item>
+        <item>room service</item>
+        <item>school</item>
+        <item>settings</item>
+        <item>shop</item>
+        <item>shopping cart</item>
+        <item>spa</item>
+        <item>speaker</item>
+        <item>store</item>
+        <item>supervisor account</item>
+        <item>terrain</item>
+        <item>theaters</item>
+        <item>today</item>
+        <item>toys</item>
+        <item>transaction</item>
+        <item>tv</item>
+        <item>videocam</item>
+        <item>watch</item>
+        <item>weekend</item>
+        <item>work</item>
+    </string-array>
+
 </resources>

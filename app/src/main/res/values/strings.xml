@@ -141,4 +141,7 @@
     <!-- Color picker -->
     <string name="choose_color">Choose color</string>
 
+    <!-- Icon picker -->
+    <string name="choose_icon">Choose icon</string>
+
 </resources>

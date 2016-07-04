@@ -143,7 +143,8 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         if (fromAccountId > 0 && toAccountId > 0) {
             holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_transfer_black_24dp, R.color.colorWhite));
         } else {
-            holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, R.drawable.ic_question_mark_black_24dp, R.color.colorWhite));
+            int iconId = DrawableHelper.getIdentifier(mContext, mCursor.getString(TransactionsFragment.COLUMN_CATEGORY_ICON));
+            holder.mTransactionIcon.setImageDrawable(DrawableHelper.tint(mContext, iconId, R.color.colorWhite));
         }
 
         // Set the icon background color
