@@ -211,6 +211,7 @@ public class ManageCategoryFragment extends Fragment implements
                             0,
                             0);
                     mCurrentCategory = new Category(mOriginalCategory);
+                    mCategoryParent.setText(R.string.none);
                     renderCurrentCategoryDetails();
                 }
             }
