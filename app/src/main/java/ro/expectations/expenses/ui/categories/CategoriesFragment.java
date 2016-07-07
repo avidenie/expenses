@@ -101,8 +101,8 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     if (mAdapter.getSelectedItemCount() == 1) {
                         int position = mAdapter.getSelectedItemPositions().get(0);
                         long categoryId = mAdapter.getItemId(position);
-                        Intent editCategoryIntent = new Intent(getActivity(), EditCategoryActivity.class);
-                        editCategoryIntent.putExtra(EditCategoryActivity.ARG_CATEGORY_ID, categoryId);
+                        Intent editCategoryIntent = new Intent(getActivity(), ManageCategoryActivity.class);
+                        editCategoryIntent.putExtra(ManageCategoryActivity.ARG_CATEGORY_ID, categoryId);
                         startActivity(editCategoryIntent);
                         mode.finish();
                     }

@@ -19,10 +19,10 @@
 
 package ro.expectations.expenses.ui.categories;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
@@ -46,10 +46,11 @@ public class CategoriesActivity extends DrawerActivity implements OnAppBarHeight
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
+                Intent newCategoryIntent = new Intent(CategoriesActivity.this, ManageCategoryActivity.class);
+                startActivity(newCategoryIntent);
             }
         });
+        fab.setVisibility(View.VISIBLE);
 
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 

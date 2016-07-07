@@ -77,8 +77,7 @@
             android:parentActivityName=".ui.categories.CategoriesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.categories.EditCategoryActivity"
-            android:label="@string/title_activity_edit_category"
+            android:name=".ui.categories.ManageCategoryActivity"
             android:parentActivityName=".ui.categories.CategoriesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

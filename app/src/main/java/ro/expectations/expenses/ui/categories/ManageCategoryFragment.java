@@ -25,18 +25,22 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +60,7 @@ import ro.expectations.expenses.widget.dialog.ColorPickerDialogFragment;
 import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.widget.dialog.IconPickerDialogFragment;
 
-public class EditCategoryFragment extends Fragment implements
+public class ManageCategoryFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         CategoryPickerDialogFragment.Listener,
         ColorPickerDialogFragment.Listener,
@@ -78,13 +82,16 @@ public class EditCategoryFragment extends Fragment implements
     private static final int COLOR_PICKER_DIALOG_REQUEST_CODE = 0x103;
     private static final int ICON_PICKER_DIALOG_REQUEST_CODE = 0x104;
 
+    private static final int LOADER_CATEGORY = 1;
+    private static final int LOADER_PARENT_CATEGORY = 2;
+
     private static final String ARG_CATEGORY_ID = "category_id";
+    private static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
 
     private static final String INSTANCE_ORIGINAL_CATEGORY = "original_category";
     private static final String INSTANCE_CURRENT_CATEGORY = "current_category";
 
-    private long mCategoryId;
-
+    private TextInputLayout mCategoryNameLayout;
     private TextInputEditText mCategoryName;
     private TextInputEditText mCategoryParent;
 
@@ -93,14 +100,22 @@ public class EditCategoryFragment extends Fragment implements
 
     private Listener mListener;
 
-    public EditCategoryFragment() {
+    public ManageCategoryFragment() {
         // Required empty public constructor
     }
 
-    public static EditCategoryFragment newInstance(long categoryId) {
-        EditCategoryFragment fragment = new EditCategoryFragment();
+    public static ManageCategoryFragment newInstance(long categoryId) {
+        ManageCategoryFragment fragment = new ManageCategoryFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_CATEGORY_ID, categoryId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ManageCategoryFragment newInstanceWithParent(long parentCategoryId) {
+        ManageCategoryFragment fragment = new ManageCategoryFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_PARENT_CATEGORY_ID, parentCategoryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -114,16 +129,13 @@ public class EditCategoryFragment extends Fragment implements
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
-                    + " must implement EditCategoryFragment.Listener");
+                    + " must implement ManageCategoryFragment.Listener");
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mCategoryId = getArguments().getLong(ARG_CATEGORY_ID);
-        }
         setHasOptionsMenu(true);
     }
 
@@ -131,19 +143,32 @@ public class EditCategoryFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_edit_category, container, false);
+        return inflater.inflate(R.layout.fragment_manage_category, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mCategoryNameLayout = (TextInputLayout) view.findViewById(R.id.category_name_input_layout);
         mCategoryName = (TextInputEditText) view.findViewById(R.id.category_name);
-        mCategoryName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mCategoryName.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    mCurrentCategory.setName(mCategoryName.getText().toString());
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // don't care
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // don't care
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String categoryName = mCategoryName.getText().toString();
+                if (mCurrentCategory != null) {
+                    mCurrentCategory.setName(categoryName);
+                }
+                if (!categoryName.isEmpty()) {
+                    mCategoryNameLayout.setErrorEnabled(false);
                 }
             }
         });
@@ -153,8 +178,9 @@ public class EditCategoryFragment extends Fragment implements
         mCategoryParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CategoryPickerDialogFragment categoryPickerDialogFragment = CategoryPickerDialogFragment.newInstance(mCategoryId);
-                categoryPickerDialogFragment.setTargetFragment(EditCategoryFragment.this, CATEGORY_PICKER_DIALOG_REQUEST_CODE);
+                long skipCategoryId = mCurrentCategory != null ? mCurrentCategory.getId() : 0;
+                CategoryPickerDialogFragment categoryPickerDialogFragment = CategoryPickerDialogFragment.newInstance(skipCategoryId);
+                categoryPickerDialogFragment.setTargetFragment(ManageCategoryFragment.this, CATEGORY_PICKER_DIALOG_REQUEST_CODE);
                 categoryPickerDialogFragment.show(getFragmentManager(), "category_picker");
             }
         });
@@ -165,7 +191,29 @@ public class EditCategoryFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState == null) {
-            getLoaderManager().restartLoader(0, null, this);
+            long categoryId = getArguments() != null ? getArguments().getLong(ARG_CATEGORY_ID) : 0L;
+            if (categoryId > 0) {
+                Bundle args = new Bundle();
+                args.putLong(ARG_CATEGORY_ID, categoryId);
+                getLoaderManager().restartLoader(LOADER_CATEGORY, args, this);
+            } else {
+                long parentId = getArguments() != null ? getArguments().getLong(ARG_PARENT_CATEGORY_ID) : 0L;
+                if (parentId > 0) {
+                    Bundle args = new Bundle();
+                    args.putLong(ARG_CATEGORY_ID, parentId);
+                    getLoaderManager().restartLoader(LOADER_PARENT_CATEGORY, args, this);
+                } else {
+                    mOriginalCategory = new Category(
+                            0,
+                            "",
+                            ContextCompat.getColor(getActivity(), R.color.colorPrimary),
+                            "ic_question_mark_black_24dp",
+                            0,
+                            0);
+                    mCurrentCategory = new Category(mOriginalCategory);
+                    renderCurrentCategoryDetails();
+                }
+            }
         } else {
             mOriginalCategory = savedInstanceState.getParcelable(INSTANCE_ORIGINAL_CATEGORY);
             mCurrentCategory = savedInstanceState.getParcelable(INSTANCE_CURRENT_CATEGORY);
@@ -188,7 +236,9 @@ public class EditCategoryFragment extends Fragment implements
 
         int id = item.getItemId();
         if (id == R.id.action_save) {
-            save();
+            if (validate()) {
+                save();
+            }
             return true;
         }
 
@@ -205,7 +255,7 @@ public class EditCategoryFragment extends Fragment implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(
             getActivity(),
-            ContentUris.withAppendedId(ExpensesContract.Categories.CONTENT_URI, mCategoryId),
+            ContentUris.withAppendedId(ExpensesContract.Categories.CONTENT_URI, args.getLong(ARG_CATEGORY_ID)),
             Category.PROJECTION,
             null,
             null,
@@ -215,38 +265,60 @@ public class EditCategoryFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
         if (data.getCount() > 0) {
             data.moveToFirst();
 
-            long parentId = data.getLong(Category.COLUMN_CATEGORY_PARENT_ID);
-            String categoryName = data.getString(Category.COLUMN_CATEGORY_NAME);
-            String categoryColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
-            String categoryIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
-            String parentName = data.getString(Category.COLUMN_CATEGORY_PARENT_NAME);
-            int children = data.getInt(Category.COLUMN_CATEGORY_CHILDREN);
+            if (loader.getId() == LOADER_CATEGORY) {
 
-            mOriginalCategory = new Category(mCategoryId,
-                    categoryName,
-                    ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
-                    categoryIcon,
-                    parentId,
-                    children);
-            mCurrentCategory = new Category(mOriginalCategory);
+                long categoryId = data.getLong(Category.COLUMN_CATEGORY_ID);
+                long parentId = data.getLong(Category.COLUMN_CATEGORY_PARENT_ID);
+                String categoryName = data.getString(Category.COLUMN_CATEGORY_NAME);
+                String categoryColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
+                String categoryIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
+                String parentName = data.getString(Category.COLUMN_CATEGORY_PARENT_NAME);
+                int children = data.getInt(Category.COLUMN_CATEGORY_CHILDREN);
 
-            mCategoryName.setText(categoryName);
-            if (parentId > 0) {
-                mCategoryParent.setText(parentName);
-            } else {
-                if (children > 0) {
-                    mCategoryParent.setVisibility(View.GONE);
+                mOriginalCategory = new Category(
+                        categoryId,
+                        categoryName,
+                        ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
+                        categoryIcon,
+                        parentId,
+                        children);
+
+                mCategoryName.setText(categoryName);
+                if (parentId > 0) {
+                    mCategoryParent.setText(parentName);
                 } else {
-                    mCategoryParent.setText(R.string.none);
+                    if (children > 0) {
+                        mCategoryParent.setVisibility(View.GONE);
+                    } else {
+                        mCategoryParent.setText(R.string.none);
+                    }
                 }
+
+            } else {
+
+                long parentId = data.getLong(Category.COLUMN_CATEGORY_ID);
+                String parentName = data.getString(Category.COLUMN_CATEGORY_NAME);
+                String parentColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
+                String parentIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
+
+                mOriginalCategory = new Category(
+                        0,
+                        "",
+                        ColorHelper.fromRGB(parentColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
+                        parentIcon,
+                        parentId,
+                        0);
+
+                mCategoryParent.setText(parentName);
             }
 
-            renderCurrentColor();
-            renderCurrentIcon();
-            renderCurrentParentCategory();
+            mCurrentCategory = new Category(mOriginalCategory);
+
+            renderCurrentCategoryDetails();
         }
     }
 
@@ -346,6 +418,12 @@ public class EditCategoryFragment extends Fragment implements
         }
     }
 
+    private void renderCurrentCategoryDetails() {
+        renderCurrentColor();
+        renderCurrentIcon();
+        renderCurrentParentCategory();
+    }
+
     private boolean confirmDiscard(int requestCode) {
         if (!isDirty()) {
             return false;
@@ -359,7 +437,7 @@ public class EditCategoryFragment extends Fragment implements
                     getString(R.string.button_discard),
                     getString(R.string.button_keep_editing),
                     true);
-            confirmationDialogFragment.setTargetFragment(EditCategoryFragment.this, requestCode);
+            confirmationDialogFragment.setTargetFragment(ManageCategoryFragment.this, requestCode);
             confirmationDialogFragment.show(activity.getSupportFragmentManager(), "NavigateUpConfirmationDialogFragment");
             return true;
         }
@@ -371,36 +449,59 @@ public class EditCategoryFragment extends Fragment implements
         return mOriginalCategory == null || mCurrentCategory == null || !mOriginalCategory.equals(mCurrentCategory);
     }
 
+    private boolean validate() {
+        return validateCategoryName();
+    }
+
+    private boolean validateCategoryName() {
+        if (mCurrentCategory.getName().isEmpty()) {
+            mCategoryNameLayout.setErrorEnabled(true);
+            mCategoryNameLayout.setError(getString(R.string.error_category_name_empty));
+            return false;
+        }
+        return true;
+    }
+
     private void save() {
+
         if (isDirty()) {
             SaveQueryHandler saveQueryHandler = new SaveQueryHandler(
                     getActivity().getContentResolver(),
-                    new SaveQueryHandler.AsyncQueryListener() {
+                    new SaveQueryHandler.SaveQueryListener() {
                         @Override
-                        public void onQueryComplete(int token, Object cookie, int result) {
+                        public void onQueryComplete(int token) {
                             mListener.onNavigateUpConfirmed();
                         }
                     });
 
-            // update the child categories color based on parent's color
-            if (mCurrentCategory.getParentId() == 0) {
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(mCurrentCategory.getColor()));
-                String selection = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.PARENT_ID + " = ?";
-                String[] selectionArgs = new String[]{String.valueOf(mCurrentCategory.getId())};
-                saveQueryHandler.startUpdate(1, null,
-                        ExpensesContract.Categories.CONTENT_URI,
-                        updateValues,
-                        selection,
-                        selectionArgs);
-            }
+            if (mCurrentCategory.getId() > 0) {
 
-            // update the category details
-            saveQueryHandler.startUpdate(2, null,
-                    ContentUris.withAppendedId(ExpensesContract.Categories.CONTENT_URI, mCategoryId),
-                    mCurrentCategory.toContentValues(),
-                    null,
-                    null);
+                // update the child categories color based on parent's color
+                if (mCurrentCategory.getParentId() == 0) {
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(mCurrentCategory.getColor()));
+                    String selection = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.PARENT_ID + " = ?";
+                    String[] selectionArgs = new String[]{String.valueOf(mCurrentCategory.getId())};
+                    saveQueryHandler.startUpdate(0, null,
+                            ExpensesContract.Categories.CONTENT_URI,
+                            updateValues,
+                            selection,
+                            selectionArgs);
+                }
+
+                // update the category details
+                saveQueryHandler.startUpdate(100, null,
+                        ContentUris.withAppendedId(ExpensesContract.Categories.CONTENT_URI, mCurrentCategory.getId()),
+                        mCurrentCategory.toContentValues(),
+                        null,
+                        null);
+            } else {
+
+                saveQueryHandler.startInsert(100, null,
+                        ExpensesContract.Categories.CONTENT_URI,
+                        mCurrentCategory.toContentValues());
+
+            }
 
         } else {
             mListener.onNavigateUpConfirmed();
@@ -409,30 +510,34 @@ public class EditCategoryFragment extends Fragment implements
 
     private static class SaveQueryHandler extends AsyncQueryHandler {
 
-        public interface AsyncQueryListener {
-            void onQueryComplete(int token, Object cookie, int result);
+        public interface SaveQueryListener {
+            void onQueryComplete(int token);
         }
 
-        private WeakReference<AsyncQueryListener> mListener;
+        private WeakReference<SaveQueryListener> mListener;
 
-        public SaveQueryHandler(ContentResolver cr, AsyncQueryListener listener) {
+        public SaveQueryHandler(ContentResolver cr, SaveQueryListener listener) {
             super(cr);
             setQueryListener(listener);
         }
 
-        public SaveQueryHandler(ContentResolver cr) {
-            super(cr);
-        }
-
-        public void setQueryListener(AsyncQueryListener listener) {
+        public void setQueryListener(SaveQueryListener listener) {
             mListener = new WeakReference<>(listener);
         }
 
         @Override
+        protected void onInsertComplete(int token, Object cookie, Uri uri) {
+            final SaveQueryListener listener = mListener.get();
+            if (listener != null) {
+                listener.onQueryComplete(token);
+            }
+        }
+
+        @Override
         protected void onUpdateComplete(int token, Object cookie, int result) {
-            final AsyncQueryListener listener = mListener.get();
-            if (listener != null && token == 2) {
-                listener.onQueryComplete(token, cookie, result);
+            final SaveQueryListener listener = mListener.get();
+            if (listener != null && token == 100) {
+                listener.onQueryComplete(token);
             }
         }
     }

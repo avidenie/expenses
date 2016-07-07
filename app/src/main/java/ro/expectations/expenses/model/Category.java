@@ -30,6 +30,7 @@ import ro.expectations.expenses.provider.ExpensesContract;
 public class Category implements Parcelable {
 
     public static final String[] PROJECTION = {
+            ExpensesContract.Categories._ID,
             ExpensesContract.Categories.NAME,
             ExpensesContract.Categories.COLOR,
             ExpensesContract.Categories.ICON,
@@ -37,12 +38,13 @@ public class Category implements Parcelable {
             ExpensesContract.ParentCategories.PARENT_NAME,
             ExpensesContract.Categories.CHILDREN
     };
-    public static final int COLUMN_CATEGORY_NAME = 0;
-    public static final int COLUMN_CATEGORY_COLOR = 1;
-    public static final int COLUMN_CATEGORY_ICON = 2;
-    public static final int COLUMN_CATEGORY_PARENT_ID = 3;
-    public static final int COLUMN_CATEGORY_PARENT_NAME = 4;
-    public static final int COLUMN_CATEGORY_CHILDREN = 5;
+    public static final int COLUMN_CATEGORY_ID = 0;
+    public static final int COLUMN_CATEGORY_NAME = 1;
+    public static final int COLUMN_CATEGORY_COLOR = 2;
+    public static final int COLUMN_CATEGORY_ICON = 3;
+    public static final int COLUMN_CATEGORY_PARENT_ID = 4;
+    public static final int COLUMN_CATEGORY_PARENT_NAME = 5;
+    public static final int COLUMN_CATEGORY_CHILDREN = 6;
 
     public static final Parcelable.Creator<Category> CREATOR = new Creator<Category>() {
         @Override

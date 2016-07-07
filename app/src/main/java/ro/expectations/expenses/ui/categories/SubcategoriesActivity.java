@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -86,10 +85,12 @@ public class SubcategoriesActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
+                Intent newCategoryIntent = new Intent(SubcategoriesActivity.this, ManageCategoryActivity.class);
+                newCategoryIntent.putExtra(ManageCategoryActivity.ARG_PARENT_CATEGORY_ID, mParentCategoryId);
+                startActivity(newCategoryIntent);
             }
         });
+        fab.setVisibility(View.VISIBLE);
 
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);

@@ -43,10 +43,11 @@ import android.widget.ImageView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.DrawableHelper;
 
-public class EditCategoryActivity extends AppCompatActivity implements EditCategoryFragment.Listener {
+public class ManageCategoryActivity extends AppCompatActivity implements ManageCategoryFragment.Listener {
 
     public static final String ARG_CATEGORY_ID = "category_id";
-    public static final String TAG_FRAGMENT_EDIT_CATEGORY = "fragment_edit_category";
+    public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
+    public static final String TAG_FRAGMENT_MANAGE_CATEGORY = "fragment_manage_category";
 
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mFloatingActionButton;
@@ -59,14 +60,18 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         super.onCreate(savedInstanceState);
 
         long categoryId = getIntent().getLongExtra(ARG_CATEGORY_ID, 0);
-        if (categoryId <= 0) {
+        if (categoryId < 0) {
             Intent redirectIntent = new Intent(this, CategoriesActivity.class);
             startActivity(redirectIntent);
             finish();
             return;
+        } else if (categoryId == 0) {
+            setTitle(getString(R.string.title_new_category));
+        } else {
+            setTitle(getString(R.string.title_edit_category));
         }
 
-        setContentView(R.layout.activity_edit_category);
+        setContentView(R.layout.activity_manage_category);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,9 +82,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
-                    if (editCategoryFragment != null) {
-                        editCategoryFragment.changeIcon();
+                    ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+                    if (manageCategoryFragment != null) {
+                        manageCategoryFragment.changeIcon();
                     }
                 }
             });
@@ -90,9 +95,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             mCategoryIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
-                    if (editCategoryFragment != null) {
-                        editCategoryFragment.changeIcon();
+                    ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+                    if (manageCategoryFragment != null) {
+                        manageCategoryFragment.changeIcon();
                     }
                 }
             });
@@ -103,9 +108,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
             mChangeColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
-                    if (editCategoryFragment != null) {
-                        editCategoryFragment.changeColor();
+                    ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+                    if (manageCategoryFragment != null) {
+                        manageCategoryFragment.changeColor();
                     }
                 }
             });
@@ -116,9 +121,15 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         if (savedInstanceState == null) {
-            EditCategoryFragment fragment = EditCategoryFragment.newInstance(categoryId);
+            ManageCategoryFragment fragment;
+            if (categoryId == 0) {
+                long parentCategoryId = getIntent().getLongExtra(ARG_PARENT_CATEGORY_ID, 0);
+                fragment = ManageCategoryFragment.newInstanceWithParent(parentCategoryId);
+            } else {
+                fragment = ManageCategoryFragment.newInstance(categoryId);
+            }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment, fragment, TAG_FRAGMENT_EDIT_CATEGORY);
+            transaction.replace(R.id.fragment, fragment, TAG_FRAGMENT_MANAGE_CATEGORY);
             transaction.commit();
         }
     }
@@ -128,9 +139,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
-                if (editCategoryFragment != null) {
-                    if (editCategoryFragment.confirmNavigateUp()) {
+                ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+                if (manageCategoryFragment != null) {
+                    if (manageCategoryFragment.confirmNavigateUp()) {
                         return true;
                     }
                 }
@@ -140,9 +151,9 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
 
     @Override
     public void onBackPressed() {
-        EditCategoryFragment editCategoryFragment = getVisibleEditCategoryFragment();
-        if (editCategoryFragment != null) {
-            if (editCategoryFragment.confirmBackPressed()) {
+        ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+        if (manageCategoryFragment != null) {
+            if (manageCategoryFragment.confirmBackPressed()) {
                 return;
             }
         }
@@ -199,10 +210,10 @@ public class EditCategoryActivity extends AppCompatActivity implements EditCateg
         mChangeColor.setVisibility(View.GONE);
     }
 
-    private EditCategoryFragment getVisibleEditCategoryFragment() {
-        EditCategoryFragment editCategoryFragment = (EditCategoryFragment) getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT_EDIT_CATEGORY);
-        if (editCategoryFragment != null && editCategoryFragment.isVisible()) {
-            return editCategoryFragment;
+    private ManageCategoryFragment getVisibleManageCategoryFragment() {
+        ManageCategoryFragment manageCategoryFragment = (ManageCategoryFragment) getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT_MANAGE_CATEGORY);
+        if (manageCategoryFragment != null && manageCategoryFragment.isVisible()) {
+            return manageCategoryFragment;
         } else {
             return null;
         }
