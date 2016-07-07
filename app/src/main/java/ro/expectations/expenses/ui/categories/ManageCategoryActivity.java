@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -158,6 +159,20 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
             }
         }
         super.onBackPressed();
+    }
+
+    @Nullable
+    @Override
+    public Intent getSupportParentActivityIntent() {
+        ManageCategoryFragment manageCategoryFragment = getVisibleManageCategoryFragment();
+        if (manageCategoryFragment != null) {
+            Intent parentActivityIntent = manageCategoryFragment.getParentActivityIntent();
+            if (parentActivityIntent != null) {
+                return parentActivityIntent;
+            }
+        }
+
+        return super.getSupportParentActivityIntent();
     }
 
     @Override

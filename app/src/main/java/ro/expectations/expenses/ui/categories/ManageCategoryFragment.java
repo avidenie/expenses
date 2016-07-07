@@ -24,6 +24,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -393,6 +394,20 @@ public class ManageCategoryFragment extends Fragment implements
 
     public boolean confirmBackPressed() {
         return confirmDiscard(ON_BACK_PRESSED_DIALOG_REQUEST_CODE);
+    }
+
+    public Intent getParentActivityIntent() {
+        if (mCurrentCategory == null) {
+            return null;
+        }
+        long parentCategoryId = mCurrentCategory.getParentId();
+        if (parentCategoryId > 0) {
+            Intent intent = new Intent(getActivity(), SubcategoriesActivity.class);
+            intent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, parentCategoryId);
+            return intent;
+        } else {
+            return new Intent(getActivity(), CategoriesActivity.class);
+        }
     }
 
     private void renderCurrentColor() {
