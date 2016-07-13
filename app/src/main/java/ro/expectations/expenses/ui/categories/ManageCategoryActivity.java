@@ -206,7 +206,7 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey), accentColor);
+        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), accentColor);
         mChangeColorBackground.setBackground(background);
     }
 
