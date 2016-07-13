@@ -23,9 +23,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
@@ -63,6 +65,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     private AppBarHelper.State mPreviousState;
     private AppBarHelperProvider mAppBarHelperProvider;
 
+    private int mStatusBarColor;
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
@@ -78,6 +81,11 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             actionEditCategory.setIcon(DrawableHelper.tint(getContext(), actionEditCategory.getIcon(), R.color.colorWhite));
             MenuItem actionDeleteCategory = menu.findItem(R.id.action_delete_category);
             actionDeleteCategory.setIcon(DrawableHelper.tint(getContext(), actionDeleteCategory.getIcon(), R.color.colorWhite));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mStatusBarColor = getActivity().getWindow().getStatusBarColor();
+                getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
+            }
             return true;
         }
 
@@ -148,6 +156,11 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             }
             mPreviousState = null;
             ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
+
+            // reset the status bar color to default
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().getWindow().setStatusBarColor(mStatusBarColor);
+            }
         }
     };
 
