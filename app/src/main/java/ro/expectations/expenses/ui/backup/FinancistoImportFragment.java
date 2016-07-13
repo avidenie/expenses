@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +56,8 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
 import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
@@ -70,6 +72,7 @@ public class FinancistoImportFragment extends Fragment
     private static final int CONFIRMATION_DIALOG_REQUEST_CODE = 0;
     private static final String KEY_SELECTED_FILE = "selected_file";
 
+    private RecyclerView mRecyclerView;
     private FinancistoImportAdapter mAdapter;
     private TextView mEmptyView;
     private LinearLayout mRequestPermissionRationale;
@@ -81,7 +84,8 @@ public class FinancistoImportFragment extends Fragment
 
     private File mSelectedFile;
 
-    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
+    private AppBarHelper.State mPreviousState;
+    private AppBarHelperProvider mAppBarHelperProvider;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -97,8 +101,17 @@ public class FinancistoImportFragment extends Fragment
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
             mode.setTitle(getResources().getQuantityString(R.plurals.selected_backup_files, 1, 1));
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
+
+            // lock app bar in collapsed state
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState == null) {
+                mPreviousState = appBarHelper.getState();
+            }
+            appBarHelper.setExpanded(false, true);
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
+
             return true;
         }
 
@@ -131,7 +144,14 @@ public class FinancistoImportFragment extends Fragment
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
+
+            // unlock collapsed app bar
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
+                appBarHelper.setExpanded(true, true);
+            }
+            mPreviousState = null;
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -148,10 +168,10 @@ public class FinancistoImportFragment extends Fragment
         super.onAttach(context);
 
         try {
-            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+            mAppBarHelperProvider = (AppBarHelperProvider) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnAppBarHeightChangeListener");
+                    + " must implement AppBarHelperProvider");
         }
     }
 
@@ -166,7 +186,7 @@ public class FinancistoImportFragment extends Fragment
         mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
         mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));

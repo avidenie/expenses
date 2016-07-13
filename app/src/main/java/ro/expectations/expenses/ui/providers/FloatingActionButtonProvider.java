@@ -17,7 +17,7 @@
  * along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.ui.common;
+package ro.expectations.expenses.ui.providers;
 
 import android.support.design.widget.FloatingActionButton;
 

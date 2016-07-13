@@ -27,6 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,18 +42,21 @@ import android.widget.TextView;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
 import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private RecyclerView mRecyclerView;
     private AccountsAdapter mAdapter;
     private TextView mEmptyView;
 
-    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
+    private AppBarHelper.State mPreviousState;
+    private AppBarHelperProvider mAppBarHelperProvider;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -71,6 +75,7 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
             int selectedAccounts = mAdapter.getSelectedItemCount();
             mode.setTitle(getResources().getQuantityString(
                     R.plurals.selected_accounts,
@@ -82,7 +87,15 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 menu.findItem(R.id.action_edit_account).setVisible(false);
             }
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
+
+            // lock app bar in collapsed state
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState == null) {
+                mPreviousState = appBarHelper.getState();
+            }
+            appBarHelper.setExpanded(false, true);
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
+
             return true;
         }
 
@@ -105,12 +118,21 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+
             mActionMode = null;
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
+
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
+
+            // unlock collapsed app bar
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
+                appBarHelper.setExpanded(true, true);
+            }
+            mPreviousState = null;
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -123,10 +145,10 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
         super.onAttach(context);
 
         try {
-            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+            mAppBarHelperProvider = (AppBarHelperProvider) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnAppBarHeightChangeListener");
+                    + " must implement AppBarHelperProvider");
         }
     }
 
@@ -137,15 +159,15 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
         mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new AccountsAdapter(getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {

@@ -29,12 +29,12 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
-import ro.expectations.expenses.utils.LayoutUtils;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 
-public class FinancistoImportActivity extends AppCompatActivity implements OnAppBarHeightChangeListener {
+public class FinancistoImportActivity extends AppCompatActivity implements AppBarHelperProvider  {
 
-    private AppBarLayout mAppBarLayout;
+    private AppBarHelper mAppBarHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +46,16 @@ public class FinancistoImportActivity extends AppCompatActivity implements OnApp
         mainContent.setLayoutResource(R.layout.content_backup);
         mainContent.inflate();
 
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mAppBarHelper = new AppBarHelper();
+        mAppBarHelper.attachToAppBar(appBarLayout);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
-
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
         if (savedInstanceState == null) {
             FinancistoImportFragment fragment = FinancistoImportFragment.newInstance();
@@ -64,7 +66,7 @@ public class FinancistoImportActivity extends AppCompatActivity implements OnApp
     }
 
     @Override
-    public void onAppBarHeightChange(boolean expand) {
-        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
+    public AppBarHelper getAppBarHelper() {
+        return mAppBarHelper;
     }
 }

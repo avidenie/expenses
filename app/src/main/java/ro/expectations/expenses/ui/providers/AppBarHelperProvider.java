@@ -17,8 +17,10 @@
  * along with Expenses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.ui.common;
+package ro.expectations.expenses.ui.providers;
 
-public interface OnAppBarHeightChangeListener {
-    void onAppBarHeightChange(boolean expand);
+import ro.expectations.expenses.ui.helper.AppBarHelper;
+
+public interface AppBarHelperProvider {
+    AppBarHelper getAppBarHelper();
 }

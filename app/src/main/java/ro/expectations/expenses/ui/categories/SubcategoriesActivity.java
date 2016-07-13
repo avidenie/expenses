@@ -42,16 +42,17 @@ import android.view.ViewStub;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.helper.ColorHelper;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
-import ro.expectations.expenses.utils.LayoutUtils;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
 
 public class SubcategoriesActivity extends AppCompatActivity
-        implements OnAppBarHeightChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements AppBarHelperProvider, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
 
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
-    private AppBarLayout mAppBarLayout;
+
+    private AppBarHelper mAppBarHelper;
 
     private long mParentCategoryId;
 
@@ -92,7 +93,10 @@ public class SubcategoriesActivity extends AppCompatActivity
         });
         fab.setVisibility(View.VISIBLE);
 
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mAppBarHelper = new AppBarHelper();
+        mAppBarHelper.attachToAppBar(appBarLayout);
+
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         if (savedInstanceState == null) {
@@ -104,8 +108,8 @@ public class SubcategoriesActivity extends AppCompatActivity
     }
 
     @Override
-    public void onAppBarHeightChange(boolean expand) {
-        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
+    public AppBarHelper getAppBarHelper() {
+        return mAppBarHelper;
     }
 
     @Override

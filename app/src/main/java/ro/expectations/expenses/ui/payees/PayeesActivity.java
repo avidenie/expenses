@@ -26,13 +26,13 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.utils.LayoutUtils;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 
-public class PayeesActivity extends DrawerActivity implements OnAppBarHeightChangeListener {
+public class PayeesActivity extends DrawerActivity implements AppBarHelperProvider {
 
-    private AppBarLayout mAppBarLayout;
+    private AppBarHelper mAppBarHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,10 @@ public class PayeesActivity extends DrawerActivity implements OnAppBarHeightChan
 
         mMainContent.setLayoutResource(R.layout.content_payees);
         mMainContent.inflate();
+
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mAppBarHelper = new AppBarHelper();
+        mAppBarHelper.attachToAppBar(appBarLayout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +54,6 @@ public class PayeesActivity extends DrawerActivity implements OnAppBarHeightChan
             }
         });
         fab.setVisibility(View.VISIBLE);
-
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
     }
 
     @Override
@@ -59,9 +61,8 @@ public class PayeesActivity extends DrawerActivity implements OnAppBarHeightChan
         return R.id.nav_payees;
     }
 
-
     @Override
-    public void onAppBarHeightChange(boolean expand) {
-        LayoutUtils.changeAppBarHeight(this, mAppBarLayout, expand);
+    public AppBarHelper getAppBarHelper() {
+        return mAppBarHelper;
     }
 }

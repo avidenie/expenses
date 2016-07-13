@@ -31,6 +31,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -58,8 +59,9 @@ import ro.expectations.expenses.helper.BackupHelper;
 import ro.expectations.expenses.helper.DrawableHelper;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
-import ro.expectations.expenses.ui.common.FloatingActionButtonProvider;
-import ro.expectations.expenses.ui.common.OnAppBarHeightChangeListener;
+import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
+import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
 import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
@@ -74,14 +76,16 @@ public class BackupFragment extends Fragment {
     private boolean mReadStorageAllowed = false;
     private boolean mIsFinancistoInstalled = false;
 
-    private FloatingActionButtonProvider mFloatingActionButtonProvider;
-    private OnAppBarHeightChangeListener mOnAppBarHeightChangeListener;
-
+    private RecyclerView mRecyclerView;
     private BackupAdapter mAdapter;
     private TextView mEmptyView;
     private LinearLayout mRequestPermissionRationale;
     private TextView mPermissionRationale;
     private Button mAllowAccess;
+
+    private AppBarHelper.State mPreviousState;
+    private AppBarHelperProvider mAppBarHelperProvider;
+    private FloatingActionButtonProvider mFloatingActionButtonProvider;
 
     private boolean mDismissProgressBar = false;
     private boolean mLaunchRestoreAlertDialog = false;
@@ -103,6 +107,7 @@ public class BackupFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
             int selectedFiles = mAdapter.getSelectedItemCount();
             mode.setTitle(getResources().getQuantityString(
                     R.plurals.selected_backup_files,
@@ -114,7 +119,15 @@ public class BackupFragment extends Fragment {
             } else {
                 menu.findItem(R.id.action_restore).setVisible(false);
             }
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(false);
+
+            // lock app bar in collapsed state
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState == null) {
+                mPreviousState = appBarHelper.getState();
+            }
+            appBarHelper.setExpanded(false, true);
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
+
             return true;
         }
 
@@ -139,12 +152,21 @@ public class BackupFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+
             mActionMode = null;
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
+
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
-            mOnAppBarHeightChangeListener.onAppBarHeightChange(true);
+
+            // unlock collapsed app bar
+            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
+            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
+                appBarHelper.setExpanded(true, true);
+            }
+            mPreviousState = null;
+            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -166,10 +188,10 @@ public class BackupFragment extends Fragment {
                     + " must implement FloatingActionButtonProvider");
         }
         try {
-            mOnAppBarHeightChangeListener = (OnAppBarHeightChangeListener) context;
+            mAppBarHelperProvider = (AppBarHelperProvider) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnAppBarHeightChangeListener");
+                    + " must implement AppBarHelperProvider");
         }
     }
 
@@ -191,15 +213,15 @@ public class BackupFragment extends Fragment {
         mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
         mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         mAdapter = new BackupAdapter(getActivity(), new File[0]);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
