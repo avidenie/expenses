@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.widget.recyclerview;
+package ro.expectations.expenses.ui.recyclerview;
 
 import android.content.Context;
 import android.content.res.TypedArray;

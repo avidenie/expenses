@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.widget.dialog;
+package ro.expectations.expenses.ui.dialog;
 
 import android.app.Dialog;
 import android.database.Cursor;
@@ -42,7 +42,7 @@ import android.view.View;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 
 public class CategoryPickerDialogFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

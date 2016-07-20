@@ -49,8 +49,8 @@ import ro.expectations.expenses.provider.ExpensesContract.ToRunningBalances;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
-import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

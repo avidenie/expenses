@@ -58,11 +58,11 @@ import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
-import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
-import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
-import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
-import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
-import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
+import ro.expectations.expenses.ui.dialog.ConfirmationDialogFragment;
+import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
+import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 
 public class FinancistoImportFragment extends Fragment
         implements ConfirmationDialogFragment.Listener {

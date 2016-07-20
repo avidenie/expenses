@@ -49,8 +49,8 @@ import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
-import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 
 public class CategoriesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

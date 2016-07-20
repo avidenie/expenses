@@ -56,10 +56,10 @@ import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.model.Category;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.widget.dialog.CategoryPickerDialogFragment;
-import ro.expectations.expenses.widget.dialog.ColorPickerDialogFragment;
-import ro.expectations.expenses.widget.dialog.ConfirmationDialogFragment;
-import ro.expectations.expenses.widget.dialog.IconPickerDialogFragment;
+import ro.expectations.expenses.ui.dialog.CategoryPickerDialogFragment;
+import ro.expectations.expenses.ui.dialog.ColorPickerDialogFragment;
+import ro.expectations.expenses.ui.dialog.ConfirmationDialogFragment;
+import ro.expectations.expenses.ui.dialog.IconPickerDialogFragment;
 
 public class ManageCategoryFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,

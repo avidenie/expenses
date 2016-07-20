@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.widget.dialog;
+package ro.expectations.expenses.ui.dialog;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,7 +31,7 @@ import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.DrawableUtils;
-import ro.expectations.expenses.widget.recyclerview.SingleSelectionAdapter;
+import ro.expectations.expenses.ui.recyclerview.SingleSelectionAdapter;
 
 public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapter.ViewHolder> {
 

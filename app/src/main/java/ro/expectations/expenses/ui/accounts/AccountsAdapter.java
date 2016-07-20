@@ -43,7 +43,7 @@ import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.NumberUtils;
-import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
+import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 
 public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.ViewHolder> {
 

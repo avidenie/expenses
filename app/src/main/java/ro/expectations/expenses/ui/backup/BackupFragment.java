@@ -63,10 +63,10 @@ import ro.expectations.expenses.ui.helper.AppBarHelper;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.widget.dialog.AlertDialogFragment;
-import ro.expectations.expenses.widget.dialog.ProgressDialogFragment;
-import ro.expectations.expenses.widget.recyclerview.DividerItemDecoration;
-import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
+import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
+import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
+import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 
 public class BackupFragment extends Fragment {
 
