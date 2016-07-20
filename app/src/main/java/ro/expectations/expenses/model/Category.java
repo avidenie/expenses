@@ -24,7 +24,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 
-import ro.expectations.expenses.helper.ColorHelper;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class Category implements Parcelable {
@@ -188,7 +188,7 @@ public class Category implements Parcelable {
     public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ExpensesContract.Categories.NAME, name);
-        contentValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(color));
+        contentValues.put(ExpensesContract.Categories.COLOR, ColorUtils.toRGB(color));
         contentValues.put(ExpensesContract.Categories.ICON, icon);
         if (parentId > 0) {
             contentValues.put(ExpensesContract.Categories.PARENT_ID, parentId);

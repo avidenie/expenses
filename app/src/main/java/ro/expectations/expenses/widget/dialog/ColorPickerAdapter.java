@@ -30,7 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.widget.recyclerview.SingleSelectionAdapter;
 
 public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapter.ViewHolder> {
@@ -63,7 +63,7 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
         int color = mColors[position];
 
         // Set the icon background color
-        Drawable background = DrawableHelper.tintWithColor(holder.mColorBackground.getBackground().mutate(), color);
+        Drawable background = DrawableUtils.tintWithColor(holder.mColorBackground.getBackground().mutate(), color);
         holder.mColorBackground.setBackground(background);
 
         // Set the checked icon

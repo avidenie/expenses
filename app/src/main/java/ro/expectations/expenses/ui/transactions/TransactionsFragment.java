@@ -38,7 +38,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract.Categories;
 import ro.expectations.expenses.provider.ExpensesContract.FromAccounts;
 import ro.expectations.expenses.provider.ExpensesContract.FromRunningBalances;
@@ -124,9 +124,9 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
             inflater.inflate(R.menu.context_menu_transactions, menu);
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
             MenuItem actionEditTransaction = menu.findItem(R.id.action_edit_transaction);
-            actionEditTransaction.setIcon(DrawableHelper.tint(getContext(), actionEditTransaction.getIcon(), R.color.colorWhite));
+            actionEditTransaction.setIcon(DrawableUtils.tint(getContext(), actionEditTransaction.getIcon(), R.color.colorWhite));
             MenuItem actionDeleteTransaction = menu.findItem(R.id.action_delete_transaction);
-            actionDeleteTransaction.setIcon(DrawableHelper.tint(getContext(), actionDeleteTransaction.getIcon(), R.color.colorWhite));
+            actionDeleteTransaction.setIcon(DrawableUtils.tint(getContext(), actionDeleteTransaction.getIcon(), R.color.colorWhite));
             return true;
         }
 

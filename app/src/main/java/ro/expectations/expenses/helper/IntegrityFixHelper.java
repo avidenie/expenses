@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.utils;
+package ro.expectations.expenses.helper;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
@@ -35,13 +35,13 @@ import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.RunningBalances;
 
-public class IntegrityFix {
+public class IntegrityFixHelper {
 
-    private static final String TAG = IntegrityFix.class.getSimpleName();
+    private static final String TAG = IntegrityFixHelper.class.getSimpleName();
 
     private Context mContext;
 
-    public IntegrityFix(Context context) {
+    public IntegrityFixHelper(Context context) {
         mContext = context;
     }
 

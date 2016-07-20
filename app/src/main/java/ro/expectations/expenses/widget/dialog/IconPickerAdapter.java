@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.ViewHolder> {
 
@@ -70,7 +70,7 @@ public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         // Set the icon
-        holder.mIcon.setImageResource(DrawableHelper.getIdentifier(mContext, mIcons.get(position).get("icon")));
+        holder.mIcon.setImageResource(DrawableUtils.getIdentifier(mContext, mIcons.get(position).get("icon")));
 
         // Set the icon title
         holder.mTitle.setText(mIcons.get(position).get("title"));

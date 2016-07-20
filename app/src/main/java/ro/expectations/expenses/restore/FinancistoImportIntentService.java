@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
@@ -240,7 +240,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         List<Map<String, String>> parentCategories = new ArrayList<>();
         List<Map<String, String>> childCategories = new ArrayList<>();
         Map<Long, String> parentColors = new HashMap<>();
-        String defaultColor = ColorHelper.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
+        String defaultColor = ColorUtils.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
         String defaultIcon = "ic_question_mark_black_24dp";
 
         for(Map<String, String> values: mCategories) {
@@ -278,7 +278,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         int colorIndex = 0;
         for(Map<String, String> values: parentCategories) {
             long id = Long.parseLong(values.get("_id"));
-            String color = ColorHelper.toRGB(colors[colorIndex]);
+            String color = ColorUtils.toRGB(colors[colorIndex]);
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                     .withValue(ExpensesContract.Categories._ID, id)
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))

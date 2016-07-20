@@ -44,7 +44,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
@@ -78,9 +78,9 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                 ((DrawerActivity) activity).lockNavigationDrawer();
             }
             MenuItem actionEditCategory = menu.findItem(R.id.action_edit_category);
-            actionEditCategory.setIcon(DrawableHelper.tint(getContext(), actionEditCategory.getIcon(), R.color.colorWhite));
+            actionEditCategory.setIcon(DrawableUtils.tint(getContext(), actionEditCategory.getIcon(), R.color.colorWhite));
             MenuItem actionDeleteCategory = menu.findItem(R.id.action_delete_category);
-            actionDeleteCategory.setIcon(DrawableHelper.tint(getContext(), actionDeleteCategory.getIcon(), R.color.colorWhite));
+            actionDeleteCategory.setIcon(DrawableUtils.tint(getContext(), actionDeleteCategory.getIcon(), R.color.colorWhite));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mStatusBarColor = getActivity().getWindow().getStatusBarColor();

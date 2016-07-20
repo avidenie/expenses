@@ -42,7 +42,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class ManageCategoryActivity extends AppCompatActivity implements ManageCategoryFragment.Listener {
 
@@ -206,7 +206,7 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
         mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
 
         // change the change icon color
-        Drawable background = DrawableHelper.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), accentColor);
+        Drawable background = DrawableUtils.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), accentColor);
         mChangeColorBackground.setBackground(background);
     }
 

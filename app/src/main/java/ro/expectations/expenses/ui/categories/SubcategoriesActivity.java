@@ -40,7 +40,7 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
@@ -143,7 +143,7 @@ public class SubcategoriesActivity extends AppCompatActivity
             }
 
             // retrieve the parent category color
-            int color = ColorHelper.fromRGB(data.getString(data.getColumnIndex(ExpensesContract.Categories.COLOR)), ContextCompat.getColor(this, R.color.colorPrimary));
+            int color = ColorUtils.fromRGB(data.getString(data.getColumnIndex(ExpensesContract.Categories.COLOR)), ContextCompat.getColor(this, R.color.colorPrimary));
 
             // change the collapsing toolbar layout
             mCollapsingToolbarLayout.setBackgroundColor(color);

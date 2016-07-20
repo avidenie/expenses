@@ -52,8 +52,8 @@ import android.view.ViewGroup;
 import java.lang.ref.WeakReference;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.ColorUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.model.Category;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.dialog.CategoryPickerDialogFragment;
@@ -229,7 +229,7 @@ public class ManageCategoryFragment extends Fragment implements
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem item = menu.add(Menu.NONE, R.id.action_save, Menu.NONE, R.string.action_save);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        item.setIcon(DrawableHelper.tint(getActivity(), R.drawable.ic_done_black_24dp, R.color.colorWhite));
+        item.setIcon(DrawableUtils.tint(getActivity(), R.drawable.ic_done_black_24dp, R.color.colorWhite));
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -284,7 +284,7 @@ public class ManageCategoryFragment extends Fragment implements
                 mOriginalCategory = new Category(
                         categoryId,
                         categoryName,
-                        ColorHelper.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
+                        ColorUtils.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
                         categoryIcon,
                         parentId,
                         children);
@@ -310,7 +310,7 @@ public class ManageCategoryFragment extends Fragment implements
                 mOriginalCategory = new Category(
                         0,
                         "",
-                        ColorHelper.fromRGB(parentColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
+                        ColorUtils.fromRGB(parentColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
                         parentIcon,
                         parentId,
                         0);
@@ -356,7 +356,7 @@ public class ManageCategoryFragment extends Fragment implements
     @Override
     public void onIconSelected(int targetRequestCode, String icon) {
         mCurrentCategory.setIcon(icon);
-        mListener.onIconSelected(DrawableHelper.getIdentifier(getActivity(), icon));
+        mListener.onIconSelected(DrawableUtils.getIdentifier(getActivity(), icon));
     }
 
     @Override
@@ -495,7 +495,7 @@ public class ManageCategoryFragment extends Fragment implements
                 // update the child categories color based on parent's color
                 if (mCurrentCategory.getParentId() == 0) {
                     ContentValues updateValues = new ContentValues();
-                    updateValues.put(ExpensesContract.Categories.COLOR, ColorHelper.toRGB(mCurrentCategory.getColor()));
+                    updateValues.put(ExpensesContract.Categories.COLOR, ColorUtils.toRGB(mCurrentCategory.getColor()));
                     String selection = ExpensesContract.Categories.TABLE_NAME + "." + ExpensesContract.Categories.PARENT_ID + " = ?";
                     String[] selectionArgs = new String[]{String.valueOf(mCurrentCategory.getId())};
                     saveQueryHandler.startUpdate(0, null,

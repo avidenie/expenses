@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.utils.IntegrityFix;
+import ro.expectations.expenses.helper.IntegrityFixHelper;
 
 abstract public class AbstractRestoreIntentService extends IntentService {
 
@@ -65,7 +65,7 @@ abstract public class AbstractRestoreIntentService extends IntentService {
         try {
             emptyDatabase();
             populateDatabase();
-            new IntegrityFix(this).fix();
+            new IntegrityFixHelper(this).fix();
         } catch(RemoteException | OperationApplicationException e) {
             notifyFailure(e);
             return;

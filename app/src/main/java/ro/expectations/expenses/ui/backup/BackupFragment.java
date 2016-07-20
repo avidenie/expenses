@@ -55,8 +55,8 @@ import java.io.File;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.backup.BackupIntentService;
-import ro.expectations.expenses.helper.BackupHelper;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.BackupUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
@@ -99,9 +99,9 @@ public class BackupFragment extends Fragment {
             inflater.inflate(R.menu.context_menu_backup, menu);
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
             MenuItem actionRestore = menu.findItem(R.id.action_restore);
-            actionRestore.setIcon(DrawableHelper.tint(getContext(), actionRestore.getIcon(), R.color.colorWhite));
+            actionRestore.setIcon(DrawableUtils.tint(getContext(), actionRestore.getIcon(), R.color.colorWhite));
             MenuItem actionDelete = menu.findItem(R.id.action_delete);
-            actionDelete.setIcon(DrawableHelper.tint(getContext(), actionDelete.getIcon(), R.color.colorWhite));
+            actionDelete.setIcon(DrawableUtils.tint(getContext(), actionDelete.getIcon(), R.color.colorWhite));
             return true;
         }
 
@@ -403,7 +403,7 @@ public class BackupFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        File[] files = BackupHelper.listBackups(BackupHelper.getLocalBackupFolder(getActivity()));
+        File[] files = BackupUtils.listBackups(BackupUtils.getLocalBackupFolder(getActivity()));
         mAdapter.setFiles(files);
         mFloatingActionButtonProvider.getFloatingActionButton().show();
         mRequestPermissionRationale.setVisibility(View.GONE);

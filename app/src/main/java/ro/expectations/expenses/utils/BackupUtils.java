@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.helper;
+package ro.expectations.expenses.utils;
 
 import android.content.Context;
 import android.os.Environment;
@@ -27,7 +27,7 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class BackupHelper {
+public class BackupUtils {
 
     public static File getLocalBackupFolder(Context context) {
         File rootFolder = new File(context.getExternalFilesDir(null) + File.separator + "backup");

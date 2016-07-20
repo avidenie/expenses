@@ -36,8 +36,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.ColorUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 
 public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAdapter.ViewHolder> {
@@ -71,8 +71,8 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
         mCursor.moveToPosition(position);
 
         // Set the icon background color
-        int color = ColorHelper.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
-        Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
+        int color = ColorUtils.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
+        Drawable background = DrawableUtils.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
         holder.mCategoryIconBackground.setBackground(background);
 
         // Set the icon
@@ -82,7 +82,7 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
         } else {
             iconId = R.drawable.ic_question_mark_black_24dp;
         }
-        holder.mCategoryIcon.setImageDrawable(DrawableHelper.tint(mContext, iconId, R.color.colorWhite));
+        holder.mCategoryIcon.setImageDrawable(DrawableUtils.tint(mContext, iconId, R.color.colorWhite));
 
         // Set the category name
         String name = mCursor.getString(COLUMN_CATEGORY_NAME);

@@ -32,9 +32,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
-import ro.expectations.expenses.helper.DrawableHelper;
-import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.utils.ColorUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
+import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
@@ -75,16 +75,16 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
         mCursor.moveToPosition(position);
 
         // Set the row background
-        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
+        ListUtils.setItemBackground(mContext, holder.itemView, isItemSelected(position),
                 holder.mCategoryIconBackground, holder.mSelectedIconBackground);
 
         // Set the icon background color
-        int color = ColorHelper.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
-        Drawable background = DrawableHelper.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
+        int color = ColorUtils.fromRGB(mCursor.getString(COLUMN_CATEGORY_COLOR), ContextCompat.getColor(mContext, R.color.colorPrimary));
+        Drawable background = DrawableUtils.tintWithColor(holder.mCategoryIconBackground.getBackground().mutate(), color);
         holder.mCategoryIconBackground.setBackground(background);
 
         // Set the icon
-        int iconId = DrawableHelper.getIdentifier(mContext, mCursor.getString(COLUMN_CATEGORY_ICON));
+        int iconId = DrawableUtils.getIdentifier(mContext, mCursor.getString(COLUMN_CATEGORY_ICON));
         holder.mCategoryIcon.setImageResource(iconId);
 
         // Set the category name

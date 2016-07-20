@@ -17,11 +17,11 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.helper;
+package ro.expectations.expenses.utils;
 
 import android.graphics.Color;
 
-public class ColorHelper {
+public class ColorUtils {
 
     public static int fromRGB(String color, int defaultColor) {
         if (color == null) {

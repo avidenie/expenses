@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.helper;
+package ro.expectations.expenses.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -28,7 +28,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 
 import ro.expectations.expenses.R;
 
-public class DrawableHelper {
+public class DrawableUtils {
 
     public static Drawable tint(Context context, @DrawableRes int resId, @ColorRes int colorId) {
         return tint(context, ContextCompat.getDrawable(context, resId), colorId);

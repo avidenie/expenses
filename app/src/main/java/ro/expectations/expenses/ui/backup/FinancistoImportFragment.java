@@ -52,8 +52,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.BackupHelper;
-import ro.expectations.expenses.helper.DrawableHelper;
+import ro.expectations.expenses.utils.BackupUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
@@ -95,7 +95,7 @@ public class FinancistoImportFragment extends Fragment
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_import_financisto, menu);
             MenuItem actionFinancistoImport = menu.findItem(R.id.action_financisto_import);
-            actionFinancistoImport.setIcon(DrawableHelper.tint(getContext(), actionFinancistoImport.getIcon(), R.color.colorWhite));
+            actionFinancistoImport.setIcon(DrawableUtils.tint(getContext(), actionFinancistoImport.getIcon(), R.color.colorWhite));
             return true;
         }
 
@@ -353,7 +353,7 @@ public class FinancistoImportFragment extends Fragment
     }
 
     private void setupRecyclerView() {
-        File[] files = BackupHelper.listBackups(BackupHelper.getFinancistoBackupFolder());
+        File[] files = BackupUtils.listBackups(BackupUtils.getFinancistoBackupFolder());
         mAdapter.setFiles(files);
         mRequestPermissionRationale.setVisibility(View.GONE);
         mEmptyView.setText(getString(R.string.no_financisto_backup_found));

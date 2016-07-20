@@ -40,7 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ColorHelper;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.widget.recyclerview.ItemClickHelper;
 
@@ -110,7 +110,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
                 cursor.moveToPosition(position);
                 int categoryId = cursor.getInt(CategoryPickerAdapter.COLUMN_CATEGORY_ID);
                 String categoryName = cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_NAME);
-                int color = ColorHelper.fromRGB(cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_COLOR), ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+                int color = ColorUtils.fromRGB(cursor.getString(CategoryPickerAdapter.COLUMN_CATEGORY_COLOR), ContextCompat.getColor(getActivity(), R.color.colorPrimary));
                 mCallback.onCategorySelected(getTargetRequestCode(), categoryId, categoryName, color);
                 dismiss();
             }

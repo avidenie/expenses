@@ -17,7 +17,7 @@
  * along with Expenses. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ro.expectations.expenses.helper;
+package ro.expectations.expenses.utils;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 
 import ro.expectations.expenses.R;
 
-public class ListHelper {
+public class ListUtils {
 
     public static void setItemBackground(Context context, View itemView, boolean selected) {
         setItemBackground(context, itemView, selected, null, null);

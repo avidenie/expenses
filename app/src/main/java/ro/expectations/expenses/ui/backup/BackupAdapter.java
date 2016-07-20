@@ -30,7 +30,7 @@ import android.widget.TextView;
 import java.io.File;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.widget.recyclerview.MultipleSelectionAdapter;
 
 public class BackupAdapter extends MultipleSelectionAdapter<BackupAdapter.ViewHolder> {
@@ -60,7 +60,7 @@ public class BackupAdapter extends MultipleSelectionAdapter<BackupAdapter.ViewHo
         File currentFile = mFiles[position];
 
         // Set the row background
-        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position));
+        ListUtils.setItemBackground(mContext, holder.itemView, isItemSelected(position));
 
         // Set the backup file details
         holder.mBackupFilename.setText(currentFile.getName());

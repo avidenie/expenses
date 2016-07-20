@@ -36,8 +36,8 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.helper.DrawableHelper;
-import ro.expectations.expenses.helper.ListHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
+import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardIssuer;
 import ro.expectations.expenses.model.ElectronicPaymentType;
@@ -67,7 +67,7 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         mCursor.moveToPosition(position);
 
         // Set the row background
-        ListHelper.setItemBackground(mContext, holder.itemView, isItemSelected(position),
+        ListUtils.setItemBackground(mContext, holder.itemView, isItemSelected(position),
                 holder.mAccountIconBackground, holder.mSelectedIconBackground);
 
         // Set the icon
@@ -85,7 +85,7 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
                     cardIssuer = CardIssuer.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, cardIssuer.iconId, R.color.colorWhite));
+            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, cardIssuer.iconId, R.color.colorWhite));
         } else if (accountType == AccountType.ELECTRONIC) {
             String paymentType = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
             ElectronicPaymentType electronicPaymentType;
@@ -98,13 +98,13 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
                     electronicPaymentType = ElectronicPaymentType.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, electronicPaymentType.iconId, R.color.colorWhite));
+            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, electronicPaymentType.iconId, R.color.colorWhite));
         } else {
-            holder.mAccountIcon.setImageDrawable(DrawableHelper.tint(mContext, accountType.iconId, R.color.colorWhite));
+            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, accountType.iconId, R.color.colorWhite));
         }
 
         // Set the icon background color
-        Drawable background = DrawableHelper.tintWithColor(holder.mAccountIconBackground.getBackground().mutate(), ContextCompat.getColor(mContext, accountType.colorId));
+        Drawable background = DrawableUtils.tintWithColor(holder.mAccountIconBackground.getBackground().mutate(), ContextCompat.getColor(mContext, accountType.colorId));
         holder.mAccountIconBackground.setBackground(background);
 
         // Set the description
