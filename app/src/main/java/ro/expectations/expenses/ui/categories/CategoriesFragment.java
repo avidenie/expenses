@@ -231,9 +231,11 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     mAdapter.setItemSelected(position, true);
                     mActionMode.invalidate();
                 } else if (mParentCategoryId == 0) {
-                    long categoryId = parent.getAdapter().getItemId(position);
+                    Cursor cursor = mAdapter.getCursor();
+                    cursor.moveToPosition(position);
                     Intent subcategoryIntent = new Intent(getActivity(), SubcategoriesActivity.class);
-                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, categoryId);
+                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, cursor.getLong(CategoriesAdapter.COLUMN_CATEGORY_ID));
+                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_STYLE, cursor.getString(CategoriesAdapter.COLUMN_CATEGORY_STYLE));
                     getActivity().startActivity(subcategoryIntent);
                 }
             }

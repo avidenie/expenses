@@ -25,9 +25,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -41,8 +41,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.Map;
+
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.DrawableUtils;
+import ro.expectations.expenses.utils.ColorStyleUtils;
 
 public class ManageCategoryActivity extends AppCompatActivity implements ManageCategoryFragment.Listener {
 
@@ -186,27 +189,29 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
     }
 
     @Override
-    public void onColorSelected(@ColorInt int color, @ColorInt int darkColor, @ColorInt int accentColor) {
+    public void onColorStyleSelected(@StyleRes int style) {
+
+        Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(this, style);
 
         // change the collapsing toolbar layout
-        mCollapsingToolbarLayout.setBackgroundColor(color);
+        mCollapsingToolbarLayout.setBackgroundColor(colors.get(ColorStyleUtils.COLOR_PRIMARY));
 
         // change the support action bar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
-            supportActionBar.setBackgroundDrawable(new ColorDrawable(color));
+            supportActionBar.setBackgroundDrawable(new ColorDrawable(colors.get(ColorStyleUtils.COLOR_PRIMARY)));
         }
 
         // change the status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(darkColor);
+            getWindow().setStatusBarColor(colors.get(ColorStyleUtils.COLOR_PRIMARY_DARK));
         }
 
         // change the floating action button
-        mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
+        mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(colors.get(ColorStyleUtils.COLOR_ACCENT)));
 
         // change the change icon color
-        Drawable background = DrawableUtils.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), accentColor);
+        Drawable background = DrawableUtils.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), colors.get(ColorStyleUtils.COLOR_ACCENT));
         mChangeColorBackground.setBackground(background);
     }
 

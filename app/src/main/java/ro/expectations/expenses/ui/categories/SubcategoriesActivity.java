@@ -22,15 +22,12 @@ package ro.expectations.expenses.ui.categories;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -40,7 +37,7 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ColorUtils;
+import ro.expectations.expenses.utils.ColorStyleUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.helper.AppBarHelper;
@@ -49,6 +46,7 @@ public class SubcategoriesActivity extends AppCompatActivity
         implements AppBarHelperProvider, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
+    public static final String ARG_PARENT_CATEGORY_STYLE = "parent_category_style";
 
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
@@ -58,6 +56,14 @@ public class SubcategoriesActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        String style = getIntent().getStringExtra(ARG_PARENT_CATEGORY_STYLE);
+        if (style == null || style.isEmpty()) {
+            style = "ColorIndigo";
+        }
+
+        setTheme(ColorStyleUtils.getIdentifier(this, style));
+
         super.onCreate(savedInstanceState);
 
         mParentCategoryId = getIntent().getLongExtra(ARG_PARENT_CATEGORY_ID, 0);
@@ -140,29 +146,6 @@ public class SubcategoriesActivity extends AppCompatActivity
             setTitle(categoryName);
             if (supportActionBar != null) {
                 supportActionBar.setDisplayShowTitleEnabled(true);
-            }
-
-            // retrieve the parent category color
-            int color = ColorUtils.fromRGB(data.getString(data.getColumnIndex(ExpensesContract.Categories.COLOR)), ContextCompat.getColor(this, R.color.colorPrimary));
-
-            // change the collapsing toolbar layout
-            mCollapsingToolbarLayout.setBackgroundColor(color);
-
-            // change the support action bar
-            if (supportActionBar != null) {
-                supportActionBar.setBackgroundDrawable(new ColorDrawable(color));
-            }
-
-            // change the status bar
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int[] colors = getResources().getIntArray(R.array.colorPicker);
-                for(int i = 0, n = colors.length; i < n; i++) {
-                    if (colors[i] == color) {
-                        int[] darkColors = getResources().getIntArray(R.array.colorPickerDark);
-                        getWindow().setStatusBarColor(darkColors[i]);
-                        break;
-                    }
-                }
             }
         }
     }

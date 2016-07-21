@@ -21,7 +21,7 @@ package ro.expectations.expenses.ui.dialog;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
+import android.support.annotation.StyleRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +29,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.Map;
+
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.ui.recyclerview.SingleSelectionAdapter;
+import ro.expectations.expenses.utils.ColorStyleUtils;
 
 public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapter.ViewHolder> {
 
@@ -40,14 +43,13 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
     }
 
     final private Context mContext;
-    @ColorInt private int[] mColors;
+    @StyleRes private int[] mStyles;
     final private OnItemClickListener mOnItemClickListener;
 
-    public ColorPickerAdapter(Context context, @ColorInt int[] colors, OnItemClickListener onClickListener) {
+    public ColorPickerAdapter(Context context, @StyleRes int[] styles, OnItemClickListener onClickListener) {
         mContext = context;
-        mColors = colors;
+        mStyles = styles;
         mOnItemClickListener = onClickListener;
-        setHasStableIds(true);
     }
 
     @Override
@@ -60,10 +62,11 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        int color = mColors[position];
+        @StyleRes int styleResourceId = mStyles[position];
+        Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(mContext, styleResourceId);
 
         // Set the icon background color
-        Drawable background = DrawableUtils.tintWithColor(holder.mColorBackground.getBackground().mutate(), color);
+        Drawable background = DrawableUtils.tintWithColor(holder.mColorBackground.getBackground().mutate(), colors.get(ColorStyleUtils.COLOR_PRIMARY));
         holder.mColorBackground.setBackground(background);
 
         // Set the checked icon
@@ -82,12 +85,11 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
 
     @Override
     public int getItemCount() {
-        return mColors.length;
+        return mStyles.length;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return mColors[position];
+    public @StyleRes int getItem(int position) {
+        return mStyles[position];
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

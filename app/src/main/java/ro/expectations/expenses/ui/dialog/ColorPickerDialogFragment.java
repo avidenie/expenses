@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -32,22 +33,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import java.util.Map;
+
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.utils.ColorStyleUtils;
 
 public class ColorPickerDialogFragment extends DialogFragment {
 
     public interface Listener {
-        void onColorSelected(int targetRequestCode, @ColorRes int colorId, @ColorRes int darkColorId, @ColorRes int accentColorId);
+        void onColorSelected(int targetRequestCode, @ColorRes int colorId, @StyleRes int style);
     }
 
-    private static final String ARG_SELECTED_COLOR = "selected_color";
+    private static final String ARG_SELECTED_STYLE = "selected_style";
 
     private Listener mCallback;
     private ColorPickerAdapter mAdapter;
 
-    public static ColorPickerDialogFragment newInstance(int color) {
+    public static ColorPickerDialogFragment newInstance(String style) {
         Bundle args = new Bundle();
-        args.putInt(ARG_SELECTED_COLOR, color);
+        args.putString(ARG_SELECTED_STYLE, style);
 
         ColorPickerDialogFragment colorPickerDialogFragment = new ColorPickerDialogFragment();
         colorPickerDialogFragment.setArguments(args);
@@ -82,10 +86,13 @@ public class ColorPickerDialogFragment extends DialogFragment {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        int[] colors = getResources().getIntArray(R.array.colorPicker);
-        final int[] darkColors = getResources().getIntArray(R.array.colorPickerDark);
-        final int[] accentColors = getResources().getIntArray(R.array.colorPickerAccent);
-        mAdapter = new ColorPickerAdapter(getActivity(), colors, new ColorPickerAdapter.OnItemClickListener() {
+        String[] styleNames = getResources().getStringArray(R.array.colorPickerStyles);
+        int[] colorPickerStyles = new int[styleNames.length];
+        for (int i = 0; i < styleNames.length; i++) {
+            colorPickerStyles[i] = ColorStyleUtils.getIdentifier(getActivity(), styleNames[i]);
+        }
+
+        mAdapter = new ColorPickerAdapter(getActivity(), colorPickerStyles, new ColorPickerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 boolean isItemSelected = mAdapter.isItemSelected(position);
@@ -93,18 +100,19 @@ public class ColorPickerDialogFragment extends DialogFragment {
                     dismiss();
                 } else {
                     mAdapter.setItemSelected(position, true);
+                    @StyleRes int selectedStyle = mAdapter.getItem(position);
+                    Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(getActivity(), selectedStyle);
                     mCallback.onColorSelected(getTargetRequestCode(),
-                            (int) mAdapter.getItemId(position),
-                            darkColors[position],
-                            accentColors[position]);
+                            colors.get(ColorStyleUtils.COLOR_PRIMARY),
+                            selectedStyle);
                     dismiss();
                 }
             }
         });
 
-        int selectedColor = getArguments().getInt(ARG_SELECTED_COLOR, 0);
-        for(int i = 0, n = colors.length; i < n; i++) {
-            if (colors[i] == selectedColor) {
+        String selectedStyle = getArguments().getString(ARG_SELECTED_STYLE);
+        for(int i = 0, n = styleNames.length; i < n; i++) {
+            if (styleNames[i].equals(selectedStyle)) {
                 mAdapter.setItemSelected(i, true);
                 break;
             }

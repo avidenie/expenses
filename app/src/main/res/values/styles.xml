@@ -27,8 +27,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="alertDialogTheme">@style/AppTheme.Dialog</item>
         <item name="android:activatedBackgroundIndicator">@drawable/list_activated_background</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
-        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="android:actionModeBackground">?attr/colorPrimary</item>
+        <item name="actionModeBackground">?attr/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -49,6 +49,103 @@
 
     <style name="AppTheme.FormControls">
         <item name="colorControlActivated">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Material design colors -->
+    <style name="ColorRed">
+        <item name="colorPrimary">@color/colorRed500</item>
+        <item name="colorPrimaryDark">@color/colorRed700</item>
+        <item name="colorAccent">@color/colorBlueA200</item>
+    </style>
+    <style name="ColorPink">
+        <item name="colorPrimary">@color/colorPink500</item>
+        <item name="colorPrimaryDark">@color/colorPink700</item>
+        <item name="colorAccent">@color/colorIndigoA200</item>
+    </style>
+    <style name="ColorPurple">
+        <item name="colorPrimary">@color/colorPurple500</item>
+        <item name="colorPrimaryDark">@color/colorPurple700</item>
+        <item name="colorAccent">@color/colorGreenA200</item>
+    </style>
+    <style name="ColorDeepPurple">
+        <item name="colorPrimary">@color/colorDeepPurple500</item>
+        <item name="colorPrimaryDark">@color/colorDeepPurple700</item>
+        <item name="colorAccent">@color/colorLightGreenA200</item>
+    </style>
+    <style name="ColorIndigo">
+        <item name="colorPrimary">@color/colorIndigo500</item>
+        <item name="colorPrimaryDark">@color/colorIndigo700</item>
+        <item name="colorAccent">@color/colorPinkA200</item>
+    </style>
+    <style name="ColorBlue">
+        <item name="colorPrimary">@color/colorBlue500</item>
+        <item name="colorPrimaryDark">@color/colorBlue700</item>
+        <item name="colorAccent">@color/colorRedA200</item>
+    </style>
+    <style name="ColorLightBlue">
+        <item name="colorPrimary">@color/colorLightBlue500</item>
+        <item name="colorPrimaryDark">@color/colorLightBlue700</item>
+        <item name="colorAccent">@color/colorOrangeA200</item>
+    </style>
+    <style name="ColorCyan">
+        <item name="colorPrimary">@color/colorCyan500</item>
+        <item name="colorPrimaryDark">@color/colorCyan700</item>
+        <item name="colorAccent">@color/colorDeepOrangeA200</item>
+    </style>
+    <style name="ColorTeal">
+        <item name="colorPrimary">@color/colorTeal500</item>
+        <item name="colorPrimaryDark">@color/colorTeal700</item>
+        <item name="colorAccent">@color/colorAmberA200</item>
+    </style>
+    <style name="ColorGreen">
+        <item name="colorPrimary">@color/colorGreen500</item>
+        <item name="colorPrimaryDark">@color/colorGreen700</item>
+        <item name="colorAccent">@color/colorPurpleA200</item>
+    </style>
+    <style name="ColorLightGreen">
+        <item name="colorPrimary">@color/colorLightGreen500</item>
+        <item name="colorPrimaryDark">@color/colorLightGreen700</item>
+        <item name="colorAccent">@color/colorDeepPurpleA200</item>
+    </style>
+    <style name="ColorLime">
+        <item name="colorPrimary">@color/colorLime500</item>
+        <item name="colorPrimaryDark">@color/colorLime700</item>
+        <item name="colorAccent">@color/colorPinkA200</item>
+    </style>
+    <style name="ColorYellow">
+        <item name="colorPrimary">@color/colorYellow500</item>
+        <item name="colorPrimaryDark">@color/colorYellow700</item>
+        <item name="colorAccent">@color/colorDeepPurpleA200</item>
+    </style>
+    <style name="ColorAmber">
+        <item name="colorPrimary">@color/colorAmber500</item>
+        <item name="colorPrimaryDark">@color/colorAmber700</item>
+        <item name="colorAccent">@color/colorRedA200</item>
+    </style>
+    <style name="ColorOrange">
+        <item name="colorPrimary">@color/colorOrange500</item>
+        <item name="colorPrimaryDark">@color/colorOrange700</item>
+        <item name="colorAccent">@color/colorPurpleA200</item>
+    </style>
+    <style name="ColorDeepOrange">
+        <item name="colorPrimary">@color/colorDeepOrange500</item>
+        <item name="colorPrimaryDark">@color/colorDeepOrange700</item>
+        <item name="colorAccent">@color/colorDeepPurpleA200</item>
+    </style>
+    <style name="ColorBrown">
+        <item name="colorPrimary">@color/colorBrown500</item>
+        <item name="colorPrimaryDark">@color/colorBrown700</item>
+        <item name="colorAccent">@color/colorBlueA200</item>
+    </style>
+    <style name="ColorGrey">
+        <item name="colorPrimary">@color/colorGrey500</item>
+        <item name="colorPrimaryDark">@color/colorGrey700</item>
+        <item name="colorAccent">@color/colorDeepOrangeA200</item>
+    </style>
+    <style name="ColorBlueGrey">
+        <item name="colorPrimary">@color/colorBlueGrey500</item>
+        <item name="colorPrimaryDark">@color/colorBlueGrey700</item>
+        <item name="colorAccent">@color/colorPinkA200</item>
     </style>
 
 </resources>

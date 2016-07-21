@@ -20,73 +20,30 @@
 
 <resources>
 
-    <!-- Color picker colors -->
-    <integer-array name="colorPicker">
-        <item>@color/colorRed500</item>
-        <item>@color/colorPink500</item>
-        <item>@color/colorPurple500</item>
-        <item>@color/colorDeepPurple500</item>
-        <item>@color/colorIndigo500</item>
-        <item>@color/colorBlue500</item>
-        <item>@color/colorLightBlue500</item>
-        <item>@color/colorCyan500</item>
-        <item>@color/colorTeal500</item>
-        <item>@color/colorGreen500</item>
-        <item>@color/colorLightGreen500</item>
-        <item>@color/colorLime500</item>
-        <item>@color/colorYellow500</item>
-        <item>@color/colorAmber500</item>
-        <item>@color/colorOrange500</item>
-        <item>@color/colorDeepOrange500</item>
-        <item>@color/colorBrown500</item>
-        <item>@color/colorGrey500</item>
-        <item>@color/colorBlueGrey500</item>
-    </integer-array>
+    <!-- Color picker styles -->
+    <string-array name="colorPickerStyles">
+        <item>ColorRed</item>
+        <item>ColorPink</item>
+        <item>ColorPurple</item>
+        <item>ColorDeepPurple</item>
+        <item>ColorIndigo</item>
+        <item>ColorBlue</item>
+        <item>ColorLightBlue</item>
+        <item>ColorCyan</item>
+        <item>ColorTeal</item>
+        <item>ColorGreen</item>
+        <item>ColorLightGreen</item>
+        <item>ColorLime</item>
+        <item>ColorYellow</item>
+        <item>ColorAmber</item>
+        <item>ColorOrange</item>
+        <item>ColorDeepOrange</item>
+        <item>ColorBrown</item>
+        <item>ColorGrey</item>
+        <item>ColorBlueGrey</item>
+    </string-array>
 
-    <integer-array name="colorPickerDark">
-        <item>@color/colorRed700</item>
-        <item>@color/colorPink700</item>
-        <item>@color/colorPurple700</item>
-        <item>@color/colorDeepPurple700</item>
-        <item>@color/colorIndigo700</item>
-        <item>@color/colorBlue700</item>
-        <item>@color/colorLightBlue700</item>
-        <item>@color/colorCyan700</item>
-        <item>@color/colorTeal700</item>
-        <item>@color/colorGreen700</item>
-        <item>@color/colorLightGreen700</item>
-        <item>@color/colorLime700</item>
-        <item>@color/colorYellow700</item>
-        <item>@color/colorAmber700</item>
-        <item>@color/colorOrange700</item>
-        <item>@color/colorDeepOrange700</item>
-        <item>@color/colorBrown700</item>
-        <item>@color/colorGrey700</item>
-        <item>@color/colorBlueGrey700</item>
-    </integer-array>
-
-    <integer-array name="colorPickerAccent">
-        <item>@color/colorBlueA200</item>
-        <item>@color/colorIndigoA200</item>
-        <item>@color/colorGreenA200</item>
-        <item>@color/colorLightGreenA200</item>
-        <item>@color/colorPinkA200</item>
-        <item>@color/colorRedA200</item>
-        <item>@color/colorOrangeA200</item>
-        <item>@color/colorDeepOrangeA200</item>
-        <item>@color/colorAmberA200</item>
-        <item>@color/colorPurpleA200</item>
-        <item>@color/colorDeepPurpleA200</item>
-        <item>@color/colorPinkA200</item>
-        <item>@color/colorDeepPurpleA200</item>
-        <item>@color/colorRedA200</item>
-        <item>@color/colorPurpleA200</item>
-        <item>@color/colorDeepPurpleA200</item>
-        <item>@color/colorBlueA200</item>
-        <item>@color/colorDeepOrangeA200</item>
-        <item>@color/colorPinkA200</item>
-    </integer-array>
-
+    <!-- Icon picker -->
     <string-array name="iconPicker">
         <item>ic_ac_unit_black_24dp</item>
         <item>ic_account_balance_black_24dp</item>

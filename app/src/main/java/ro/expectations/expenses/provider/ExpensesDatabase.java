@@ -54,6 +54,7 @@ public class ExpensesDatabase extends SQLiteOpenHelper {
                 Categories.NAME + " TEXT NOT NULL," +
                 Categories.PARENT_ID + " INTEGER DEFAULT NULL," +
                 Categories.COLOR + " TEXT NOT NULL," +
+                Categories.STYLE + " TEXT NOT NULL," +
                 Categories.ICON + " TEXT NOT NULL, " +
                 "CONSTRAINT fk_parent_id FOREIGN KEY (" + Categories.PARENT_ID + ") REFERENCES " +
                 Categories.TABLE_NAME + " (" + Categories._ID +
