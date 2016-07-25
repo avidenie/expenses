@@ -79,7 +79,10 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         if (mFloatingActionButton != null) {

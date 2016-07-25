@@ -24,6 +24,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -260,7 +261,10 @@ public class ExpensesProvider extends ContentProvider {
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, groupBy, null, sortOrder);
 
         // make sure that potential listeners are getting notified
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        Context context = getContext();
+        if (context != null) {
+            cursor.setNotificationUri(context.getContentResolver(), uri);
+        }
 
         return cursor;
     }
@@ -299,7 +303,10 @@ public class ExpensesProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown content provider insert URI: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Context context = getContext();
+        if (context != null) {
+            context.getContentResolver().notifyChange(uri, null);
+        }
         return returnUri;
     }
 
@@ -376,7 +383,10 @@ public class ExpensesProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown content provider update URI: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Context context = getContext();
+        if (context != null) {
+            context.getContentResolver().notifyChange(uri, null);
+        }
         return rowsUpdated;
     }
 
@@ -473,7 +483,10 @@ public class ExpensesProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown content provider delete URI: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Context context = getContext();
+        if (context != null) {
+            context.getContentResolver().notifyChange(uri, null);
+        }
         return rowsDeleted;
     }
 

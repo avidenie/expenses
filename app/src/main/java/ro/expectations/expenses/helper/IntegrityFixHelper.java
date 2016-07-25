@@ -39,7 +39,7 @@ public class IntegrityFixHelper {
 
     private static final String TAG = IntegrityFixHelper.class.getSimpleName();
 
-    private Context mContext;
+    private final Context mContext;
 
     public IntegrityFixHelper(Context context) {
         mContext = context;

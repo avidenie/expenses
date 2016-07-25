@@ -43,7 +43,7 @@ abstract public class AbstractRestoreIntentService extends IntentService {
 
     protected static final String TAG = AbstractRestoreIntentService.class.getSimpleName();
 
-    protected ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
+    protected final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 
     public AbstractRestoreIntentService() {
         super("RestoreIntentService");

@@ -232,7 +232,7 @@ public class ManageCategoryFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem item = menu.add(Menu.NONE, R.id.action_save, Menu.NONE, R.string.action_save);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         item.setIcon(DrawableUtils.tint(getActivity(), R.drawable.ic_done_black_24dp, R.color.colorWhite));
         super.onCreateOptionsMenu(menu, inflater);
     }

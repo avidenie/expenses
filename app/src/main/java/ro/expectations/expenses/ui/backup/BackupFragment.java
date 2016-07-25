@@ -89,7 +89,7 @@ public class BackupFragment extends Fragment {
     private boolean mLaunchRestoreAlertDialog = false;
 
     private ActionMode mActionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {

@@ -42,9 +42,9 @@ public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.Vi
         void onItemClick(View view, int position);
     }
 
-    final private Context mContext;
-    private List<Map<String, String>> mIcons;
-    final private OnItemClickListener mOnItemClickListener;
+    private final Context mContext;
+    private final List<Map<String, String>> mIcons;
+    private final OnItemClickListener mOnItemClickListener;
 
     public IconPickerAdapter(Context context, String[] icons, String[] iconTitles, OnItemClickListener onClickListener) {
         mContext = context;

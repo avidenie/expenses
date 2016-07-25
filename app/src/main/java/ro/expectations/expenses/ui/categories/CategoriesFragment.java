@@ -61,7 +61,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     private int mStatusBarColor;
 
     private ActionMode mActionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {

@@ -19,6 +19,7 @@
 
 package ro.expectations.expenses.ui.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -79,7 +80,7 @@ public class ColorPickerDialogFragment extends DialogFragment {
 
         // Inflate the layout
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_fragment_color_picker, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_fragment_color_picker, null);
 
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 4);

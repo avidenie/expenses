@@ -141,7 +141,7 @@ public abstract class MultipleSelectionAdapter<VH extends RecyclerView.ViewHolde
                     final int key = in.readInt();
                     final boolean value = (in.readInt() == TRUE);
                     if (value) {
-                        put(key, value);
+                        put(key, true);
                     }
                 }
             }

@@ -19,6 +19,7 @@
 
 package ro.expectations.expenses.ui.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -93,7 +94,7 @@ public class CategoryPickerDialogFragment extends DialogFragment implements Load
 
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_fragment_recyclerview, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_fragment_recyclerview, null);
 
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

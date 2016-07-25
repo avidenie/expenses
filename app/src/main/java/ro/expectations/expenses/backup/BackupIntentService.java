@@ -52,7 +52,7 @@ public class BackupIntentService extends IntentService {
     }
 
     public static class ErrorEvent {
-        private Exception mException;
+        private final Exception mException;
 
         public ErrorEvent(Exception e) {
             mException = e;

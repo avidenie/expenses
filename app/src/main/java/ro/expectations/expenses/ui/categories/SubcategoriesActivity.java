@@ -23,8 +23,6 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -37,20 +35,13 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ColorStyleUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.utils.ColorStyleUtils;
 
-public class SubcategoriesActivity extends AppCompatActivity
-        implements AppBarHelperProvider, LoaderManager.LoaderCallbacks<Cursor> {
+public class SubcategoriesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
     public static final String ARG_PARENT_CATEGORY_STYLE = "parent_category_style";
-
-    private CollapsingToolbarLayout mCollapsingToolbarLayout;
-
-    private AppBarHelper mAppBarHelper;
 
     private long mParentCategoryId;
 
@@ -99,23 +90,12 @@ public class SubcategoriesActivity extends AppCompatActivity
         });
         fab.setVisibility(View.VISIBLE);
 
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mAppBarHelper = new AppBarHelper();
-        mAppBarHelper.attachToAppBar(appBarLayout);
-
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-
         if (savedInstanceState == null) {
             CategoriesFragment fragment = CategoriesFragment.newInstance(mParentCategoryId);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
         }
-    }
-
-    @Override
-    public AppBarHelper getAppBarHelper() {
-        return mAppBarHelper;
     }
 
     @Override

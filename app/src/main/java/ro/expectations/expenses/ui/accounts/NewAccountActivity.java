@@ -20,6 +20,7 @@
 package ro.expectations.expenses.ui.accounts;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewStub;
@@ -35,7 +36,10 @@ public class NewAccountActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
         mainContent.setLayoutResource(R.layout.content_new_account);

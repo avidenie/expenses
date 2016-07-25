@@ -48,14 +48,13 @@ import ro.expectations.expenses.utils.DrawableUtils;
 
 public class PayeesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private RecyclerView recyclerView;
     private PayeesAdapter mAdapter;
     private TextView mEmptyView;
 
     private int mStatusBarColor;
 
     private ActionMode mActionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -146,7 +145,7 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
             mStatusBarColor = getActivity().getWindow().getStatusBarColor();
         }
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list_payees);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_payees);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);

@@ -164,7 +164,6 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         public final RelativeLayout mAccountIconBackground;
         public final ImageView mAccountIcon;
         public final RelativeLayout mSelectedIconBackground;
-        public final ImageView mSelectedIcon;
         public final TextView mAccountTitle;
         public final TextView mAccountDescription;
         public final TextView mAccountLastTransactionAt;
@@ -175,7 +174,6 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
             mAccountIconBackground = (RelativeLayout) view.findViewById(R.id.account_icon_background);
             mSelectedIconBackground = (RelativeLayout) view.findViewById(R.id.selected_icon_background);
             mAccountIcon = (ImageView) view.findViewById(R.id.account_icon);
-            mSelectedIcon = (ImageView) view.findViewById(R.id.selected_icon);
             mAccountTitle = (TextView) view.findViewById(R.id.account_title);
             mAccountDescription = (TextView) view.findViewById(R.id.account_description);
             mAccountLastTransactionAt = (TextView) view.findViewById(R.id.account_last_transaction_at);

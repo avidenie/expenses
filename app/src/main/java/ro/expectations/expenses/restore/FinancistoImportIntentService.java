@@ -50,12 +50,12 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     private static final String TAG = FinancistoImportIntentService.class.getSimpleName();
 
-    private List<ContentValues> mAccountContentValues = new ArrayList<>();
-    private Map<String, String> mCurrencies = new HashMap<>();
-    private List<Map<String, String>> mCategories = new ArrayList<>();
-    private List<Long> mPayeeIds = new ArrayList<>();
-    private List<ContentValues> mTransactionContentValues = new ArrayList<>();
-    private Map<Long, List<ContentValues>> mTransactionDetailsContentValues = new HashMap<>();
+    private final List<ContentValues> mAccountContentValues = new ArrayList<>();
+    private final Map<String, String> mCurrencies = new HashMap<>();
+    private final List<Map<String, String>> mCategories = new ArrayList<>();
+    private final List<Long> mPayeeIds = new ArrayList<>();
+    private final List<ContentValues> mTransactionContentValues = new ArrayList<>();
+    private final Map<Long, List<ContentValues>> mTransactionDetailsContentValues = new HashMap<>();
 
     @Override
     protected void parse(InputStream input) throws IOException {

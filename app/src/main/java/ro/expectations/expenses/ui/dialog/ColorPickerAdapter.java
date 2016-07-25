@@ -42,9 +42,9 @@ public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapte
         void onItemClick(View view, int position);
     }
 
-    final private Context mContext;
-    @StyleRes private int[] mStyles;
-    final private OnItemClickListener mOnItemClickListener;
+    private final Context mContext;
+    @StyleRes private final int[] mStyles;
+    private final OnItemClickListener mOnItemClickListener;
 
     public ColorPickerAdapter(Context context, @StyleRes int[] styles, OnItemClickListener onClickListener) {
         mContext = context;
