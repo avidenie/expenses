@@ -143,7 +143,13 @@ public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAd
         if (fromAccountId > 0 && toAccountId > 0) {
             holder.mTransactionIcon.setImageDrawable(DrawableUtils.tint(mContext, R.drawable.ic_transfer_black_24dp, R.color.colorWhite));
         } else {
-            int iconId = DrawableUtils.getIdentifier(mContext, mCursor.getString(TransactionsFragment.COLUMN_CATEGORY_ICON));
+            String iconName = mCursor.getString(TransactionsFragment.COLUMN_CATEGORY_ICON);
+            int iconId;
+            if (iconName == null || iconName.isEmpty()) {
+                iconId = R.drawable.ic_question_mark_black_24dp;
+            } else {
+                iconId = DrawableUtils.getIdentifier(mContext, iconName);
+            }
             holder.mTransactionIcon.setImageDrawable(DrawableUtils.tint(mContext, iconId, R.color.colorWhite));
         }
 
