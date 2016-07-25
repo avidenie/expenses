@@ -20,19 +20,14 @@
 package ro.expectations.expenses.ui.payees;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 
-public class PayeesActivity extends DrawerActivity implements AppBarHelperProvider {
-
-    private AppBarHelper mAppBarHelper;
+public class PayeesActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +35,6 @@ public class PayeesActivity extends DrawerActivity implements AppBarHelperProvid
 
         mMainContent.setLayoutResource(R.layout.content_payees);
         mMainContent.inflate();
-
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mAppBarHelper = new AppBarHelper();
-        mAppBarHelper.attachToAppBar(appBarLayout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -59,10 +50,5 @@ public class PayeesActivity extends DrawerActivity implements AppBarHelperProvid
     @Override
     protected int getSelfNavDrawerItem() {
         return R.id.nav_payees;
-    }
-
-    @Override
-    public AppBarHelper getAppBarHelper() {
-        return mAppBarHelper;
     }
 }

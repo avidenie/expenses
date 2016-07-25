@@ -19,15 +19,15 @@
 
 package ro.expectations.expenses.ui.accounts;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,36 +40,42 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.ui.transactions.TransactionsActivity;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.ui.transactions.TransactionsActivity;
+import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class AccountsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private RecyclerView mRecyclerView;
     private AccountsAdapter mAdapter;
     private TextView mEmptyView;
 
-    private AppBarHelper.State mPreviousState;
-    private AppBarHelperProvider mAppBarHelperProvider;
+    private int mStatusBarColor;
 
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_accounts, menu);
+
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
+
             MenuItem actionEditAccount = menu.findItem(R.id.action_edit_account);
             actionEditAccount.setIcon(DrawableUtils.tint(getContext(), actionEditAccount.getIcon(), R.color.colorWhite));
             MenuItem actionCloseAccount = menu.findItem(R.id.action_close_account);
             actionCloseAccount.setIcon(DrawableUtils.tint(getContext(), actionCloseAccount.getIcon(), R.color.colorWhite));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int primaryColorDark = ColorStyleUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
+                getActivity().getWindow().setStatusBarColor(0XFF000000 | primaryColorDark);
+            }
+
             return true;
         }
 
@@ -87,14 +93,6 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 menu.findItem(R.id.action_edit_account).setVisible(false);
             }
-
-            // lock app bar in collapsed state
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState == null) {
-                mPreviousState = appBarHelper.getState();
-            }
-            appBarHelper.setExpanded(false, true);
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
 
             return true;
         }
@@ -126,13 +124,10 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
 
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
 
-            // unlock collapsed app bar
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
-                appBarHelper.setExpanded(true, true);
+            // reset the status bar color to default
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().getWindow().setStatusBarColor(mStatusBarColor);
             }
-            mPreviousState = null;
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -141,33 +136,29 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mAppBarHelperProvider = (AppBarHelperProvider) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement AppBarHelperProvider");
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_accounts, container, false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_accounts, container, false);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        mEmptyView = (TextView) rootView.findViewById(R.id.list_accounts_empty);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBarColor = getActivity().getWindow().getStatusBarColor();
+        }
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_accounts);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        mEmptyView = (TextView) view.findViewById(R.id.list_accounts_empty);
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_accounts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setHasFixedSize(true);
 
         mAdapter = new AccountsAdapter(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
@@ -208,8 +199,6 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
                 return true;
             }
         });
-
-        return rootView;
     }
 
     @Override

@@ -20,9 +20,13 @@
 package ro.expectations.expenses.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.support.annotation.AttrRes;
+import android.support.annotation.ColorRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -72,5 +76,12 @@ public class ColorStyleUtils {
 
     public static Map<String, Integer> getColorsFromStyle(Context context, String styleName) {
         return getColorsFromStyle(context, getIdentifier(context, styleName));
+    }
+
+    @ColorRes public static int getColorFromTheme(Context context, @AttrRes int color) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(color, typedValue, true);
+        return typedValue.data;
     }
 }

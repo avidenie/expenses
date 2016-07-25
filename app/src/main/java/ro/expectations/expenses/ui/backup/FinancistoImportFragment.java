@@ -20,7 +20,6 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,17 +50,15 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.BackupUtils;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.FinancistoImportIntentService;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
 import ro.expectations.expenses.ui.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.utils.BackupUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class FinancistoImportFragment extends Fragment
         implements ConfirmationDialogFragment.Listener {
@@ -72,7 +68,6 @@ public class FinancistoImportFragment extends Fragment
     private static final int CONFIRMATION_DIALOG_REQUEST_CODE = 0;
     private static final String KEY_SELECTED_FILE = "selected_file";
 
-    private RecyclerView mRecyclerView;
     private FinancistoImportAdapter mAdapter;
     private TextView mEmptyView;
     private LinearLayout mRequestPermissionRationale;
@@ -84,18 +79,18 @@ public class FinancistoImportFragment extends Fragment
 
     private File mSelectedFile;
 
-    private AppBarHelper.State mPreviousState;
-    private AppBarHelperProvider mAppBarHelperProvider;
-
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_import_financisto, menu);
+
             MenuItem actionFinancistoImport = menu.findItem(R.id.action_financisto_import);
             actionFinancistoImport.setIcon(DrawableUtils.tint(getContext(), actionFinancistoImport.getIcon(), R.color.colorWhite));
+
             return true;
         }
 
@@ -103,14 +98,6 @@ public class FinancistoImportFragment extends Fragment
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 
             mode.setTitle(getResources().getQuantityString(R.plurals.selected_backup_files, 1, 1));
-
-            // lock app bar in collapsed state
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState == null) {
-                mPreviousState = appBarHelper.getState();
-            }
-            appBarHelper.setExpanded(false, true);
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
 
             return true;
         }
@@ -144,14 +131,6 @@ public class FinancistoImportFragment extends Fragment
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
-
-            // unlock collapsed app bar
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
-                appBarHelper.setExpanded(true, true);
-            }
-            mPreviousState = null;
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -161,18 +140,6 @@ public class FinancistoImportFragment extends Fragment
 
     public FinancistoImportFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mAppBarHelperProvider = (AppBarHelperProvider) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement AppBarHelperProvider");
-        }
     }
 
     @Override
@@ -186,15 +153,15 @@ public class FinancistoImportFragment extends Fragment
         mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
         mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         mAdapter = new FinancistoImportAdapter(getActivity(), new File[0]);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {

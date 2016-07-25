@@ -21,19 +21,14 @@ package ro.expectations.expenses.ui.categories;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
 
-public class CategoriesActivity extends DrawerActivity implements AppBarHelperProvider {
-
-    private AppBarHelper mAppBarHelper;
+public class CategoriesActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +36,6 @@ public class CategoriesActivity extends DrawerActivity implements AppBarHelperPr
 
         mMainContent.setLayoutResource(R.layout.content_categories);
         mMainContent.inflate();
-
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mAppBarHelper = new AppBarHelper();
-        mAppBarHelper.attachToAppBar(appBarLayout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,10 +58,5 @@ public class CategoriesActivity extends DrawerActivity implements AppBarHelperPr
     @Override
     protected int getSelfNavDrawerItem() {
         return R.id.nav_categories;
-    }
-
-    @Override
-    public AppBarHelper getAppBarHelper() {
-        return mAppBarHelper;
     }
 }

@@ -21,7 +21,6 @@ package ro.expectations.expenses.ui.backup;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -29,15 +28,10 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
-import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
+import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 
-public class BackupActivity extends DrawerActivity
-        implements AppBarHelperProvider, FloatingActionButtonProvider {
-
-    private AppBarHelper mAppBarHelper;
+public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider {
 
     private FloatingActionButton mFloatingActionButton;
 
@@ -47,10 +41,6 @@ public class BackupActivity extends DrawerActivity
 
         mMainContent.setLayoutResource(R.layout.content_backup);
         mMainContent.inflate();
-
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mAppBarHelper = new AppBarHelper();
-        mAppBarHelper.attachToAppBar(appBarLayout);
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         Drawable icon = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_cloud_upload_black_24dp));
@@ -77,11 +67,6 @@ public class BackupActivity extends DrawerActivity
     @Override
     protected int getSelfNavDrawerItem() {
         return R.id.nav_backup;
-    }
-
-    @Override
-    public AppBarHelper getAppBarHelper() {
-        return mAppBarHelper;
     }
 
     @Override

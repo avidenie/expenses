@@ -20,7 +20,6 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -29,12 +28,8 @@ import android.view.View;
 import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 
-public class FinancistoImportActivity extends AppCompatActivity implements AppBarHelperProvider  {
-
-    private AppBarHelper mAppBarHelper;
+public class FinancistoImportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +40,6 @@ public class FinancistoImportActivity extends AppCompatActivity implements AppBa
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
         mainContent.setLayoutResource(R.layout.content_backup);
         mainContent.inflate();
-
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mAppBarHelper = new AppBarHelper();
-        mAppBarHelper.attachToAppBar(appBarLayout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,10 +54,5 @@ public class FinancistoImportActivity extends AppCompatActivity implements AppBa
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
         }
-    }
-
-    @Override
-    public AppBarHelper getAppBarHelper() {
-        return mAppBarHelper;
     }
 }

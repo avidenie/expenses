@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,7 +32,6 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,18 +55,17 @@ import java.io.File;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.backup.BackupIntentService;
-import ro.expectations.expenses.utils.BackupUtils;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.restore.AbstractRestoreIntentService;
 import ro.expectations.expenses.restore.LocalRestoreIntentService;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
-import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
-import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
 import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
+import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.utils.BackupUtils;
+import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class BackupFragment extends Fragment {
 
@@ -76,15 +75,14 @@ public class BackupFragment extends Fragment {
     private boolean mReadStorageAllowed = false;
     private boolean mIsFinancistoInstalled = false;
 
-    private RecyclerView mRecyclerView;
     private BackupAdapter mAdapter;
     private TextView mEmptyView;
     private LinearLayout mRequestPermissionRationale;
     private TextView mPermissionRationale;
     private Button mAllowAccess;
 
-    private AppBarHelper.State mPreviousState;
-    private AppBarHelperProvider mAppBarHelperProvider;
+    private int mStatusBarColor;
+
     private FloatingActionButtonProvider mFloatingActionButtonProvider;
 
     private boolean mDismissProgressBar = false;
@@ -95,13 +93,22 @@ public class BackupFragment extends Fragment {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_backup, menu);
+
             ((DrawerActivity) getActivity()).lockNavigationDrawer();
+
             MenuItem actionRestore = menu.findItem(R.id.action_restore);
             actionRestore.setIcon(DrawableUtils.tint(getContext(), actionRestore.getIcon(), R.color.colorWhite));
             MenuItem actionDelete = menu.findItem(R.id.action_delete);
             actionDelete.setIcon(DrawableUtils.tint(getContext(), actionDelete.getIcon(), R.color.colorWhite));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int primaryColorDark = ColorStyleUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
+                getActivity().getWindow().setStatusBarColor(0XFF000000 | primaryColorDark);
+            }
+
             return true;
         }
 
@@ -119,14 +126,6 @@ public class BackupFragment extends Fragment {
             } else {
                 menu.findItem(R.id.action_restore).setVisible(false);
             }
-
-            // lock app bar in collapsed state
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState == null) {
-                mPreviousState = appBarHelper.getState();
-            }
-            appBarHelper.setExpanded(false, true);
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
 
             return true;
         }
@@ -160,13 +159,10 @@ public class BackupFragment extends Fragment {
 
             ((DrawerActivity) getActivity()).unlockNavigationDrawer();
 
-            // unlock collapsed app bar
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
-                appBarHelper.setExpanded(true, true);
+            // reset the status bar color to default
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().getWindow().setStatusBarColor(mStatusBarColor);
             }
-            mPreviousState = null;
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
         }
     };
 
@@ -187,12 +183,6 @@ public class BackupFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement FloatingActionButtonProvider");
         }
-        try {
-            mAppBarHelperProvider = (AppBarHelperProvider) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement AppBarHelperProvider");
-        }
     }
 
     @Override
@@ -205,23 +195,30 @@ public class BackupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_backup, container, false);
+    }
 
-        View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
+    @Override
+    public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBarColor = getActivity().getWindow().getStatusBarColor();
+        }
 
         mRequestPermissionRationale = (LinearLayout) rootView.findViewById(R.id.request_permission_rationale);
         mPermissionRationale = (TextView) rootView.findViewById(R.id.permission_rationale);
         mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
         mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         mAdapter = new BackupAdapter(getActivity(), new File[0]);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
@@ -274,8 +271,6 @@ public class BackupFragment extends Fragment {
         } else {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
         }
-
-        return rootView;
     }
 
     @Override

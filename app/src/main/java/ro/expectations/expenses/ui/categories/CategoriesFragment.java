@@ -20,17 +20,15 @@
 package ro.expectations.expenses.ui.categories;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,13 +42,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.providers.AppBarHelperProvider;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
-import ro.expectations.expenses.ui.helper.AppBarHelper;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class CategoriesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -58,34 +55,35 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
 
     private long mParentCategoryId;
 
-    private RecyclerView mRecyclerView;
     private CategoriesAdapter mAdapter;
     private TextView mEmptyView;
 
-    private AppBarHelper.State mPreviousState;
-    private AppBarHelperProvider mAppBarHelperProvider;
-
     private int mStatusBarColor;
+
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.context_menu_categories, menu);
+
             Activity activity = getActivity();
             if (activity instanceof DrawerActivity) {
                 ((DrawerActivity) activity).lockNavigationDrawer();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    int primaryColorDark = ColorStyleUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
+                    getActivity().getWindow().setStatusBarColor(0XFF000000 | primaryColorDark);
+                }
             }
+
             MenuItem actionEditCategory = menu.findItem(R.id.action_edit_category);
             actionEditCategory.setIcon(DrawableUtils.tint(getContext(), actionEditCategory.getIcon(), R.color.colorWhite));
             MenuItem actionDeleteCategory = menu.findItem(R.id.action_delete_category);
             actionDeleteCategory.setIcon(DrawableUtils.tint(getContext(), actionDeleteCategory.getIcon(), R.color.colorWhite));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mStatusBarColor = getActivity().getWindow().getStatusBarColor();
-                getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
-            }
             return true;
         }
 
@@ -102,14 +100,6 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
             } else {
                 menu.findItem(R.id.action_edit_category).setVisible(false);
             }
-
-            // lock app bar in collapsed state
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState == null) {
-                mPreviousState = appBarHelper.getState();
-            }
-            appBarHelper.setExpanded(false, true);
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, false);
 
             return true;
         }
@@ -146,20 +136,13 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
 
             Activity activity = getActivity();
             if (activity instanceof DrawerActivity) {
+
                 ((DrawerActivity) activity).unlockNavigationDrawer();
-            }
 
-            // unlock collapsed app bar
-            AppBarHelper appBarHelper = mAppBarHelperProvider.getAppBarHelper();
-            if (mPreviousState != null && mPreviousState == AppBarHelper.State.EXPANDED) {
-                appBarHelper.setExpanded(true, true);
-            }
-            mPreviousState = null;
-            ViewCompat.setNestedScrollingEnabled(mRecyclerView, true);
-
-            // reset the status bar color to default
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getActivity().getWindow().setStatusBarColor(mStatusBarColor);
+                // reset the status bar color to default
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getActivity().getWindow().setStatusBarColor(mStatusBarColor);
+                }
             }
         }
     };
@@ -177,18 +160,6 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mAppBarHelperProvider = (AppBarHelperProvider) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement AppBarHelperProvider");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -199,23 +170,30 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_categories, container, false);
+    }
 
-        View rootView = inflater.inflate(R.layout.fragment_categories, container, false);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_categories);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBarColor = getActivity().getWindow().getStatusBarColor();
+        }
 
-        mEmptyView = (TextView) rootView.findViewById(R.id.list_categories_empty);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_categories);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setHasFixedSize(true);
+
+        mEmptyView = (TextView) view.findViewById(R.id.list_categories_empty);
         if (mParentCategoryId > 0) {
             mEmptyView.setText(getString(R.string.no_subcategories_defined));
         }
 
         mAdapter = new CategoriesAdapter(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        ItemClickHelper itemClickHelper = new ItemClickHelper(mRecyclerView);
+        ItemClickHelper itemClickHelper = new ItemClickHelper(recyclerView);
         itemClickHelper.setOnItemClickListener(new ItemClickHelper.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView parent, View view, int position) {
@@ -258,8 +236,6 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                 return true;
             }
         });
-
-        return rootView;
     }
 
     @Override
