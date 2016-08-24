@@ -20,6 +20,7 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -55,13 +56,14 @@ import ro.expectations.expenses.restore.FinancistoImportIntentService;
 import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
 import ro.expectations.expenses.ui.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
+import ro.expectations.expenses.ui.overview.OverviewActivity;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 import ro.expectations.expenses.utils.BackupUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 
 public class FinancistoImportFragment extends Fragment
-        implements ConfirmationDialogFragment.Listener {
+        implements ConfirmationDialogFragment.Listener, DialogInterface.OnClickListener {
 
     private static final String TAG = FinancistoImportFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 0;
@@ -330,11 +332,13 @@ public class FinancistoImportFragment extends Fragment
     private void showAlertDialog() {
         FragmentActivity activity = getActivity();
         if (activity != null && isResumed()) {
-            AlertDialogFragment.newInstance(
+            AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(
                     getString(R.string.success),
                     getString(R.string.financisto_import_successful),
-                    true
-            ).show(activity.getSupportFragmentManager(), "AlertDialogFragment");
+                    false
+            );
+            alertDialogFragment.setTargetFragment(this, 0);
+            alertDialogFragment.show(activity.getSupportFragmentManager(), "AlertDialogFragment");
         } else {
             mLaunchAlertDialog = true;
         }
@@ -359,6 +363,12 @@ public class FinancistoImportFragment extends Fragment
                 mDismissProgressBar = true;
             }
         }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        Intent intent = new Intent(getActivity(), OverviewActivity.class);
+        startActivity(intent);
     }
 }
 

@@ -20,9 +20,12 @@
 package ro.expectations.expenses.ui.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 
 import ro.expectations.expenses.R;
@@ -31,6 +34,9 @@ public class AlertDialogFragment extends DialogFragment {
 
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
+
+    private DialogInterface.OnClickListener mOnClickListener = null;
+    private DialogInterface.OnDismissListener mOnDismissListener = null;
 
     public static AlertDialogFragment newInstance(String title, String message, boolean cancelable) {
         Bundle args = new Bundle();
@@ -43,12 +49,29 @@ public class AlertDialogFragment extends DialogFragment {
         return alertDialogFragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Fragment target = getTargetFragment();
+
+        if (target instanceof DialogInterface.OnClickListener) {
+            mOnClickListener = (DialogInterface.OnClickListener) target;
+        }
+
+        if (target instanceof DialogInterface.OnDismissListener) {
+            mOnDismissListener = (DialogInterface.OnDismissListener) target;
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         Bundle arguments = getArguments();
         String title = arguments.getString(ARG_TITLE, null);
         String message = arguments.getString(ARG_MESSAGE, null);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if (title != null) {
             builder.setTitle(title);
@@ -56,7 +79,13 @@ public class AlertDialogFragment extends DialogFragment {
         if (message != null) {
             builder.setMessage(message);
         }
-        builder.setPositiveButton(getString(R.string.button_ok), null);
+
+        builder.setPositiveButton(getString(R.string.button_ok), mOnClickListener);
+
+        if (mOnDismissListener != null) {
+            builder.setOnDismissListener(mOnDismissListener);
+        }
+
         return builder.create();
     }
 }
