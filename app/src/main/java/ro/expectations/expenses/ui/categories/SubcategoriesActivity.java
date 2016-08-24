@@ -49,11 +49,9 @@ public class SubcategoriesActivity extends AppCompatActivity implements LoaderMa
     protected void onCreate(Bundle savedInstanceState) {
 
         String style = getIntent().getStringExtra(ARG_PARENT_CATEGORY_STYLE);
-        if (style == null || style.isEmpty()) {
-            style = "ColorIndigo";
+        if (style != null && !style.isEmpty()) {
+            setTheme(ColorStyleUtils.getIdentifier(this, style));
         }
-
-        setTheme(ColorStyleUtils.getIdentifier(this, style));
 
         super.onCreate(savedInstanceState);
 
@@ -102,7 +100,8 @@ public class SubcategoriesActivity extends AppCompatActivity implements LoaderMa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 ExpensesContract.Categories.NAME,
-                ExpensesContract.Categories.COLOR
+                ExpensesContract.Categories.COLOR,
+                ExpensesContract.Categories.STYLE
         };
 
         return new CursorLoader(
@@ -126,6 +125,12 @@ public class SubcategoriesActivity extends AppCompatActivity implements LoaderMa
             setTitle(categoryName);
             if (supportActionBar != null) {
                 supportActionBar.setDisplayShowTitleEnabled(true);
+            }
+
+            // if the parent category style was not set, set it and restart
+            if (!getIntent().hasExtra(ARG_PARENT_CATEGORY_STYLE)) {
+                getIntent().putExtra(ARG_PARENT_CATEGORY_STYLE, data.getString(data.getColumnIndex(ExpensesContract.Categories.STYLE)));
+                recreate();
             }
         }
     }
