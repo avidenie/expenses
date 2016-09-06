@@ -19,9 +19,9 @@
 
 package ro.expectations.expenses.ui.payees;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import ro.expectations.expenses.R;
@@ -40,8 +40,8 @@ public class PayeesActivity extends DrawerActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-                        .setAction("OK", null).show();
+                Intent newPayeeIntent = new Intent(PayeesActivity.this, ManagePayeeActivity.class);
+                startActivity(newPayeeIntent);
             }
         });
         fab.setVisibility(View.VISIBLE);

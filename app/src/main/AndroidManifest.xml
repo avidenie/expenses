@@ -84,6 +84,10 @@
             android:name=".ui.payees.PayeesActivity"
             android:label="@string/title_activity_payees"
             android:theme="@style/AppTheme.NoActionBar.Drawer" />
+        <activity
+            android:name=".ui.payees.ManagePayeeActivity"
+            android:parentActivityName=".ui.payees.PayeesActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name=".provider.ExpensesProvider"

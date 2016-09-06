@@ -19,6 +19,7 @@
 
 package ro.expectations.expenses.ui.payees;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -100,6 +101,14 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
             int id = item.getItemId();
             switch(id) {
                 case R.id.action_edit_payee:
+                    if (mAdapter.getSelectedItemCount() == 1) {
+                        int position = mAdapter.getSelectedItemPositions().get(0);
+                        long payeeId = mAdapter.getItemId(position);
+                        Intent editPayeeIntent = new Intent(getActivity(), ManagePayeeActivity.class);
+                        editPayeeIntent.putExtra(ManagePayeeActivity.ARG_PAYEE_ID, payeeId);
+                        startActivity(editPayeeIntent);
+                        mode.finish();
+                    }
                     mode.finish();
                     return true;
                 case R.id.action_delete_payee:

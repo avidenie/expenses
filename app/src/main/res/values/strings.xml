@@ -147,4 +147,10 @@
     <string name="title_edit_category">Edit category</string>
     <string name="error_category_name_empty">You need to enter a category name</string>
 
+    <!-- Manage payees -->
+    <string name="title_new_payee">Add new payee</string>
+    <string name="title_edit_payee">Edit payee</string>
+    <string name="payee_name">Name</string>
+    <string name="error_payee_name_empty">You need to enter a payee name</string>
+
 </resources>
