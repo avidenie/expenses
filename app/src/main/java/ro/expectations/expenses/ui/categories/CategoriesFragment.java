@@ -115,8 +115,8 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                         Intent editCategoryIntent = new Intent(getActivity(), ManageCategoryActivity.class);
                         editCategoryIntent.putExtra(ManageCategoryActivity.ARG_CATEGORY_ID, categoryId);
                         startActivity(editCategoryIntent);
-                        mode.finish();
                     }
+                    mode.finish();
                     return true;
                 case R.id.action_delete_category:
                     mode.finish();

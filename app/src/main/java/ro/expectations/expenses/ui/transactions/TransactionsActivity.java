@@ -71,7 +71,7 @@ public class TransactionsActivity extends DrawerActivity
             mSelectedAccountId = savedInstanceState.getLong(ARG_ACCOUNT_ID, 0);
         }
 
-        mMainContent.setLayoutResource(R.layout.content_transactions);
+        mMainContent.setLayoutResource(R.layout.content_fragment);
         mMainContent.inflate();
 
         // Setup spinner.

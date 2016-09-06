@@ -39,7 +39,7 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMainContent.setLayoutResource(R.layout.content_backup);
+        mMainContent.setLayoutResource(R.layout.content_fragment);
         mMainContent.inflate();
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);

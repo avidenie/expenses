@@ -34,7 +34,7 @@ public class CategoriesActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMainContent.setLayoutResource(R.layout.content_categories);
+        mMainContent.setLayoutResource(R.layout.content_fragment);
         mMainContent.inflate();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

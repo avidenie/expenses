@@ -107,7 +107,6 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
                         Intent editPayeeIntent = new Intent(getActivity(), ManagePayeeActivity.class);
                         editPayeeIntent.putExtra(ManagePayeeActivity.ARG_PAYEE_ID, payeeId);
                         startActivity(editPayeeIntent);
-                        mode.finish();
                     }
                     mode.finish();
                     return true;
