@@ -41,7 +41,7 @@ import java.util.Map;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.model.AccountType;
-import ro.expectations.expenses.model.CardIssuer;
+import ro.expectations.expenses.model.CardType;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.ColorStyleUtils;
@@ -138,7 +138,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
     private void processAccountEntry(Map<String, String> values) {
         AccountType accountType;
-        CardIssuer cardIssuer = null;
+        CardType cardType = null;
         ElectronicPaymentType electronicPaymentType = null;
         switch (values.get("type")) {
             case "CASH":
@@ -149,11 +149,11 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 break;
             case "DEBIT_CARD":
                 accountType = AccountType.DEBIT_CARD;
-                cardIssuer = getCardIssuer(values.get("card_issuer"));
+                cardType = getCardType(values.get("card_issuer"));
                 break;
             case "CREDIT_CARD":
                 accountType = AccountType.CREDIT_CARD;
-                cardIssuer = getCardIssuer(values.get("card_issuer"));
+                cardType = getCardType(values.get("card_issuer"));
                 break;
             case "ASSET":
                 accountType = AccountType.SAVINGS;
@@ -176,10 +176,10 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
 
         String accountSubtype ;
-        if (cardIssuer == null) {
+        if (cardType == null) {
             accountSubtype = electronicPaymentType == null ? null : electronicPaymentType.toString();
         } else {
-            accountSubtype = cardIssuer.toString();
+            accountSubtype = cardType.toString();
         }
 
         ContentValues accountValues = new ContentValues();
@@ -466,33 +466,33 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
     }
 
-    private CardIssuer getCardIssuer(String cardIssuer) {
-        switch(cardIssuer) {
+    private CardType getCardType(String cardType) {
+        switch(cardType) {
             case "VISA":
-                return CardIssuer.VISA;
+                return CardType.VISA;
             case "VISA_ELECTRON":
-                return CardIssuer.VISA_ELECTRON;
+                return CardType.VISA_ELECTRON;
             case "MASTERCARD":
-                return CardIssuer.MASTERCARD;
+                return CardType.MASTERCARD;
             case "MAESTRO":
-                return CardIssuer.MAESTRO;
+                return CardType.MAESTRO;
             case "CIRRUS":
-                return CardIssuer.CIRRUS;
+                return CardType.CIRRUS;
             case "AMEX":
-                return CardIssuer.AMERICAN_EXPRESS;
+                return CardType.AMERICAN_EXPRESS;
             case "JCB":
-                return CardIssuer.JCB;
+                return CardType.JCB;
             case "DINERS":
-                return CardIssuer.DINERS;
+                return CardType.DINERS;
             case "DISCOVER":
-                return CardIssuer.DISCOVER;
+                return CardType.DISCOVER;
             case "UNIONPAY":
-                return CardIssuer.UNIONPAY;
+                return CardType.UNIONPAY;
             case "EPS":
-                return CardIssuer.EPS;
+                return CardType.EPS;
             case "NETS":
             default:
-                return CardIssuer.OTHER;
+                return CardType.OTHER;
         }
     }
 

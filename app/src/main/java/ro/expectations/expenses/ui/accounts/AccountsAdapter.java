@@ -39,7 +39,7 @@ import ro.expectations.expenses.R;
 import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.model.AccountType;
-import ro.expectations.expenses.model.CardIssuer;
+import ro.expectations.expenses.model.CardType;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.NumberUtils;
@@ -74,26 +74,26 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
         String type = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.TYPE));
         AccountType accountType = AccountType.valueOf(type);
         if (accountType == AccountType.CREDIT_CARD || accountType == AccountType.DEBIT_CARD) {
-            String issuer = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
-            CardIssuer cardIssuer;
-            if (issuer == null) {
-                cardIssuer = CardIssuer.OTHER;
+            String subtype = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
+            CardType cardType;
+            if (subtype == null) {
+                cardType = CardType.OTHER;
             } else {
                 try {
-                    cardIssuer = CardIssuer.valueOf(issuer);
+                    cardType = CardType.valueOf(subtype);
                 } catch (final IllegalArgumentException ex) {
-                    cardIssuer = CardIssuer.OTHER;
+                    cardType = CardType.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, cardIssuer.iconId, R.color.colorWhite));
+            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, cardType.iconId, R.color.colorWhite));
         } else if (accountType == AccountType.ELECTRONIC) {
-            String paymentType = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
+            String subtype = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
             ElectronicPaymentType electronicPaymentType;
-            if (paymentType == null) {
+            if (subtype == null) {
                 electronicPaymentType = ElectronicPaymentType.OTHER;
             } else {
                 try {
-                    electronicPaymentType = ElectronicPaymentType.valueOf(paymentType);
+                    electronicPaymentType = ElectronicPaymentType.valueOf(subtype);
                 } catch(IllegalArgumentException ex) {
                     electronicPaymentType = ElectronicPaymentType.OTHER;
                 }
