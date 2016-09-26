@@ -20,35 +20,16 @@
 package ro.expectations.expenses.ui.payees;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewStub;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-
-import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.ui.categories.CategoriesActivity;
-import ro.expectations.expenses.ui.categories.ManageCategoryFragment;
-import ro.expectations.expenses.utils.ColorStyleUtils;
-import ro.expectations.expenses.utils.DrawableUtils;
 
 public class ManagePayeeActivity extends AppCompatActivity implements ManagePayeeFragment.Listener {
 

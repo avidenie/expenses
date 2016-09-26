@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
+import ro.expectations.expenses.utils.ListUtils;
 
 public class PayeesAdapter extends MultipleSelectionAdapter<PayeesAdapter.ViewHolder> {
 

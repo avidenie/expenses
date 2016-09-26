@@ -41,9 +41,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.utils.ColorUtils;
 
 public class CategoryPickerDialogFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

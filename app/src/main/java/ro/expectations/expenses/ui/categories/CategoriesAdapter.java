@@ -32,11 +32,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.utils.ListUtils;
-import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 
 public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapter.ViewHolder> {
 

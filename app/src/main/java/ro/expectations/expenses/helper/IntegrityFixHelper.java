@@ -31,9 +31,9 @@ import java.util.concurrent.TimeUnit;
 
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.provider.ExpensesContract.Accounts;
-import ro.expectations.expenses.provider.ExpensesContract.Transactions;
-import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
 import ro.expectations.expenses.provider.ExpensesContract.RunningBalances;
+import ro.expectations.expenses.provider.ExpensesContract.TransactionDetails;
+import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 
 public class IntegrityFixHelper {
 

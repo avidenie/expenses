@@ -39,12 +39,12 @@ import java.util.List;
 import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardType;
 import ro.expectations.expenses.model.ElectronicPaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.ColorUtils;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
 

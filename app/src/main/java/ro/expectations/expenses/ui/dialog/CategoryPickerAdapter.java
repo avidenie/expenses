@@ -36,9 +36,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
-import ro.expectations.expenses.provider.ExpensesContract;
 
 public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAdapter.ViewHolder> {
 

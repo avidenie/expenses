@@ -38,7 +38,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.provider.ExpensesContract.Categories;
 import ro.expectations.expenses.provider.ExpensesContract.FromAccounts;
 import ro.expectations.expenses.provider.ExpensesContract.FromRunningBalances;
@@ -51,6 +50,7 @@ import ro.expectations.expenses.provider.ExpensesContract.Transactions;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

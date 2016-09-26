@@ -30,8 +30,8 @@ import android.widget.TextView;
 import java.io.File;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
+import ro.expectations.expenses.utils.ListUtils;
 
 public class BackupAdapter extends MultipleSelectionAdapter<BackupAdapter.ViewHolder> {
 

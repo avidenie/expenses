@@ -32,9 +32,9 @@ import android.widget.ImageView;
 import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.ui.recyclerview.SingleSelectionAdapter;
 import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class ColorPickerAdapter extends SingleSelectionAdapter<ColorPickerAdapter.ViewHolder> {
 

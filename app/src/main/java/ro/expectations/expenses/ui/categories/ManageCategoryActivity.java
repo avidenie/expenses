@@ -44,8 +44,8 @@ import android.widget.ImageView;
 import java.util.Map;
 
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.DrawableUtils;
 
 public class ManageCategoryActivity extends AppCompatActivity implements ManageCategoryFragment.Listener {
 

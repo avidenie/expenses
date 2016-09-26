@@ -36,11 +36,11 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 import ro.expectations.expenses.R;
+import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 import ro.expectations.expenses.utils.ListUtils;
 import ro.expectations.expenses.utils.NumberUtils;
-import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 
 public class TransactionsAdapter extends MultipleSelectionAdapter<TransactionsAdapter.ViewHolder> {
 

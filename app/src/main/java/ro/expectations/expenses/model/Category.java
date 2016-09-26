@@ -24,8 +24,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 
-import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.utils.ColorUtils;
 
 public class Category implements Parcelable {
 

@@ -34,8 +34,8 @@ import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
-import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.helper.IntegrityFixHelper;
+import ro.expectations.expenses.provider.ExpensesContract;
 
 abstract public class AbstractRestoreIntentService extends IntentService {
 
