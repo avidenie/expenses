@@ -73,7 +73,7 @@
     <string name="account_type_credit_card">Credit Card</string>
     <string name="account_type_savings">Savings Account</string>
     <string name="account_type_loan">Loan Account</string>
-    <string name="account_type_electronic">Electronic</string>
+    <string name="account_type_online">Online Account</string>
     <string name="account_type_other">Other</string>
 
     <!-- Card issuers -->
@@ -90,13 +90,11 @@
     <string name="card_issuer_diners">Diners Club</string>
     <string name="card_issuer_other">Other</string>
 
-    <!-- Electronic payments -->
-    <string name="electronic_payment_paypal">Paypal</string>
-    <string name="electronic_payment_google_wallet">Google Wallet</string>
-    <string name="electronic_payment_amazon">Amazon</string>
-    <string name="electronic_payment_ebay">Ebay</string>
-    <string name="electronic_payment_bitcoin">Bitcoin</string>
-    <string name="electronic_payment_other">Other</string>
+    <!-- Online payments -->
+    <string name="online_payment_paypal">Paypal</string>
+    <string name="online_payment_google_wallet">Google Wallet</string>
+    <string name="online_payment_amazon">Amazon</string>
+    <string name="online_payment_other">Other</string>
 
     <!-- Empty listings -->
     <string name="no_account_defined">You haven\'t created an account yet.</string>

@@ -38,7 +38,7 @@ import java.util.Currency;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardType;
-import ro.expectations.expenses.model.ElectronicPaymentType;
+import ro.expectations.expenses.model.OnlinePaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.recyclerview.MultipleSelectionAdapter;
 import ro.expectations.expenses.utils.DrawableUtils;
@@ -86,19 +86,19 @@ public class AccountsAdapter extends MultipleSelectionAdapter<AccountsAdapter.Vi
                 }
             }
             holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, cardType.iconId, R.color.colorWhite));
-        } else if (accountType == AccountType.ELECTRONIC) {
+        } else if (accountType == AccountType.ONLINE) {
             String subtype = mCursor.getString(mCursor.getColumnIndex(ExpensesContract.Accounts.SUBTYPE));
-            ElectronicPaymentType electronicPaymentType;
+            OnlinePaymentType onlinePaymentType;
             if (subtype == null) {
-                electronicPaymentType = ElectronicPaymentType.OTHER;
+                onlinePaymentType = OnlinePaymentType.OTHER;
             } else {
                 try {
-                    electronicPaymentType = ElectronicPaymentType.valueOf(subtype);
+                    onlinePaymentType = OnlinePaymentType.valueOf(subtype);
                 } catch(IllegalArgumentException ex) {
-                    electronicPaymentType = ElectronicPaymentType.OTHER;
+                    onlinePaymentType = OnlinePaymentType.OTHER;
                 }
             }
-            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, electronicPaymentType.iconId, R.color.colorWhite));
+            holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, onlinePaymentType.iconId, R.color.colorWhite));
         } else {
             holder.mAccountIcon.setImageDrawable(DrawableUtils.tint(mContext, accountType.iconId, R.color.colorWhite));
         }

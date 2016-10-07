@@ -41,7 +41,7 @@ import java.util.Map;
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardType;
-import ro.expectations.expenses.model.ElectronicPaymentType;
+import ro.expectations.expenses.model.OnlinePaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.utils.ColorStyleUtils;
 import ro.expectations.expenses.utils.ColorUtils;
@@ -139,7 +139,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     private void processAccountEntry(Map<String, String> values) {
         AccountType accountType;
         CardType cardType = null;
-        ElectronicPaymentType electronicPaymentType = null;
+        OnlinePaymentType onlinePaymentType = null;
         switch (values.get("type")) {
             case "CASH":
                 accountType = AccountType.CASH;
@@ -161,13 +161,13 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
             case "LIABILITY":
                 accountType = AccountType.LOAN;
                 break;
-            case "ELECTRONIC":
-                accountType = AccountType.ELECTRONIC;
-                electronicPaymentType = getElectronicPaymentType(values.get("card_issuer"));
+            case "ONLINE":
+                accountType = AccountType.ONLINE;
+                onlinePaymentType = getOnlinePaymentType(values.get("card_issuer"));
                 break;
             case "PAYPAL":
-                accountType = AccountType.ELECTRONIC;
-                electronicPaymentType = ElectronicPaymentType.PAYPAL;
+                accountType = AccountType.ONLINE;
+                onlinePaymentType = OnlinePaymentType.PAYPAL;
                 break;
             case "OTHER":
             default:
@@ -177,7 +177,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
 
         String accountSubtype ;
         if (cardType == null) {
-            accountSubtype = electronicPaymentType == null ? null : electronicPaymentType.toString();
+            accountSubtype = onlinePaymentType == null ? null : onlinePaymentType.toString();
         } else {
             accountSubtype = cardType.toString();
         }
@@ -447,22 +447,16 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 .build());
     }
 
-    private ElectronicPaymentType getElectronicPaymentType(String paymentType) {
+    private OnlinePaymentType getOnlinePaymentType(String paymentType) {
         switch(paymentType) {
             case "PAYPAL":
-                return ElectronicPaymentType.PAYPAL;
-            case "BITCOIN":
-                return ElectronicPaymentType.BITCOIN;
+                return OnlinePaymentType.PAYPAL;
             case "AMAZON":
-                return ElectronicPaymentType.AMAZON;
-            case "EBAY":
-                return ElectronicPaymentType.EBAY;
+                return OnlinePaymentType.AMAZON;
             case "GOOGLE_WALLET":
-                return ElectronicPaymentType.GOOGLE_WALLET;
-            case "WEB_MONEY":
-            case "YANDEX_MONEY":
+                return OnlinePaymentType.GOOGLE_WALLET;
             default:
-                return ElectronicPaymentType.OTHER;
+                return OnlinePaymentType.OTHER;
         }
     }
 

@@ -21,18 +21,16 @@ package ro.expectations.expenses.model;
 
 import ro.expectations.expenses.R;
 
-public enum ElectronicPaymentType {
-    PAYPAL(R.string.electronic_payment_paypal, R.drawable.ic_electronic_payment_paypal_black_24dp),
-    GOOGLE_WALLET(R.string.electronic_payment_google_wallet, R.drawable.ic_electronic_payment_google_wallet_black_24dp),
-    AMAZON(R.string.electronic_payment_amazon, R.drawable.ic_electronic_payment_amazon_black_24dp),
-    EBAY(R.string.electronic_payment_ebay, R.drawable.ic_electronic_payment_ebay_black_24dp),
-    BITCOIN(R.string.electronic_payment_bitcoin, R.drawable.ic_electronic_payment_bitcoin_black_24dp),
-    OTHER(R.string.electronic_payment_other, R.drawable.ic_electronic_payment_black_24dp);
+public enum OnlinePaymentType {
+    PAYPAL(R.string.online_payment_paypal, R.drawable.ic_payment_paypal_black_24dp),
+    GOOGLE_WALLET(R.string.online_payment_google_wallet, R.drawable.ic_payment_google_wallet_black_24dp),
+    AMAZON(R.string.online_payment_amazon, R.drawable.ic_payment_amazon_black_24dp),
+    OTHER(R.string.online_payment_other, R.drawable.ic_online_payment_black_24dp);
 
     public final int titleId;
     public final int iconId;
 
-    ElectronicPaymentType(int titleId, int iconId) {
+    OnlinePaymentType(int titleId, int iconId) {
         this.titleId = titleId;
         this.iconId = iconId;
     }

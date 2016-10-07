@@ -80,7 +80,6 @@
         <item>ic_directions_railway_black_24dp</item>
         <item>ic_directions_run_black_24dp</item>
         <item>ic_directions_subway_black_24dp</item>
-        <item>ic_electronic_payment_black_24dp</item>
         <item>ic_email_black_24dp</item>
         <item>ic_explore_black_24dp</item>
         <item>ic_face_black_24dp</item>
@@ -118,6 +117,7 @@
         <item>ic_local_taxi_black_24dp</item>
         <item>ic_money_bag_black_24dp</item>
         <item>ic_movie_black_24dp</item>
+        <item>ic_online_payment_black_24dp</item>
         <item>ic_payee_black_24dp</item>
         <item>ic_pets_black_24dp</item>
         <item>ic_phone_android_black_24dp</item>
@@ -183,7 +183,6 @@
         <item>directions railway</item>
         <item>directions run</item>
         <item>directions subway</item>
-        <item>electronic payment</item>
         <item>email</item>
         <item>explore</item>
         <item>face</item>
@@ -221,6 +220,7 @@
         <item>local taxi</item>
         <item>money bag</item>
         <item>movie</item>
+        <item>online payment</item>
         <item>payee</item>
         <item>pets</item>
         <item>phone android</item>
