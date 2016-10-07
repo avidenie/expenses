@@ -40,7 +40,7 @@ public class AccountsActivity extends DrawerActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent newAccountIntent = new Intent(AccountsActivity.this, NewAccountActivity.class);
+                Intent newAccountIntent = new Intent(AccountsActivity.this, ManageAccountActivity.class);
                 startActivity(newAccountIntent);
             }
         });

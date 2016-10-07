@@ -102,8 +102,13 @@ public class AccountsFragment extends Fragment implements LoaderManager.LoaderCa
             int id = item.getItemId();
             switch(id) {
                 case R.id.action_edit_account:
-                    Intent editAccountIntent = new Intent(getActivity(), EditAccountActivity.class);
-                    startActivity(editAccountIntent);
+                    if (mAdapter.getSelectedItemCount() == 1) {
+                        int position = mAdapter.getSelectedItemPositions().get(0);
+                        long accountId = mAdapter.getItemId(position);
+                        Intent editAccountIntent = new Intent(getActivity(), ManageAccountActivity.class);
+                        editAccountIntent.putExtra(ManageAccountActivity.ARG_ACCOUNT_ID, accountId);
+                        startActivity(editAccountIntent);
+                    }
                     mode.finish();
                     return true;
                 case R.id.action_close_account:

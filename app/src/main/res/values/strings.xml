@@ -44,8 +44,6 @@
     <!-- Activity titles -->
     <string name="title_activity_overview">Overview</string>
     <string name="title_activity_accounts">Accounts</string>
-    <string name="title_activity_new_account">Add new account</string>
-    <string name="title_activity_edit_account">Edit account</string>
     <string name="title_activity_transactions">Transactions</string>
     <string name="title_activity_backup">Backup/Restore</string>
     <string name="title_activity_financisto_import">Import from Financisto</string>
@@ -150,5 +148,12 @@
     <string name="title_edit_payee">Edit payee</string>
     <string name="payee_name">Name</string>
     <string name="error_payee_name_empty">You need to enter a payee name</string>
+
+    <!-- Manage accounts -->
+    <string name="title_new_account">Add new account</string>
+    <string name="title_edit_account">Edit account</string>
+    <string name="account_title">Title</string>
+    <string name="error_account_name_empty">You need to enter an account title</string>
+    <string name="account_currency">Currency</string>
 
 </resources>
