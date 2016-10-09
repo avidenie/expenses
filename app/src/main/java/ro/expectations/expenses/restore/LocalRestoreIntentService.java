@@ -19,14 +19,17 @@
 
 package ro.expectations.expenses.restore;
 
+import android.content.Intent;
 import android.os.SystemClock;
-
-import org.greenrobot.eventbus.EventBus;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class LocalRestoreIntentService extends AbstractRestoreIntentService {
+
+    public static final String ACTION_SUCCESS = "LocalRestoreIntentService.ACTION_SUCCESS";
+    public static final String ACTION_FAILURE = "LocalRestoreIntentService.ACTION_FAILURE";
 
     protected static final String TAG = LocalRestoreIntentService.class.getSimpleName();
 
@@ -39,27 +42,14 @@ public class LocalRestoreIntentService extends AbstractRestoreIntentService {
 
     @Override
     protected void notifySuccess() {
-        EventBus.getDefault().post(new SuccessEvent());
+        Intent successIntent = new Intent(ACTION_SUCCESS);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(successIntent);
     }
 
     @Override
     protected void notifyFailure(Exception e) {
-        EventBus.getDefault().post(new ErrorEvent(e));
+        Intent failureIntent = new Intent(ACTION_FAILURE);
+        failureIntent.putExtra("exception", e);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(failureIntent);
     }
-
-    public static class SuccessEvent {
-    }
-
-    public static class ErrorEvent {
-        private final Exception mException;
-
-        public ErrorEvent(Exception e) {
-            mException = e;
-        }
-
-        public Exception getException() {
-            return mException;
-        }
-    }
-
 }

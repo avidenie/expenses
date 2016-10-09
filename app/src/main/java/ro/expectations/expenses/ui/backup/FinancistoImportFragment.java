@@ -20,8 +20,11 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +32,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,10 +47,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -133,6 +133,26 @@ public class FinancistoImportFragment extends Fragment
             if (mAdapter.isChoiceMode()) {
                 mAdapter.clearSelection();
             }
+        }
+    };
+
+    private BroadcastReceiver mSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            hideProgressDialog();
+            showAlertDialog();
+            if (mActionMode != null) {
+                mActionMode.finish();
+            }
+        }
+    };
+
+    private BroadcastReceiver mFailureReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Throwable failureException = (Throwable) intent.getSerializableExtra("exception");
+            Log.e(TAG, "An error occurred while importing Financisto backup: "
+                    + failureException.getMessage(), failureException);
         }
     };
 
@@ -236,14 +256,14 @@ public class FinancistoImportFragment extends Fragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.registerReceiver(mSuccessReceiver,
+                new IntentFilter(FinancistoImportIntentService.ACTION_SUCCESS));
+        localBroadcastManager.registerReceiver(mFailureReceiver,
+                new IntentFilter(FinancistoImportIntentService.ACTION_FAILURE));
 
         if (mDismissProgressBar) {
             hideProgressDialog();
@@ -257,15 +277,18 @@ public class FinancistoImportFragment extends Fragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        mAdapter.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_SELECTED_FILE, mSelectedFile);
+    public void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.unregisterReceiver(mSuccessReceiver);
+        localBroadcastManager.unregisterReceiver(mFailureReceiver);
     }
 
     @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+    public void onSaveInstanceState(Bundle outState) {
+        mAdapter.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_SELECTED_FILE, mSelectedFile);
     }
 
     @Override
@@ -295,23 +318,6 @@ public class FinancistoImportFragment extends Fragment
     @Override
     public void onDenied(int targetRequestCode) {
         // nothing to do
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onSuccess(FinancistoImportIntentService.SuccessEvent successEvent) {
-        hideProgressDialog();
-        showAlertDialog();
-        if (mActionMode != null) {
-            mActionMode.finish();
-        }
-        EventBus.getDefault().removeStickyEvent(successEvent);
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onFailure(FinancistoImportIntentService.ErrorEvent errorEvent) {
-        Log.e(TAG, "An error occurred while importing Financisto backup: "
-                + errorEvent.getException().getMessage(), errorEvent.getException());
-        EventBus.getDefault().removeStickyEvent(errorEvent);
     }
 
     private void showRequestPermissionRationale() {

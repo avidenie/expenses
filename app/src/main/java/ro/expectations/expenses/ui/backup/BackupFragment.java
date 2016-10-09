@@ -20,8 +20,10 @@
 package ro.expectations.expenses.ui.backup;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +34,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,10 +49,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -165,6 +164,45 @@ public class BackupFragment extends Fragment {
             }
         }
     };
+
+    private BroadcastReceiver mLocalRestoreSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            hideProgressDialog();
+            showRestoreAlertDialog();
+            if (mActionMode != null) {
+                mActionMode.finish();
+            }
+        }
+    };
+
+    private BroadcastReceiver mLocalRestoreFailureReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Throwable failureException = (Throwable) intent.getSerializableExtra("exception");
+            Log.e(TAG, "An error occurred while restoring backup: "
+                    + failureException.getMessage(), failureException);
+        }
+    };
+
+    private BroadcastReceiver mBackupSuccessReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            hideProgressDialog();
+            showBackupAlertDialog();
+        }
+    };
+
+    private BroadcastReceiver mBackupFailureReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Throwable failureException = (Throwable) intent.getSerializableExtra("exception");
+            Log.e(TAG, "An error occurred while backing up database: "
+                    + failureException.getMessage(), failureException);
+
+        }
+    };
+
 
     static BackupFragment newInstance() {
         return new BackupFragment();
@@ -285,14 +323,20 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+
+        localBroadcastManager.registerReceiver(mLocalRestoreSuccessReceiver,
+                new IntentFilter(LocalRestoreIntentService.ACTION_SUCCESS));
+        localBroadcastManager.registerReceiver(mLocalRestoreFailureReceiver,
+                new IntentFilter(LocalRestoreIntentService.ACTION_FAILURE));
+
+        localBroadcastManager.registerReceiver(mBackupSuccessReceiver,
+                new IntentFilter(BackupIntentService.ACTION_SUCCESS));
+        localBroadcastManager.registerReceiver(mBackupFailureReceiver,
+                new IntentFilter(BackupIntentService.ACTION_FAILURE));
 
         if (mDismissProgressBar) {
             hideProgressDialog();
@@ -331,9 +375,12 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.unregisterReceiver(mLocalRestoreSuccessReceiver);
+        localBroadcastManager.unregisterReceiver(mBackupFailureReceiver);
     }
 
     @Override
@@ -355,33 +402,6 @@ public class BackupFragment extends Fragment {
                 mFloatingActionButtonProvider.getFloatingActionButton().hide();
             }
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSuccess(LocalRestoreIntentService.SuccessEvent successEvent) {
-        hideProgressDialog();
-        showRestoreAlertDialog();
-        if (mActionMode != null) {
-            mActionMode.finish();
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFailure(LocalRestoreIntentService.ErrorEvent errorEvent) {
-        Log.e(TAG, "An error occurred while restoring backup: "
-                + errorEvent.getException().getMessage(), errorEvent.getException());
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSuccess(BackupIntentService.SuccessEvent successEvent) {
-        hideProgressDialog();
-        showBackupAlertDialog();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFailure(BackupIntentService.ErrorEvent errorEvent) {
-        Log.e(TAG, "An error occurred while backing up database: "
-                + errorEvent.getException().getMessage(), errorEvent.getException());
     }
 
     public void fabAction() {

@@ -21,10 +21,10 @@ package ro.expectations.expenses.restore;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,6 +47,9 @@ import ro.expectations.expenses.utils.ColorStyleUtils;
 import ro.expectations.expenses.utils.ColorUtils;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
+
+    public static final String ACTION_SUCCESS = "FinancistoImportIntentService.ACTION_SUCCESS";
+    public static final String ACTION_FAILURE = "FinancistoImportIntentService.ACTION_FAILURE";
 
     private static final String TAG = FinancistoImportIntentService.class.getSimpleName();
 
@@ -105,13 +108,16 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     }
 
     @Override
-    protected void notifyFailure(Exception e) {
-        EventBus.getDefault().postSticky(new ErrorEvent(e));
+    protected void notifySuccess() {
+        Intent successIntent = new Intent(ACTION_SUCCESS);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(successIntent);
     }
 
     @Override
-    protected void notifySuccess() {
-        EventBus.getDefault().postSticky(new SuccessEvent());
+    protected void notifyFailure(Exception e) {
+        Intent failureIntent = new Intent(ACTION_FAILURE);
+        failureIntent.putExtra("exception", e);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(failureIntent);
     }
 
     private void processEntry(String tableName, Map<String, String> values) {
@@ -490,7 +496,7 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
     }
 
-    public String getParentCategoryId(Map<String, String> category) {
+    private String getParentCategoryId(Map<String, String> category) {
 
         String parentId = "0";
         int previousLeft = 0;
@@ -509,20 +515,5 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
         }
 
         return parentId;
-    }
-
-    public static class SuccessEvent {
-    }
-
-    public static class ErrorEvent {
-        private Exception mException;
-
-        public ErrorEvent(Exception e) {
-            mException = e;
-        }
-
-        public Exception getException() {
-            return mException;
-        }
     }
 }
