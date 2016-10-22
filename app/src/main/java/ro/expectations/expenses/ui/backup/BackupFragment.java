@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -47,6 +48,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,6 +61,7 @@ import ro.expectations.expenses.restore.LocalRestoreIntentService;
 import ro.expectations.expenses.ui.dialog.AlertDialogFragment;
 import ro.expectations.expenses.ui.dialog.ProgressDialogFragment;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
@@ -79,10 +82,12 @@ public class BackupFragment extends Fragment {
     private LinearLayout mRequestPermissionRationale;
     private TextView mPermissionRationale;
     private Button mAllowAccess;
+    private FrameLayout mVerticalCenterWrapper;
 
     private int mStatusBarColor;
 
     private FloatingActionButtonProvider mFloatingActionButtonProvider;
+    private AppBarLayoutProvider mAppBarLayoutProvider;
 
     private boolean mDismissProgressBar = false;
     private boolean mLaunchRestoreAlertDialog = false;
@@ -203,7 +208,6 @@ public class BackupFragment extends Fragment {
         }
     };
 
-
     static BackupFragment newInstance() {
         return new BackupFragment();
     }
@@ -215,11 +219,20 @@ public class BackupFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof FloatingActionButtonProvider) {
             mFloatingActionButtonProvider = (FloatingActionButtonProvider) context;
+            mAppBarLayoutProvider = null;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement FloatingActionButtonProvider");
+        }
+
+        if (context instanceof AppBarLayoutProvider) {
+            mAppBarLayoutProvider = (AppBarLayoutProvider) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement AppBarLayoutProvider");
         }
     }
 
@@ -247,6 +260,15 @@ public class BackupFragment extends Fragment {
         mPermissionRationale = (TextView) rootView.findViewById(R.id.permission_rationale);
         mAllowAccess = (Button) rootView.findViewById(R.id.allow_access);
         mEmptyView = (TextView) rootView.findViewById(R.id.list_backup_empty);
+
+        mVerticalCenterWrapper = (FrameLayout) rootView.findViewById(R.id.vertical_center_wrapper);
+        mAppBarLayoutProvider.getAppBarLayout().addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int paddingBottom = appBarLayout.getTotalScrollRange() - Math.abs(verticalOffset);
+                mVerticalCenterWrapper.setPaddingRelative(0, 0, 0, paddingBottom);
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list_backup);
         recyclerView.setHasFixedSize(true);
@@ -387,6 +409,7 @@ public class BackupFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mFloatingActionButtonProvider = null;
+        mAppBarLayoutProvider = null;
     }
 
     @Override

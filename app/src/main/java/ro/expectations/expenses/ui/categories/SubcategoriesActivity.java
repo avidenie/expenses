@@ -23,6 +23,7 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -36,14 +37,18 @@ import android.view.ViewStub;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.utils.ColorStyleUtils;
 
-public class SubcategoriesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SubcategoriesActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>, AppBarLayoutProvider {
 
     public static final String ARG_PARENT_CATEGORY_ID = "parent_category_id";
     public static final String ARG_PARENT_CATEGORY_STYLE = "parent_category_style";
 
     private long mParentCategoryId;
+
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,8 @@ public class SubcategoriesActivity extends AppCompatActivity implements LoaderMa
         ViewStub mainContent = (ViewStub) findViewById(R.id.main_content);
         mainContent.setLayoutResource(R.layout.content_fragment);
         mainContent.inflate();
+
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,6 +101,11 @@ public class SubcategoriesActivity extends AppCompatActivity implements LoaderMa
             transaction.add(R.id.fragment, fragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public AppBarLayout getAppBarLayout() {
+        return mAppBarLayout;
     }
 
     @Override

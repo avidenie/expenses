@@ -21,6 +21,7 @@ package ro.expectations.expenses.ui.backup;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -29,11 +30,13 @@ import android.view.View;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.ui.providers.FloatingActionButtonProvider;
 
-public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider {
+public class BackupActivity extends DrawerActivity implements FloatingActionButtonProvider, AppBarLayoutProvider {
 
     private FloatingActionButton mFloatingActionButton;
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
             }
         });
 
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+
         if (savedInstanceState == null) {
             BackupFragment fragment = BackupFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -72,5 +77,9 @@ public class BackupActivity extends DrawerActivity implements FloatingActionButt
     @Override
     public FloatingActionButton getFloatingActionButton() {
         return mFloatingActionButton;
+    }
+
+    public AppBarLayout getAppBarLayout() {
+        return mAppBarLayout;
     }
 }

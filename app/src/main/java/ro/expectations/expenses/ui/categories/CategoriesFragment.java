@@ -20,11 +20,13 @@
 package ro.expectations.expenses.ui.categories;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -39,11 +41,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.provider.ExpensesContract;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 import ro.expectations.expenses.utils.ColorStyleUtils;
@@ -57,8 +61,11 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
 
     private CategoriesAdapter mAdapter;
     private TextView mEmptyView;
+    private FrameLayout mVerticalCenterWrapper;
 
     private int mStatusBarColor;
+
+    private AppBarLayoutProvider mAppBarLayoutProvider;
 
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -160,6 +167,18 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof AppBarLayoutProvider) {
+            mAppBarLayoutProvider = (AppBarLayoutProvider) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement AppBarLayoutProvider");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -189,6 +208,15 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
         if (mParentCategoryId > 0) {
             mEmptyView.setText(getString(R.string.no_subcategories_defined));
         }
+
+        mVerticalCenterWrapper = (FrameLayout) view.findViewById(R.id.vertical_center_wrapper);
+        mAppBarLayoutProvider.getAppBarLayout().addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int paddingBottom = appBarLayout.getTotalScrollRange() - Math.abs(verticalOffset);
+                mVerticalCenterWrapper.setPaddingRelative(0, 0, 0, paddingBottom);
+            }
+        });
 
         mAdapter = new CategoriesAdapter(getActivity());
         recyclerView.setAdapter(mAdapter);
@@ -253,6 +281,12 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mAdapter.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mAppBarLayoutProvider = null;
     }
 
     @Override

@@ -21,20 +21,27 @@ package ro.expectations.expenses.ui.payees;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.ui.drawer.DrawerActivity;
+import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 
-public class PayeesActivity extends DrawerActivity {
+public class PayeesActivity extends DrawerActivity implements AppBarLayoutProvider {
+
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMainContent.setLayoutResource(R.layout.content_payees);
+        mMainContent.setLayoutResource(R.layout.content_fragment);
         mMainContent.inflate();
+
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +52,18 @@ public class PayeesActivity extends DrawerActivity {
             }
         });
         fab.setVisibility(View.VISIBLE);
+
+        if (savedInstanceState == null) {
+            PayeesFragment fragment = PayeesFragment.newInstance();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.fragment, fragment);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public AppBarLayout getAppBarLayout() {
+        return mAppBarLayout;
     }
 
     @Override
