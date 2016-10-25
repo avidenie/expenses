@@ -115,6 +115,7 @@
         <item>@drawable/ic_home_black_24dp</item>
         <item>@drawable/ic_hot_tub_black_24dp</item>
         <item>@drawable/ic_hotel_black_24dp</item>
+        <item>@drawable/ic_keyboard_black_24dp</item>
         <item>@drawable/ic_kitchen_black_24dp</item>
         <item>@drawable/ic_laptop_black_24dp</item>
         <item>@drawable/ic_library_books_black_24dp</item>
@@ -218,6 +219,7 @@
         <item>home</item>
         <item>hot tub</item>
         <item>hotel</item>
+        <item>keyboard</item>
         <item>kitchen</item>
         <item>laptop</item>
         <item>library books</item>
