@@ -44,7 +44,8 @@ public class DrawableUtils {
         return wrappedDrawable;
     }
 
-    public static @DrawableRes int getIdentifier(Context context, String iconName, @DrawableRes int defaultResourceId) {
+    @DrawableRes
+    public static int getIdentifier(Context context, String iconName, @DrawableRes int defaultResourceId) {
         int iconResourceId = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
         if (iconResourceId == 0) {
             iconResourceId = defaultResourceId;
@@ -53,7 +54,8 @@ public class DrawableUtils {
         return iconResourceId;
     }
 
-    public static @DrawableRes int getIdentifier(Context context, String iconName) {
+    @DrawableRes
+    public static int getIdentifier(Context context, String iconName) {
         return getIdentifier(context, iconName, R.drawable.ic_question_mark_black_24dp);
     }
 }

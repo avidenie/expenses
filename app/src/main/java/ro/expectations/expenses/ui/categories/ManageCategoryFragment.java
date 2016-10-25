@@ -356,9 +356,9 @@ public class ManageCategoryFragment extends Fragment implements
     }
 
     @Override
-    public void onIconSelected(int targetRequestCode, String icon) {
-        mCurrentCategory.setIcon(icon);
-        mListener.onIconSelected(DrawableUtils.getIdentifier(getActivity(), icon));
+    public void onIconSelected(int targetRequestCode, @DrawableRes int icon) {
+        mCurrentCategory.setIcon(getResources().getResourceEntryName(icon));
+        mListener.onIconSelected(icon);
     }
 
     @Override
@@ -420,7 +420,7 @@ public class ManageCategoryFragment extends Fragment implements
     }
 
     private void renderCurrentIcon() {
-        onIconSelected(-1, mCurrentCategory.getIcon());
+        onIconSelected(-1, DrawableUtils.getIdentifier(getActivity(), mCurrentCategory.getIcon()));
     }
 
     private void renderCurrentParentCategory() {

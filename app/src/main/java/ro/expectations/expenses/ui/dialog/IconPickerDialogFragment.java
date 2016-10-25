@@ -21,7 +21,9 @@ package ro.expectations.expenses.ui.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -37,7 +39,7 @@ import ro.expectations.expenses.R;
 public class IconPickerDialogFragment extends DialogFragment {
 
     public interface Listener {
-        void onIconSelected(int targetRequestCode, String icon);
+        void onIconSelected(int targetRequestCode, @DrawableRes int icon);
     }
 
     private Listener mCallback;
@@ -76,9 +78,15 @@ public class IconPickerDialogFragment extends DialogFragment {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-        String[] icons = getResources().getStringArray(R.array.iconPicker);
+        TypedArray availableIcons = getResources().obtainTypedArray(R.array.iconPicker);
+        int[] icons = new int[availableIcons.length()];
+        for (int i = 0; i < availableIcons.length(); i++) {
+            icons[i] = availableIcons.getResourceId(i, R.drawable.ic_question_mark_black_24dp);
+        }
+        availableIcons.recycle();
+
         String[] iconTitles = getResources().getStringArray(R.array.iconPickerTitle);
-        mAdapter = new IconPickerAdapter(getActivity(), icons, iconTitles, new IconPickerAdapter.OnItemClickListener() {
+        mAdapter = new IconPickerAdapter(icons, iconTitles, new IconPickerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 mCallback.onIconSelected(getTargetRequestCode(), mAdapter.getIcon(position));

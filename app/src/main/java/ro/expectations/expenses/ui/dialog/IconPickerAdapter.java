@@ -19,7 +19,7 @@
 
 package ro.expectations.expenses.ui.dialog;
 
-import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +28,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import ro.expectations.expenses.R;
-import ro.expectations.expenses.utils.DrawableUtils;
 
 public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.ViewHolder> {
 
@@ -42,20 +36,14 @@ public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.Vi
         void onItemClick(View view, int position);
     }
 
-    private final Context mContext;
-    private final List<Map<String, String>> mIcons;
+    @DrawableRes
+    private final int[] mIcons;
+    private final String[] mIconTitles;
     private final OnItemClickListener mOnItemClickListener;
 
-    public IconPickerAdapter(Context context, String[] icons, String[] iconTitles, OnItemClickListener onClickListener) {
-        mContext = context;
-
-        mIcons = new ArrayList<>(icons.length);
-        for (int i = 0; i < icons.length; i++) {
-            Map<String, String> item = new HashMap<>();
-            item.put("icon", icons[i]);
-            item.put("title", iconTitles[i]);
-            mIcons.add(i, item);
-        }
+    public IconPickerAdapter(@DrawableRes int[] icons, String[] iconTitles, OnItemClickListener onClickListener) {
+        mIcons = icons;
+        mIconTitles = iconTitles;
         mOnItemClickListener = onClickListener;
     }
 
@@ -70,10 +58,10 @@ public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         // Set the icon
-        holder.mIcon.setImageResource(DrawableUtils.getIdentifier(mContext, mIcons.get(position).get("icon")));
+        holder.mIcon.setImageResource(mIcons[position]);
 
         // Set the icon title
-        holder.mTitle.setText(mIcons.get(position).get("title"));
+        holder.mTitle.setText(mIconTitles[position]);
 
         // Set the onclick listener
         if (mOnItemClickListener != null) {
@@ -88,18 +76,19 @@ public class IconPickerAdapter extends RecyclerView.Adapter<IconPickerAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return mIcons.size();
+        return mIcons.length;
     }
 
-    public String getIcon(int position) {
-        return mIcons.get(position).get("icon");
+    @DrawableRes
+    public int getIcon(int position) {
+        return mIcons[position];
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final RelativeLayout mContainer;
-        public final ImageView mIcon;
-        public final TextView mTitle;
+        final RelativeLayout mContainer;
+        final ImageView mIcon;
+        final TextView mTitle;
 
         public ViewHolder(View view) {
             super(view);
