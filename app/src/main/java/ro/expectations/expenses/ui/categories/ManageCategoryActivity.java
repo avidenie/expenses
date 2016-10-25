@@ -25,6 +25,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -192,29 +193,34 @@ public class ManageCategoryActivity extends AppCompatActivity implements ManageC
     }
 
     @Override
-    public void onColorStyleSelected(@StyleRes int style) {
+    public void onColorSelected(@ColorInt int color) {
 
+        @StyleRes int style = ColorStyleUtils.getStyleForColor(this, color);
         Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(this, style);
 
+        int colorPrimary = colors.get(ColorStyleUtils.COLOR_PRIMARY);
+        int colorPrimaryDark = colors.get(ColorStyleUtils.COLOR_PRIMARY_DARK);
+        int colorAccent = colors.get(ColorStyleUtils.COLOR_ACCENT);
+
         // change the collapsing toolbar layout
-        mCollapsingToolbarLayout.setBackgroundColor(colors.get(ColorStyleUtils.COLOR_PRIMARY));
+        mCollapsingToolbarLayout.setBackgroundColor(colorPrimary);
 
         // change the support action bar
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
-            supportActionBar.setBackgroundDrawable(new ColorDrawable(colors.get(ColorStyleUtils.COLOR_PRIMARY)));
+            supportActionBar.setBackgroundDrawable(new ColorDrawable(colorPrimary));
         }
 
         // change the status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(colors.get(ColorStyleUtils.COLOR_PRIMARY_DARK));
+            getWindow().setStatusBarColor(colorPrimaryDark);
         }
 
         // change the floating action button
-        mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(colors.get(ColorStyleUtils.COLOR_ACCENT)));
+        mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
 
         // change the change icon color
-        Drawable background = DrawableUtils.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), colors.get(ColorStyleUtils.COLOR_ACCENT));
+        Drawable background = DrawableUtils.tintWithColor(ContextCompat.getDrawable(this, R.drawable.circle_background_grey).mutate(), colorAccent);
         mChangeColorBackground.setBackground(background);
     }
 

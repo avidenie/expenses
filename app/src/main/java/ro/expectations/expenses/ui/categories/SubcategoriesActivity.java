@@ -53,9 +53,11 @@ public class SubcategoriesActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        String style = getIntent().getStringExtra(ARG_PARENT_CATEGORY_STYLE);
-        if (style != null && !style.isEmpty()) {
-            setTheme(ColorStyleUtils.getIdentifier(this, style));
+        if (getIntent().hasExtra(ARG_PARENT_CATEGORY_STYLE)) {
+            int styleResId = getIntent().getIntExtra(ARG_PARENT_CATEGORY_STYLE, -1);
+            if (styleResId > 0) {
+                setTheme(styleResId);
+            }
         }
 
         super.onCreate(savedInstanceState);
@@ -112,8 +114,7 @@ public class SubcategoriesActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 ExpensesContract.Categories.NAME,
-                ExpensesContract.Categories.COLOR,
-                ExpensesContract.Categories.STYLE
+                ExpensesContract.Categories.COLOR
         };
 
         return new CursorLoader(
@@ -141,7 +142,9 @@ public class SubcategoriesActivity extends AppCompatActivity
 
             // if the parent category style was not set, set it and restart
             if (!getIntent().hasExtra(ARG_PARENT_CATEGORY_STYLE)) {
-                getIntent().putExtra(ARG_PARENT_CATEGORY_STYLE, data.getString(data.getColumnIndex(ExpensesContract.Categories.STYLE)));
+                String color = data.getString(data.getColumnIndex(ExpensesContract.Categories.COLOR));
+                int style = ColorStyleUtils.getStyleForColor(this, color);
+                getIntent().putExtra(ARG_PARENT_CATEGORY_STYLE, style);
                 recreate();
             }
         }

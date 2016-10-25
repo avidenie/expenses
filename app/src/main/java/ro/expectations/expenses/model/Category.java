@@ -33,7 +33,6 @@ public class Category implements Parcelable {
             ExpensesContract.Categories._ID,
             ExpensesContract.Categories.NAME,
             ExpensesContract.Categories.COLOR,
-            ExpensesContract.Categories.STYLE,
             ExpensesContract.Categories.ICON,
             ExpensesContract.Categories.PARENT_ID,
             ExpensesContract.ParentCategories.PARENT_NAME,
@@ -42,11 +41,10 @@ public class Category implements Parcelable {
     public static final int COLUMN_CATEGORY_ID = 0;
     public static final int COLUMN_CATEGORY_NAME = 1;
     public static final int COLUMN_CATEGORY_COLOR = 2;
-    public static final int COLUMN_CATEGORY_STYLE = 3;
-    public static final int COLUMN_CATEGORY_ICON = 4;
-    public static final int COLUMN_CATEGORY_PARENT_ID = 5;
-    public static final int COLUMN_CATEGORY_PARENT_NAME = 6;
-    public static final int COLUMN_CATEGORY_CHILDREN = 7;
+    public static final int COLUMN_CATEGORY_ICON = 3;
+    public static final int COLUMN_CATEGORY_PARENT_ID = 4;
+    public static final int COLUMN_CATEGORY_PARENT_NAME = 5;
+    public static final int COLUMN_CATEGORY_CHILDREN = 6;
 
     public static final Parcelable.Creator<Category> CREATOR = new Creator<Category>() {
         @Override
@@ -63,16 +61,14 @@ public class Category implements Parcelable {
     private long id;
     private String name;
     @ColorInt private int color;
-    private String style;
     private String icon;
     private long parentId;
     private int children;
 
-    public Category(long id, String name, @ColorInt int color, String style, String icon, long parentId, int children) {
+    public Category(long id, String name, @ColorInt int color, String icon, long parentId, int children) {
         this.id = id;
         this.name = name;
         this.color = color;
-        this.style = style;
         this.icon = icon;
         this.parentId = parentId;
         this.children = children;
@@ -82,7 +78,6 @@ public class Category implements Parcelable {
         id = in.readLong();
         name = in.readString();
         color = in.readInt();
-        style = in.readString();
         icon = in.readString();
         parentId = in.readLong();
         children = in.readInt();
@@ -92,7 +87,6 @@ public class Category implements Parcelable {
         id = other.getId();
         name = other.getName();
         color = other.getColor();
-        style = other.getStyle();
         icon = other.getIcon();
         parentId = other.getParentId();
         children = other.getChildren();
@@ -109,7 +103,6 @@ public class Category implements Parcelable {
         return id == that.id
                 && name.equals(that.name)
                 && color == that.color
-                && style.equals(that.style)
                 && icon.equals(that.icon)
                 && parentId == that.parentId
                 && children == that.children;
@@ -122,7 +115,6 @@ public class Category implements Parcelable {
         hashCode = hashCode * 37 + Long.valueOf(id).hashCode();
         hashCode = hashCode * 37 + name.hashCode();
         hashCode = hashCode * 37 + Integer.valueOf(color).hashCode();
-        hashCode = hashCode * 37 + style.hashCode();
         hashCode = hashCode * 37 + icon.hashCode();
         hashCode = hashCode * 37 + Long.valueOf(parentId).hashCode();
         hashCode = hashCode * 37 + children;
@@ -140,7 +132,6 @@ public class Category implements Parcelable {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeInt(color);
-        dest.writeString(style);
         dest.writeLong(parentId);
         dest.writeInt(children);
     }
@@ -167,14 +158,6 @@ public class Category implements Parcelable {
 
     public void setColor(int color) {
         this.color = color;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
     }
 
     public String getIcon() {
@@ -205,7 +188,6 @@ public class Category implements Parcelable {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ExpensesContract.Categories.NAME, name);
         contentValues.put(ExpensesContract.Categories.COLOR, ColorUtils.toRGB(color));
-        contentValues.put(ExpensesContract.Categories.STYLE, style);
         contentValues.put(ExpensesContract.Categories.ICON, icon);
         if (parentId > 0) {
             contentValues.put(ExpensesContract.Categories.PARENT_ID, parentId);

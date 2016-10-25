@@ -48,7 +48,7 @@ import ro.expectations.expenses.ui.drawer.DrawerActivity;
 import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
-import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 
 public class PayeesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -78,7 +78,7 @@ public class PayeesFragment extends Fragment implements LoaderManager.LoaderCall
             actionDeletePayee.setIcon(DrawableUtils.tint(getContext(), actionDeletePayee.getIcon(), R.color.colorWhite));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int primaryColorDark = ColorStyleUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
+                int primaryColorDark = ColorUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
                 getActivity().getWindow().setStatusBarColor(0XFF000000 | primaryColorDark);
             }
 

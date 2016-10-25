@@ -28,8 +28,14 @@
     <dimen name="title_area_bottom_padding">8dp</dimen>
     <dimen name="app_bar_height_category">230dp</dimen>
     <dimen name="app_bar_extended_height">128dp</dimen>
-    <dimen name="color_picker_padding_vertical">50dp</dimen>
-    <dimen name="color_picker_item_padding_bottom">10dp</dimen>
+
+    <!-- icon picker -->
     <dimen name="icon_picker_padding_vertical">10dp</dimen>
     <dimen name="icon_picker_item_padding_bottom">10dp</dimen>
+
+    <!-- color picker -->
+    <dimen name="color_swatch_large">64dip</dimen>
+    <dimen name="color_swatch_small">48dip</dimen>
+    <dimen name="color_swatch_margins_large">8dip</dimen>
+    <dimen name="color_swatch_margins_small">4dip</dimen>
 </resources>

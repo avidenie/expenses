@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -51,13 +50,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
-import java.util.Map;
 
 import ro.expectations.expenses.R;
 import ro.expectations.expenses.model.Category;
 import ro.expectations.expenses.provider.ExpensesContract;
+import ro.expectations.expenses.ui.colorpicker.ColorPickerDialog;
+import ro.expectations.expenses.ui.colorpicker.ColorPickerSwatch;
 import ro.expectations.expenses.ui.dialog.CategoryPickerDialogFragment;
-import ro.expectations.expenses.ui.dialog.ColorPickerDialogFragment;
 import ro.expectations.expenses.ui.dialog.ConfirmationDialogFragment;
 import ro.expectations.expenses.ui.dialog.IconPickerDialogFragment;
 import ro.expectations.expenses.utils.ColorStyleUtils;
@@ -67,14 +66,14 @@ import ro.expectations.expenses.utils.DrawableUtils;
 public class ManageCategoryFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         CategoryPickerDialogFragment.Listener,
-        ColorPickerDialogFragment.Listener,
+        ColorPickerSwatch.OnColorSelectedListener,
         IconPickerDialogFragment.Listener,
         ConfirmationDialogFragment.Listener {
 
     public interface Listener {
         void onBackPressedConfirmed();
         void onNavigateUpConfirmed();
-        void onColorStyleSelected(@StyleRes int style);
+        void onColorSelected(@ColorInt int color);
         void onIconSelected(@DrawableRes int icon);
         void showChangeColor();
         void hideChangeColor();
@@ -211,7 +210,6 @@ public class ManageCategoryFragment extends Fragment implements
                             0,
                             "",
                             ContextCompat.getColor(getActivity(), R.color.colorPrimary),
-                            "ColorIndigo",
                             "ic_question_mark_black_24dp",
                             0,
                             0);
@@ -281,7 +279,6 @@ public class ManageCategoryFragment extends Fragment implements
                 long parentId = data.getLong(Category.COLUMN_CATEGORY_PARENT_ID);
                 String categoryName = data.getString(Category.COLUMN_CATEGORY_NAME);
                 String categoryColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
-                String categoryStyle = data.getString(Category.COLUMN_CATEGORY_STYLE);
                 String categoryIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
                 String parentName = data.getString(Category.COLUMN_CATEGORY_PARENT_NAME);
                 int children = data.getInt(Category.COLUMN_CATEGORY_CHILDREN);
@@ -290,7 +287,6 @@ public class ManageCategoryFragment extends Fragment implements
                         categoryId,
                         categoryName,
                         ColorUtils.fromRGB(categoryColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
-                        categoryStyle,
                         categoryIcon,
                         parentId,
                         children);
@@ -311,14 +307,12 @@ public class ManageCategoryFragment extends Fragment implements
                 long parentId = data.getLong(Category.COLUMN_CATEGORY_ID);
                 String parentName = data.getString(Category.COLUMN_CATEGORY_NAME);
                 String parentColor = data.getString(Category.COLUMN_CATEGORY_COLOR);
-                String parentStyle = data.getString(Category.COLUMN_CATEGORY_STYLE);
                 String parentIcon = data.getString(Category.COLUMN_CATEGORY_ICON);
 
                 mOriginalCategory = new Category(
                         0,
                         "",
                         ColorUtils.fromRGB(parentColor, ContextCompat.getColor(getActivity(), R.color.colorPrimary)),
-                        parentStyle,
                         parentIcon,
                         parentId,
                         0);
@@ -356,10 +350,9 @@ public class ManageCategoryFragment extends Fragment implements
     }
 
     @Override
-    public void onColorSelected(int targetRequestCode, @ColorInt int color, @StyleRes int style) {
+    public void onColorSelected(@ColorInt int color) {
         mCurrentCategory.setColor(color);
-        mCurrentCategory.setStyle(getResources().getResourceEntryName(style));
-        mListener.onColorStyleSelected(style);
+        mListener.onColorSelected(color);
     }
 
     @Override
@@ -386,9 +379,11 @@ public class ManageCategoryFragment extends Fragment implements
     }
 
     public void changeColor() {
-        ColorPickerDialogFragment colorPickerDialogFragment = ColorPickerDialogFragment.newInstance(mCurrentCategory.getStyle());
-        colorPickerDialogFragment.setTargetFragment(this, COLOR_PICKER_DIALOG_REQUEST_CODE);
-        colorPickerDialogFragment.show(getFragmentManager(), "ColorPickerDialogFragment");
+        int[] colors = getResources().getIntArray(R.array.colorPickerColors);
+        ColorPickerDialog colorPickerDialog = ColorPickerDialog.newInstance(colors,
+                mCurrentCategory.getColor(), 4, ColorPickerDialog.SIZE_SMALL);
+        colorPickerDialog.setTargetFragment(this, COLOR_PICKER_DIALOG_REQUEST_CODE);
+        colorPickerDialog.show(getFragmentManager(), "ColorPickerDialog");
     }
 
     public void changeIcon() {
@@ -413,7 +408,7 @@ public class ManageCategoryFragment extends Fragment implements
         if (parentCategoryId > 0) {
             Intent intent = new Intent(getActivity(), SubcategoriesActivity.class);
             intent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, parentCategoryId);
-            intent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_STYLE, mCurrentCategory.getStyle());
+            intent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_STYLE, ColorStyleUtils.getStyleForColor(getActivity(), mCurrentCategory.getColor()));
             return intent;
         } else {
             return new Intent(getActivity(), CategoriesActivity.class);
@@ -421,14 +416,7 @@ public class ManageCategoryFragment extends Fragment implements
     }
 
     private void renderCurrentColor() {
-        String[] styles = getResources().getStringArray(R.array.colorPickerStyles);
-        for (String style : styles) {
-            if (style.equals(mCurrentCategory.getStyle())) {
-                Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(getActivity(), style);
-                onColorSelected(-1, colors.get(ColorStyleUtils.COLOR_PRIMARY), ColorStyleUtils.getIdentifier(getActivity(), style));
-                break;
-            }
-        }
+        onColorSelected(mCurrentCategory.getColor());
     }
 
     private void renderCurrentIcon() {

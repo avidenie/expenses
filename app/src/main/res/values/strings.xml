@@ -18,11 +18,10 @@
   ~ along with Expenses. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Expenses</string>
 
     <!-- Action bar actions -->
-    <string name="action_settings">Settings</string>
     <string name="action_financisto_import">Import from Financisto</string>
     <string name="action_close_account">Close account</string>
     <string name="action_edit_account">Edit account</string>
@@ -120,7 +119,6 @@
     <!-- Transactions -->
     <string name="all_accounts">All Accounts</string>
     <string name="breadcrumbs">%1$s » %2$s</string>
-    <string name="negative_amount">-%s</string>
     <string name="multiple_categories">[Multiple categories …]</string>
     <string name="default_transfer_description">Transfer</string>
     <string name="default_debit_description">Debit</string>
@@ -134,6 +132,8 @@
 
     <!-- Color picker -->
     <string name="choose_color">Choose color</string>
+    <string name="color_swatch_description">Color <xliff:g id="color_index" example="14">%1$d</xliff:g></string>
+    <string name="color_swatch_description_selected">Color <xliff:g id="color_index" example="14">%1$d</xliff:g> selected</string>
 
     <!-- Icon picker -->
     <string name="choose_icon">Choose icon</string>
@@ -154,6 +154,5 @@
     <string name="title_edit_account">Edit account</string>
     <string name="account_title">Title</string>
     <string name="error_account_name_empty">You need to enter an account title</string>
-    <string name="account_currency">Currency</string>
 
 </resources>

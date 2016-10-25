@@ -19,11 +19,18 @@
 
 package ro.expectations.expenses.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.util.TypedValue;
 
 public class ColorUtils {
 
-    public static int fromRGB(String color, int defaultColor) {
+    @ColorInt
+    public static int fromRGB(String color, @ColorInt int defaultColor) {
         if (color == null) {
             return defaultColor;
         }
@@ -37,8 +44,15 @@ public class ColorUtils {
         }
     }
 
-    public static String toRGB(int color) {
+    public static String toRGB(@ColorInt int color) {
         return String.format("%06x", 0XFF000000 | color);
     }
 
+    @ColorRes
+    public static int getColorFromTheme(Context context, @AttrRes int color) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(color, typedValue, true);
+        return typedValue.data;
+    }
 }

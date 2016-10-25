@@ -51,6 +51,7 @@ import ro.expectations.expenses.ui.providers.AppBarLayoutProvider;
 import ro.expectations.expenses.ui.recyclerview.DividerItemDecoration;
 import ro.expectations.expenses.ui.recyclerview.ItemClickHelper;
 import ro.expectations.expenses.utils.ColorStyleUtils;
+import ro.expectations.expenses.utils.ColorUtils;
 import ro.expectations.expenses.utils.DrawableUtils;
 
 public class CategoriesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -81,7 +82,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                 ((DrawerActivity) activity).lockNavigationDrawer();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    int primaryColorDark = ColorStyleUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
+                    int primaryColorDark = ColorUtils.getColorFromTheme(getActivity(), R.attr.colorPrimaryDark);
                     getActivity().getWindow().setStatusBarColor(0XFF000000 | primaryColorDark);
                 }
             }
@@ -241,7 +242,7 @@ public class CategoriesFragment extends Fragment implements LoaderManager.Loader
                     cursor.moveToPosition(position);
                     Intent subcategoryIntent = new Intent(getActivity(), SubcategoriesActivity.class);
                     subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_ID, cursor.getLong(CategoriesAdapter.COLUMN_CATEGORY_ID));
-                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_STYLE, cursor.getString(CategoriesAdapter.COLUMN_CATEGORY_STYLE));
+                    subcategoryIntent.putExtra(SubcategoriesActivity.ARG_PARENT_CATEGORY_STYLE, ColorStyleUtils.getStyleForColor(getActivity(), cursor.getString(CategoriesAdapter.COLUMN_CATEGORY_COLOR)));
                     getActivity().startActivity(subcategoryIntent);
                 }
             }

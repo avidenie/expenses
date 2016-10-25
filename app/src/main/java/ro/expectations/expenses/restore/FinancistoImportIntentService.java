@@ -24,6 +24,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -43,7 +44,6 @@ import ro.expectations.expenses.model.AccountType;
 import ro.expectations.expenses.model.CardType;
 import ro.expectations.expenses.model.OnlinePaymentType;
 import ro.expectations.expenses.provider.ExpensesContract;
-import ro.expectations.expenses.utils.ColorStyleUtils;
 import ro.expectations.expenses.utils.ColorUtils;
 
 public class FinancistoImportIntentService extends AbstractRestoreIntentService {
@@ -246,10 +246,9 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
     private void processCategoryEntries() {
         List<Map<String, String>> parentCategories = new ArrayList<>();
         List<Map<String, String>> childCategories = new ArrayList<>();
-        Map<Long, String> parentStyles = new HashMap<>();
+        LongSparseArray<String> parentColors = new LongSparseArray<>();
 
-        String defaultColor = ColorUtils.toRGB(ContextCompat.getColor(this, R.color.colorIndigo500));
-        String defaultStyle = "ColorIndigo";
+        String defaultColor = ColorUtils.toRGB(ContextCompat.getColor(this, R.color.colorPrimary));
         String defaultIcon = "ic_question_mark_black_24dp";
 
         for(Map<String, String> values: mCategories) {
@@ -279,48 +278,40 @@ public class FinancistoImportIntentService extends AbstractRestoreIntentService 
                 .withValue(ExpensesContract.Categories._ID, -1)
                 .withValue(ExpensesContract.Categories.NAME, "SPLIT")
                 .withValue(ExpensesContract.Categories.COLOR, defaultColor)
-                .withValue(ExpensesContract.Categories.STYLE, defaultStyle)
                 .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                 .build());
 
         // process parent categories
-        String[] styles = getResources().getStringArray(R.array.colorPickerStyles);
-        int styleIndex = 0;
+        int[] colors = getResources().getIntArray(R.array.colorPickerColors);
+        int colorIndex = 0;
         for(Map<String, String> values: parentCategories) {
             long id = Long.parseLong(values.get("_id"));
-            Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(this, styles[styleIndex]);
-            String color = ColorUtils.toRGB(colors.get(ColorStyleUtils.COLOR_PRIMARY));
+            String color = ColorUtils.toRGB(colors[colorIndex]);
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                     .withValue(ExpensesContract.Categories._ID, id)
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
                     .withValue(ExpensesContract.Categories.COLOR, color)
-                    .withValue(ExpensesContract.Categories.STYLE, styles[styleIndex])
                     .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                     .build());
-            parentStyles.put(id, styles[styleIndex]);
-            styleIndex++;
-            if (styleIndex == styles.length) {
-                styleIndex = 0;
+            parentColors.put(id, color);
+            colorIndex++;
+            if (colorIndex == colors.length) {
+                colorIndex = 0;
             }
         }
 
         // process child categories
         for(Map<String, String> values: childCategories) {
             long parentId = Long.parseLong(values.get("parent_id"));
-            String style;
-            if (parentStyles.containsKey(parentId)) {
-                style = parentStyles.get(parentId);
-            } else {
-                style = defaultStyle;
+            String color = parentColors.get(parentId);
+            if (color == null) {
+                color = defaultColor;
             }
-            Map<String, Integer> colors = ColorStyleUtils.getColorsFromStyle(this, style);
-            String color = ColorUtils.toRGB(colors.get(ColorStyleUtils.COLOR_PRIMARY));
             mOperations.add(ContentProviderOperation.newInsert(ExpensesContract.Categories.CONTENT_URI)
                     .withValue(ExpensesContract.Categories._ID, Long.parseLong(values.get("_id")))
                     .withValue(ExpensesContract.Categories.NAME, values.get("title"))
                     .withValue(ExpensesContract.Categories.PARENT_ID, parentId)
                     .withValue(ExpensesContract.Categories.COLOR, color)
-                    .withValue(ExpensesContract.Categories.STYLE, style)
                     .withValue(ExpensesContract.Categories.ICON, defaultIcon)
                     .build());
         }

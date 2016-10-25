@@ -20,13 +20,10 @@
 package ro.expectations.expenses.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
-import android.util.TypedValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,19 +36,6 @@ public class ColorStyleUtils {
     public static final String COLOR_PRIMARY = "colorPrimary";
     public static final String COLOR_PRIMARY_DARK = "colorPrimaryDark";
     public static final String COLOR_ACCENT = "colorAccent";
-
-    public static @StyleRes int getIdentifier(Context context, String styleName, @StyleRes int defaultResourceId) {
-        int styleResourceId = context.getResources().getIdentifier(styleName, "style", context.getPackageName());
-        if (styleResourceId == 0) {
-            styleResourceId = defaultResourceId;
-        }
-
-        return styleResourceId;
-    }
-
-    public static @StyleRes int getIdentifier(Context context, String styleName) {
-        return getIdentifier(context, styleName, R.style.AppTheme);
-    }
 
     public static Map<String, Integer> getColorsFromStyle(Context context, @StyleRes int styleResId) {
 
@@ -74,14 +58,26 @@ public class ColorStyleUtils {
         return colors;
     }
 
-    public static Map<String, Integer> getColorsFromStyle(Context context, String styleName) {
-        return getColorsFromStyle(context, getIdentifier(context, styleName));
+    @StyleRes
+    public static int getStyleForColor(Context context, @ColorInt int color) {
+        int[] colors = context.getResources().getIntArray(R.array.colorPickerColors);
+        int idx = 0;
+        for (int currentColor: colors) {
+            if (currentColor == color) {
+                break;
+            }
+            idx++;
+        }
+
+        TypedArray styles = context.getResources().obtainTypedArray(R.array.colorPickerStyles);
+        int style = styles.getResourceId(idx, R.style.ColorIndigo);
+        styles.recycle();
+
+        return style;
     }
 
-    @ColorRes public static int getColorFromTheme(Context context, @AttrRes int color) {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(color, typedValue, true);
-        return typedValue.data;
+    @StyleRes
+    public static int getStyleForColor(Context context, String color) {
+        return getStyleForColor(context, ColorUtils.fromRGB(color, ContextCompat.getColor(context, R.color.colorPrimary)));
     }
 }

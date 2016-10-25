@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright © 2016 Adrian Videnie
   ~
@@ -17,14 +17,16 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Expenses. If not, see <http://www.gnu.org/licenses/>.
   -->
-
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recyclerview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="?attr/dialogPreferredPadding"
-    android:paddingBottom="?attr/dialogPreferredPadding"
-    android:paddingStart="@dimen/color_picker_padding_vertical"
-    android:paddingEnd="@dimen/color_picker_padding_vertical"
-    android:clipToPadding="false" />
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView
+        android:id="@+id/color_picker_swatch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/color_picker_checkmark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_colorpicker_swatch_selected"
+        android:scaleType="fitXY"
+        android:visibility="gone" />
+</merge>

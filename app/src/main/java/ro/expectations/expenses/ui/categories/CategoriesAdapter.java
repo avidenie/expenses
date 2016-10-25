@@ -44,7 +44,6 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
             ExpensesContract.Categories._ID,
             ExpensesContract.Categories.NAME,
             ExpensesContract.Categories.COLOR,
-            ExpensesContract.Categories.STYLE,
             ExpensesContract.Categories.ICON,
             ExpensesContract.Categories.PARENT_ID,
             ExpensesContract.Categories.CHILDREN
@@ -52,10 +51,9 @@ public class CategoriesAdapter extends MultipleSelectionAdapter<CategoriesAdapte
     static final int COLUMN_CATEGORY_ID = 0;
     static final int COLUMN_CATEGORY_NAME = 1;
     static final int COLUMN_CATEGORY_COLOR = 2;
-    static final int COLUMN_CATEGORY_STYLE = 3;
-    static final int COLUMN_CATEGORY_ICON = 4;
-    static final int COLUMN_CATEGORY_PARENT_ID = 5;
-    static final int COLUMN_CATEGORY_CHILDREN = 6;
+    static final int COLUMN_CATEGORY_ICON = 3;
+    static final int COLUMN_CATEGORY_PARENT_ID = 4;
+    static final int COLUMN_CATEGORY_CHILDREN = 5;
 
     private Cursor mCursor;
     final private Context mContext;

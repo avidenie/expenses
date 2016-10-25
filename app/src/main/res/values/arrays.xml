@@ -20,28 +20,50 @@
 
 <resources>
 
-    <!-- Color picker styles -->
-    <string-array name="colorPickerStyles">
-        <item>ColorRed</item>
-        <item>ColorPink</item>
-        <item>ColorPurple</item>
-        <item>ColorDeepPurple</item>
-        <item>ColorIndigo</item>
-        <item>ColorBlue</item>
-        <item>ColorLightBlue</item>
-        <item>ColorCyan</item>
-        <item>ColorTeal</item>
-        <item>ColorGreen</item>
-        <item>ColorLightGreen</item>
-        <item>ColorLime</item>
-        <item>ColorYellow</item>
-        <item>ColorAmber</item>
-        <item>ColorOrange</item>
-        <item>ColorDeepOrange</item>
-        <item>ColorBrown</item>
-        <item>ColorGrey</item>
-        <item>ColorBlueGrey</item>
-    </string-array>
+    <!-- Color picker -->
+    <array name="colorPickerColors">
+        <item>@color/colorRed500</item>
+        <item>@color/colorPink500</item>
+        <item>@color/colorPurple500</item>
+        <item>@color/colorDeepPurple500</item>
+        <item>@color/colorIndigo500</item>
+        <item>@color/colorBlue500</item>
+        <item>@color/colorLightBlue500</item>
+        <item>@color/colorCyan500</item>
+        <item>@color/colorTeal500</item>
+        <item>@color/colorGreen500</item>
+        <item>@color/colorLightGreen500</item>
+        <item>@color/colorLime500</item>
+        <item>@color/colorYellow500</item>
+        <item>@color/colorAmber500</item>
+        <item>@color/colorOrange500</item>
+        <item>@color/colorDeepOrange500</item>
+        <item>@color/colorBrown500</item>
+        <item>@color/colorGrey500</item>
+        <item>@color/colorBlueGrey500</item>
+    </array>
+
+    <array name="colorPickerStyles">
+        <item>@style/ColorRed</item>
+        <item>@style/ColorPink</item>
+        <item>@style/ColorPurple</item>
+        <item>@style/ColorDeepPurple</item>
+        <item>@style/ColorIndigo</item>
+        <item>@style/ColorBlue</item>
+        <item>@style/ColorLightBlue</item>
+        <item>@style/ColorCyan</item>
+        <item>@style/ColorTeal</item>
+        <item>@style/ColorGreen</item>
+        <item>@style/ColorLightGreen</item>
+        <item>@style/ColorLime</item>
+        <item>@style/ColorYellow</item>
+        <item>@style/ColorAmber</item>
+        <item>@style/ColorOrange</item>
+        <item>@style/ColorDeepOrange</item>
+        <item>@style/ColorBrown</item>
+        <item>@style/ColorGrey</item>
+        <item>@style/ColorBlueGrey</item>
+    </array>
 
     <!-- Icon picker -->
     <string-array name="iconPicker">
